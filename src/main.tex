@@ -1,0 +1,89 @@
+\documentclass[10pt,b5paper,openright]{book}
+\usepackage{packages}
+
+\begin{document}
+
+% Roman numbering for the front matter
+\pagenumbering{roman} 
+
+% TODO: No problem description?
+%\section*{\Huge{Problem Description}}
+%\addcontentsline{toc}{chapter}{Problem Description}
+%\input{./chapters/problem_description}
+%\newpage
+
+\section*{\Huge{Abstract}}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{./chapters/abstract}
+\newpage
+
+\section*{\Huge{Sammendrag}}
+\addcontentsline{toc}{chapter}{Sammendrag}
+\input{./chapters/sammendrag}
+\newpage
+
+\section*{\Huge{Preface}}
+\addcontentsline{toc}{chapter}{Preface}
+\input{./chapters/preface}
+\DTMlangsetup{showdayofmonth=false}
+\begin{flushright}
+    \textit{Håkon Bårsaune} \\
+    \textit{Trondheim,\today}
+\end{flushright}
+\DTMlangsetup{showdayofmonth=true}
+\newpage
+
+
+\tableofcontents
+\newpage
+
+% List of figures and tables, they don't need take two pages each
+\begingroup
+
+\let\cleardoublepage\relax
+\let\clearpage\relax
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+
+\newpage
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+
+%\newpage
+%\lstlistoflistings
+
+\newpage
+\printglossary[type=\acronymtype]
+\addcontentsline{toc}{chapter}{List of Acronyms}
+
+\endgroup
+
+
+\newpage
+
+
+\chapter{Introduction}
+\pagenumbering{arabic} % Arabic numbering for the main matter
+% Change the page style to include the chapter number and title in the header
+\fancyhead[RE]{\thepage}
+\fancyhead[LE]{\MakeUppercase{\rightmark}}
+\fancyhead[LO]{\thepage}
+\fancyhead[RO]{\MakeUppercase{\leftmark}}
+\fancyfoot[C]{}
+
+\input{./chapters/introduction}
+\input{./chapters/background_and_preliminaries}
+\input{./chapters/modeling}
+\input{./chapters/task_priority_control}
+\input{./chapters/simulation}
+\input{./chapters/conclusion_and_future_work}
+
+\printbibliography
+\addcontentsline{toc}{chapter}{Bibliography}
+\newpage
+\appendix
+
+\includepdf[pages=-]{./assets/ignored/KIchecklist.pdf}
+\addcontentsline{toc}{chapter}{AI Checklist}
+
+\end{document}
