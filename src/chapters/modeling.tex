@@ -341,7 +341,7 @@ it will be asumed that they are functions of one variable, more specifically,
 \end{align}
 We define the body twist $\bm{\nu}_i$ of link $i$ as
 \begin{align}
-    \bm{\nu}_i := \bm{\nu}_{ni}^i := (\bm{H}_i^b)^{-1}(\dot{\bm{H}}_i^b)
+    [\bm{\nu}_i]_{\wedge} := [\bm{\nu}_{ni}^i]_{\wedge} := (\bm{H}_i^b)^{-1}(\dot{\bm{H}}_i^b)
 \end{align}
 and note that
 \begin{align}
@@ -353,12 +353,13 @@ the previous links twist:
 \begin{subequations}
     \label{eq:H_recursive}
 \begin{align}
-    \bm{\nu}_{i+1} &= (\bm{H}_{i+1}^b)^{-1}(\dot{\bm{H}}_{i+1}^b) \\
+    [\bm{\nu}_{i+1}]_{\wedge} &= (\bm{H}_{i+1}^b)^{-1}(\dot{\bm{H}}_{i+1}^b) \\
     &= (\bm{H}_{i}^b\bm{H}_{i+1}^i)^{-1}(\dot{\bm{H}_{i}^b\bm{H}_{i+1}^i}) \\
     &= (\bm{H}_{i}^b\bm{A}_i)^{-1}(\dot{\bm{H}_{i}^b\bm{A}_i}) \\
     &= (\bm{A}_i)^{-1}(\bm{H}_{i}^b)^{-1}(\dot{\bm{H}}_{i}^b\bm{A}_i + \bm{H}_{i}^b\dot{\bm{A}}_i) \\
-    &= (\bm{A}_i)^{-1}\bm{\nu}_i\bm{A}_i + \dot{\theta}_i\bm{a}_i \\
-    &= \Ad^{-1}(\bm{A}_i)\bm{\nu}_i + \dot{\theta}_i\bm{a}_i \label{eq:eta:induction}\\
+    &= (\bm{A}_i)^{-1}[\bm{\nu}_i]_{\wedge}\bm{A}_i + \dot{\theta}_i[\bm{a}_i]_{\wedge} \\
+    &= [\Ad^{-1}(\bm{A}_i)\bm{\nu}_i]_{\wedge} + [\dot{\theta}_i\bm{a}_i]_{\wedge} \label{eq:eta:induction}\\
+    \bm{\nu}_{i+1} &= \Ad^{-1}(\bm{A}_i)\bm{\nu}_i + \dot{\theta}_i\bm{a}_i \\
     &= \Ad^{-1}(\bm{A}_i)\bm{J}_i\bm{\zeta} + \begin{bmatrix}\bm{0}_{6\times6+(i-1)} & \bm{a}_i & \bm{0}_{6\times n_j-i}\end{bmatrix}\bm{\zeta},
 \end{align}
 \end{subequations}

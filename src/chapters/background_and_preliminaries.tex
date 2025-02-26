@@ -1,3 +1,4 @@
+\iffalse
 \chapter{Background and {Preliminaries}}
 
 \section{$\operatorname{SO}(3)$}
@@ -24,5 +25,425 @@
 \end{subequations}
 
 \section{$\operatorname{SE}(3)$}
+\fi
+
+\chapter{Background and {Preliminaries}}
+
+% -----------------------------------------------------------------------------
+\section{SO(3)}
+\label{sec:bp:so3_se3}
+
+The special orthogonal group in three dimensions, $\SO$, and the special
+Euclidean group in three dimensions, $\SE$, are key mathematical tools in the
+study of rigid body dynamics. These groups serve distinct purposes: $\SO$ is
+used to represent rotations, while $\SE$ describes rigid body and spatial
+transformations. This section offers a brief introduction to these groups and
+highlights some of their essential properties.
+
+We denote by $\SO$ the special orthogonal group in three dimensions, which is
+the group of all $3 \times 3$ rotation matrices with determinant equal to one,
+such that
+\begin{align}
+    \SO = \{ \bm{R} \in \mathbb{R}^{3 \times 3} \mid \bm{R}^T \bm{R} = \mathbb{I}, \det(\bm{R}) = 1 \}.
+\end{align}
+Intuitively, $\bm{R}^T \bm{R} = \mathbb{I}$ means that the columns of $\bm{R}$ are orthonormal,
+and $\det(\bm{R}) = 1$ means that $\bm{R}$ is a proper rotation, i.e., it does not include
+a reflection. The $\SO$ group is closely related to the Lie algebra $\so$
+\begin{subequations}
+\begin{align}
+    \so &= \{ \bm{\Omega} \in \R^{3 \times 3} | \bm{\Omega}^T = -\bm{\Omega} \} \\
+    [\bm{\Omega_1}, \bm{\Omega_2}]_{\so} &= \bm{\Omega_1} \bm{\Omega_2}
+        - \bm{\Omega_2} \bm{\Omega_1},
+\end{align}
+\end{subequations}
+by the exponential map
+\begin{subequations}
+\begin{align}
+    \exp &: \so \to \SO \\
+    \exp &: \bm{\Omega} \mapsto \sum_{k=0}^{\infty} \frac{1}{k!} \bm{\Omega}^k.
+\end{align}
+\end{subequations}
+This is an important property, as it is fundamental to the definition of the
+angular velocity $\bm{\omega}$ of a rigid body. Consider a rotation matrix
+$\bm{R}_b^i$ that rotates a vector from the body-fixed frame $b$ to some inertial
+frame $i$. The body-fixed angular velocity $\bm{\omega}_{ib}^b$ is then defined
+as
+\begin{align}
+    \bm{\omega}_{ib}^b := \bm{R}_i^b \dot{\bm{R}}_b^i.
+\end{align}
+When specifying reference frames, we say that
+\begin{align}
+    \bm{p}^b = \bm{R}_{a}^b \bm{p}^a,
+\end{align}
+meaning that the rotation matrix $\bm{R}_{a}^b$ rotates a vector
+$\bm{p}^a\in\R^3$ from frame $a$ to frame $b$. Some important properties
+of $\bm{R}_a^b \in \SO$ are as follows \cite{modsim}:
+\begin{itemize}
+\item $\bm{R}_a^b = (\bm{R}_b^a)^{-1} = (\bm{R}_b^a)^T$
+\item $\bm{R}_a^b \bm{R}_b^c = \bm{R}_a^c$.
+\end{itemize}
+
+Rotations in three-dimensional space can be parameterized using various methods,
+including Euler angles, quaternions, angle-axis representations, and
+Rodrigues parameters. In this thesis, Euler angles are used for simplicity.
+Euler angles are a set of three angles that describe a sequence of three
+rotations about the principal axes of a reference frame. These rotations are
+performed in a specific order: typically about the $x$-axis, followed by the $y$
+-axis, and finally the $z$-axis. The resulting transformation is represented by
+a rotation matrix $\bm{R}$, which encodes the cumulative effect of these three
+successive rotations.
+Explicitly, if the three Euler angles are denoted as $\phi$, $\theta$, and $\psi$,
+corresponding to rotations about the $x$-, $y$-, and $z$-axes respectively,
+the rotation matrix is given by \cite{modsim}:
+\begin{align}
+    \bm{R} = \bm{R}_z(\psi) \bm{R}_y(\theta) \bm{R}_x(\phi),
+\end{align}
+where
+\begin{subequations}
+\label{eq:bp:so3:rotations}
+\begin{align}
+    \bm{R}_x(\phi) &= \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & \cos\phi & -\sin\phi \\
+        0 & \sin\phi & \cos\phi
+    \end{bmatrix}, \\
+    \bm{R}_y(\theta) &= \begin{bmatrix}
+        \cos\theta & 0 & \sin\theta \\
+        0 & 1 & 0 \\
+        -\sin\theta & 0 & \cos\theta
+    \end{bmatrix}, \\
+    \bm{R}_z(\psi) &= \begin{bmatrix}
+        \cos\psi & -\sin\psi & 0 \\
+        \sin\psi & \cos\psi & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}.
+\end{align}
+\end{subequations}
+A disadvantage of using Euler angles is the well known problem of gimbal lock.
+This occurs when two of the three axes align, causing the rotation matrix to
+lose a degree of freedom. We say that the system has lost a degree of freedom
+when this happens. In practice it is often possible to avoid this issue by not
+controlling the system to a $\pm90^\circ$ pitch angle, or by switching to a
+different angle representation when the system approaches gimbal lock. In this
+work we avoid this issue by not controlling the system to these singularities.
+
+% -----------------------------------------------------------------------------
+\section{SE(3)}
+\label{sec:bp:se3}
+
+The special Euclidean group in three dimensions, $\SE$, is the group of all
+rigid body transformations in three-dimensional space. It is defined as
+\begin{align}
+    \SE := \left\{ \begin{bmatrix}
+        \bm{R} & \bm{p} \\
+        \bm{0} & 1
+    \end{bmatrix}
+        \in \R^{4 \times 4} \middle| \bm{R} \in \SO, \, \bm{p} \in \R^3
+    \right\}.
+\end{align}
+A transformation by 
+\begin{align}
+    \bm{T}_b^i = \begin{bmatrix}
+        \bm{R}_{b}^i & \bm{p}_{ib}^i \\
+        \bm{0} & 1
+    \end{bmatrix}
+\end{align}
+will operate on a vector $\bm{p}_{bo}^b \in \R^3$:
+\begin{align}
+    \begin{bmatrix}
+        \bm{p}_{io}^i  \\
+        1
+    \end{bmatrix}
+    =
+    \bm{T}_b^i \begin{bmatrix}
+        \bm{p}_{bo}^b \\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \bm{R}_{b}^i \bm{p}_{bo}^b + \bm{p}_{ib}^i \\
+        1
+    \end{bmatrix}.
+    \label{eq:se3_transformation}
+\end{align}
+One can intuitively see from \autoref{eq:se3_transformation} that the transformation
+$\bm{T}_b^i$
+takes a vector $\bm{p}_{bo}^b$, the vector from the body-origin $b$ to the point $o$
+in the $b$ frame, and transforms it to the vector $\bm{p}_{io}^i$, the vector from
+the inertial-frame origin $i$ to the point $o$ described in the $i$ frame.
+
+
+Consider an element $\bm{H}_{b}^i \in \SE$, which is a transformation from frame
+$b$ to frame $i$. The body-fixed twist $\bm{\nu}_{ib}^b$ and the inertial-frame
+twist $\bm{\nu}_{ib}^i$ are defined respectively as
+\begin{subequations}
+\begin{align}
+    [\bm{\nu}_{ib}^b]_{\wedge} &= \left(\bm{H}_{b}^i\right)^{-1}\dot{\bm{H}}_{b}^i \label{eq:body_twist_def}\\
+    [\bm{\nu}_{ib}^i]_{\wedge} &= \dot{\bm{H}}_{b}^i \left(\bm{H}_{b}^i\right)^{-1}. 
+\end{align}
+\end{subequations}
+
+Similar to $\SO$, the Lie algebra $\se$ is closely related to $\SE$ by the exponential
+map. The Lie algebra $\se$ is defined as
+\begin{subequations}
+    \label{eq:se3_algebra}
+\begin{align}
+    \se &= \left\{ \begin{bmatrix}
+        \bm{\Omega} & \bm{v} \\
+        \bm{0} & 0
+    \end{bmatrix}
+    \in \R^{4 \times 4}
+    \middle|
+    \bm{\Omega} \in \so, \, \bm{v} \in \R^3
+    \right\} \\
+    \left[ \Gamma_1, \Gamma_2 \right]_{\se} &= \Gamma_1 \Gamma_2 - \Gamma_2 \Gamma_1 \\
+    \exp &: \se \to \SE
+\end{align}
+\end{subequations}
+We define the matrix representation of the ad-operator
+\begin{align}
+    \ad_{\se} : \R^6 \to \R^{6 \times 6},
+\end{align}
+implicitly by requiring that for all $\bm{y} \in \R^6$
+\begin{align}
+    \ad_{\se}( \bm{x} ) \bm{y} = \bm{x} \wedge \bm{y}. \label{eq:ad_impl}
+\end{align}
+The resulting $\ad_{\se}(\bm{x})$ matrix is then
+\begin{align}
+    \ad_{\se} : \begin{bmatrix} \bm{v} \\ \bm{\omega} \end{bmatrix}
+        \mapsto \begin{bmatrix}
+            [\bm{\omega}]_{\times} & [\bm{v}]_{\times} \\
+            \bm{0} & [\bm{\omega}]_{\times}
+        \end{bmatrix}.
+\end{align}
+In a similar fashion, the matrix representation of the $\Ad$ operator
+\begin{align}
+    \Ad_{\SE} : \SE \to \R^{6 \times 6}
+\end{align}
+is defined. This operator is implicitly defined by requiring that for all
+$\bm{\nu} \in R^6$, $\bm{H} \in \SE$
+\begin{align}
+    [\Ad_{\SE}(\bm{H})\bm{\nu}]_{\wedge} = \bm{H} [\bm{\nu}]_{\wedge} \bm{H}^{-1}.
+\end{align}
+This is essentially a mapping from body-fixed twists to inertial-frame twists,
+and is extensively used when modeling UVMs. The $\Ad$-operator is then
+\begin{align}
+    \Ad_{\SE} : \begin{bmatrix}
+        \bm{R} & \bm{p} \\
+        \bm{0} & 1
+    \end{bmatrix}
+    \mapsto
+    \begin{bmatrix}
+        \bm{R} & [\bm{p}]_{\times} \bm{R} \\
+        \bm{0} & \bm{R}
+    \end{bmatrix}.
+\end{align}
+The $\Ad$ operator of the inverse of an element of $\SE$ is also widely used
+\begin{subequations}
+\begin{align}
+    \Ad_{\SE}^{-1} &: \begin{bmatrix}
+        \bm{R} & \bm{p} \\
+        \bm{0} & 1
+    \end{bmatrix}
+    \mapsto
+    \begin{bmatrix}
+        \bm{R}^T & - \bm{R}^T [\bm{p}]_{\times} \\
+        \bm{0} & \bm{R}^T
+    \end{bmatrix} \\
+    \Ad_{\SE}^{-1}(\bm{H}) &= \Ad_{\SE}(\bm{H}^{-1}).
+\end{align}
+\end{subequations}
+In the following chapters, the $\ad$- and $\Ad$-operators will always refer to
+the $\se$ and $\SE$ Lie algebras and groups, respectively.
+
+% -----------------------------------------------------------------------------
+\section{Pseudo-Inverse and Null Space Projections}
+\label{sec:pseudoinverse}
+
+For a given matrix $\bm{A} \in \mathbb{R}^{n\times m}$ we define the Moore-Penrose
+pseudo-inverse $\bm{A}^{+} \in \mathbb{R}^{m\times n}$ as the unique matrix
+satisfying the following four properties \cite{penrose1955}:
+\begin{subequations}
+    \begin{align}
+        &\textrm{1. } & \bm{A}\bm{A}^{+}\bm{A} &= \bm{A} \\
+        &\textrm{2. } & \bm{A}^{+}\bm{A}\bm{A}^{+} &= \bm{A}^{+} \\
+        &\textrm{3. } & (\bm{A}\bm{A}^{+})^T &= \bm{A}\bm{A}^{+} \\
+        &\textrm{4. } & (\bm{A}^{+}\bm{A})^T &= \bm{A}^{+}\bm{A}
+    \end{align}
+\end{subequations}
+Note that in the general case, the transpose operator can be replaced by the
+conjugate transpose (hermitian) operator for matrices over the complex field $\mathbb{C}$ \cite{penrose1955}.
+It can be shown that for a full-column rank matrix $\bm{A}$, the pseudo-inverse is
+\begin{align}
+    \bm{A}^{+} = (\bm{A}^T \bm{A})^{-1} \bm{A}^T,
+\end{align}
+and for a full-row rank matrix $\bm{A}$, the pseudo-inverse is
+\begin{align}
+    \bm{A}^{+} = \bm{A}^T (\bm{A} \bm{A}^T)^{-1}.
+\end{align}
+In the general case, whether or not $\bm{A}$ is full rank, the pseudo-inverse can always
+be computed using the singular value decomposition (SVD) of $\bm{A}$. The SVD of $\bm{A}$ is
+\begin{subequations}
+\begin{align}
+    \bm{A} &= \bm{U} \bm{\Sigma} \bm{V}^T \\
+    \bm{U} &\in \mathbb{R}^{n\times n} \textrm{ unitary} \\
+    \bm{V} &\in \mathbb{R}^{m\times m} \textrm{ unitary} \\
+    \bm{\Sigma} &= \operatorname{diag}(\sigma_1, \sigma_2, \ldots, \sigma_r, 0, \ldots, 0) \in \mathbb{R}^{n\times m} \\
+    \sigma_1 &\geq \sigma_2 \geq \ldots \geq \sigma_r > 0 \\
+    r &= \operatorname{rank}(\bm{A}).
+\end{align}
+\end{subequations}
+Where a matrix $U$ is unitary if and only if $U^T U = U U^T = \mathbb{I}$. The pseudo-inverse
+of $\bm{A}$ can then be computed as
+\begin{subequations}
+\begin{align}
+    \bm{A}^{+} &= \bm{V} \bm{\Sigma}^{+} \bm{U}^T \\
+    \bm{\Sigma}^{+} &:= \operatorname{diag}(\sigma_1^{-1}, \sigma_2^{-1}, \ldots, \sigma_r^{-1}, 0, \ldots, 0).
+\end{align}
+\end{subequations}
+The singular value decomposition will be important when dealing with
+singularity-robust task-priority control later on in this thesis.
+
+Consider the optimization problem
+\begin{align}
+    \min_{\bm{x} \in \mathbb{R}^m} || \bm{A} \bm{x} - \bm{b} ||.
+\end{align}
+The solution to this problem is given by
+\begin{align}
+    \bm{x} = \bm{A}^{+} \bm{b} + (\mathbb{I} - \bm{A}^{+} \bm{A}) \bm{z},
+\end{align}
+where $\bm{z} \in \mathbb{R}^n$ is an arbitrary vector. The term $(\mathbb{I} - \bm{A}^{+} \bm{A}) \bm{z}$
+is the null-space projection of $\bm{z}$ onto the null-space of $\bm{A}$. Parts
+of this fact can bee seen by noting that
+\begin{align}
+    \bm{A}\left(\mathbb{I} - \bm{A}^{+} \bm{A}\right) = \bm{A} - \bm{A} = 0.
+\end{align}
+This is a fact that will be used extensively when formulating the task-priority
+controllers in later chapters.
+
+% -----------------------------------------------------------------------------
+\section{Lagrange's Equation of Motion}
+\label{sec:lagrange}
+Lagrange's equation of motion is a formulation of the equations of motion of a
+system in terms of generalized coordinates. The equations are derived from the
+d'Alembert principle. It can be shown that the equations of motion derived from
+Lagrange's equation are equivalent to the equations of motion derived from
+the classical Newton-Euler equations \cite{modsim}. There are however some advantages to using
+Lagrange's equation. For example, the equations are easier to derive for complex
+systems where the kinetic and potential energy is known. With modern computer
+algebra systems, the equations can be derived automatically, which is
+a great advantage for complex systems.
+
+Consider a system with $n$ generalized coordinates $q_1, q_2, \ldots, q_n$, and
+their time derivatives $\dot{q}_1, \dot{q}_2, \ldots, \dot{q}_n$. Collect the
+generalized coordinates in the vector $\bm{q} \in \mathbb{R}^n$ and the time
+derivatives in the vector $\bm{\dot{q}} \in \mathbb{R}^n$. The kinetic energy
+of the system is then a function $T$ of $\bm{q}$ and $\bm{\dot{q}}$
+\begin{align}
+    T = T(\bm{q}, \bm{\dot{q}})
+\end{align}
+and the potential energy is a function $U$ of $\bm{q}$
+\begin{align}
+    U = U(\bm{q}).
+\end{align}
+Define the lagrangian $L$ as the difference between the kinetic and potential
+energy
+\begin{align}
+    L(\bm{q}, \bm{\dot{q}}) = T(\bm{q}, \bm{\dot{q}}) - U(\bm{q}).
+\end{align}
+The equations of motion are then given by \cite{modsim}:
+\begin{align}
+    \frac{d}{dt} \left( \nabla_{\dot{\bm{q}}} L \right) - \nabla_{\bm{q}} L = \bm{\tau},
+\end{align}
+where the $i$-th element of the vector $\bm{\tau}$ is the generalized force acting
+on the $i$-th generalized coordinate. The generalized forces can be expressed as
+\begin{align}
+    \tau_i &= \sum_{k=1}^N \frac{\partial \bm{r}_k}{\partial q_i} \cdot \bm{F}_k
+    & i &= 1, 2, \ldots,
+\end{align}
+where $\bm{r}_k$ is the position of the $k$-th force and $\bm{F}_k$ is the force
+acting on this position. In cases where the kinetic energy is on the form
+\begin{align}
+    T = \frac{1}{2} \bm{\dot{q}}^T \bm{J}^T(\bm{q}) \bm{M} \bm{J}(\bm{q}) \bm{\dot{q}},
+\end{align}
+where $\bm{M}$ is symmetric and positive definite, the potential energy the
+result of some potential field, and $\bm{J}(\bm{q})$ is the Jacobian of the
+generalized coordinates, to be defined later, the equations of motion can be
+written as
+\begin{align}
+    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) = \bm{\tau}
+\end{align}
+where $\bm{M}(\bm{q})$ is symmetric and positive definite, $\bm{g}(\bm{q})$ is the
+gradient of the potential field.
+
+\section{Runge-Kutta Methods}
+\label{sec:runge-kutta}
+
+Runge-Kutta methods are a well-known set of numerical techniques used to solve
+ordinary differential equations. They are popular because they are
+straightforward to use and usually quite efficient. In this thesis, these
+methods will be applied to model the dynamics of underwater vehicle-manipulator
+systems, which can be described by ordinary differential equations.
+When simulating controllers for these systems, it makes sense to use Runge
+-Kutta methods, since they provide a convenient way to handle the required
+calculations.
+
+Consider a system of ordinary differential equations of the form
+\begin{align}
+    \dot{\bm{x}}(t) &= \bm{f}(\bm{x}(t), t) & \bm{x}(t_0) &= \bm{x}_0,
+\end{align}
+where $\bm{x}(t) : \R \to \R^n$ is the state of the system,
+$\bm{f} : \R^n \times \R \to \R^n$ is a vector field, $t_0$ is the initial time,
+and $\bm{x}_0$ is the initial state. In general, the solution to this system is
+not known analytically, and numerical methods, such as Runge-Kutta must be used
+to approximate the solution. These methods start by initializing the state to
+$\bm{x}_0$ and then iteratively update the state using the vector field $\bm{f}$,
+in time steps of size $h$. For explicit Runge-Kutta methods, the approximation
+is given by \cite{modsim}:
+\begin{subequations}
+    \begin{align}
+        \bm{k}_i &= \bm{f}(\bm{x}_n + h \sum_{j=1}^{i-1} a_{ij}\bm{k}_j, t_n + c_i h) &
+            i &= 1, 2, \cdots, \sigma \\
+        \bm{x}_{n+1} &= \bm{x}_n + h \sum_{i=1}^{\sigma} b_i \bm{k}_i,
+    \end{align}
+\end{subequations}
+where $\{a_{ij}\}_{i,j}$, $\{b_i\}_i$, and $\{c_i\}_i$ are the coefficients of
+the method, and $\sigma \in \mathbb{N}$ is the number of stages. The error $\bm{e}_{n+1}$ of
+the method at time $t_{n+1}$ is given by
+\begin{align}
+    \bm{e}_{n+1} = \bm{x}_{n+1} - \bm{x}(t_n;t_{n+1}),
+\end{align}
+where $\bm{x}(t_n;t_{n+1})$ is the exact solution at time $t_{n+1}$ given the
+initial condition $\bm{x}_n$ at time $t_n$. We say that the method is of order
+$p$, if $p \in \mathbb{N}$ is the smallest integer such that
+\begin{align}
+    ||\bm{e}_{n+1}|| = \mathcal{O}(h^{p+1}),
+\end{align}
+where $\mathcal{O}$ is the big-O notation \cite{modsim}.
+The most well-known Runge-Kutta method is the fourth-order Runge-Kutta method,
+which has the following coefficients:
+
+\begin{align}
+    \begin{matrix}
+        c_1 & \vline & & & & \\
+        c_2 & \vline & a_{21} & & & \\
+        c_3 & \vline & a_{31} & a_{32} & & \\
+        c_4 & \vline & a_{41} & a_{42} & a_{43} & \\
+        \hline
+        & \vline & b_1 & b_2 & b_3 & b_4
+    \end{matrix}
+    \quad=\quad 
+    \begin{matrix}
+        0 & \vline & & & & \\
+        \frac{1}{2} & \vline & \frac{1}{2} & & & \\
+        \frac{1}{2} & \vline & 0 & \frac{1}{2} & & \\
+        1 & \vline & 0 & 0 & 1 & \\
+        \hline
+        & \vline & \frac{1}{6} & \frac{1}{3} & \frac{1}{3} & \frac{1}{6}
+    \end{matrix}
+\end{align}
+
+This method is used to simulate the dynamics of the underwater vehicle-manipulator
+systems in this thesis.
 
 \section{Quaternions}
