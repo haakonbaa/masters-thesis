@@ -241,12 +241,13 @@ $\bm{\nu}_{nb}^b \in \R^6$ of the base link as well as the joint velocities
 $\dot{\bm{\theta}} \in \R^{n-1}$ are collected in the vector $\bm{\zeta} \in \R^{6+n_j}$:
 \begin{align}
     \bm{\zeta} &= \begin{bmatrix}\bm{\nu}_{nb}^b \\ \dot{\bm{\theta}}\end{bmatrix} &
-        \bm{\nu}_{nb}^b = \begin{bmatrix} \bm{v}_{nb}^b \\ \bm{\omega}_{nb}^b\end{bmatrix}.
+        \bm{\nu}_{nb}^b = \begin{bmatrix} \bm{v}_{nb}^b \\ \bm{\omega}_{nb}^b\end{bmatrix}. 
 \end{align}
 Using this collection of variables,
 the previously defined vectors, and \autoref{eq:modeling:body_twist}, 
 the differential kinematics of the system can be expressed as \cite{fossen2021}:
 \begin{subequations}
+\label{eq:mod:jac}
 \begin{align}
     \dot{\bm{\xi}}_{\Theta} &= \bm{J}_{\Theta}(\bm{\Theta}_{nb})\bm{\zeta} &
     \bm{J}_{\Theta}(\bm{\Theta}_{nb}) &= \begin{bmatrix}
@@ -416,10 +417,10 @@ More complex transforms, such as the one between frame $2$ and $1$ in \autoref{f
 are acheived by consecutive transformations on this form. To illustrate this point, the transformation
 from frame $2$ to frame $1$ in \autoref{fig:transforms_all} can be expressed as
 \begin{align}
-    \begin{bmatrix}0 & 0 & 0 & l_1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}
+    \begin{bmatrix}1 & 0 & 0 & l_1 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}
     \exp\left(\theta_1\begin{bmatrix}\bm{0} \\ 0 \\ 0 \\ 1\end{bmatrix}_{\wedge}\right)
     \exp\left(\theta_2\begin{bmatrix}\bm{0} \\ 0 \\ 1 \\ 0\end{bmatrix}_{\wedge}\right)
-    \begin{bmatrix}0 & 0 & 0 & l_2 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}.
+    \begin{bmatrix}1 & 0 & 0 & l_2 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}.
 \end{align}
 Althoug the system has become much more general by allowing joint transformations to
 be functions of an arbitrary number of parameters, computation of the link jacobians can
@@ -620,7 +621,7 @@ the added mass matrix is approximated as the zero-frequency added mass matrix
 Under this assumption, the kinetic energy of the fluid $T_A$ is approximated
 as
 \begin{align}
-    T_a &= \frac{1}{2}\bm{\nu}^T\bm{M}_A\bm{\nu} & \dot{\bm{M}_A} &= \bm{0},
+    T_a &= \frac{1}{2}\bm{\nu}^T\bm{M}_A\bm{\nu} & \dot{\bm{M}}_A &= \bm{0},
 \end{align}
 where $\bm{\nu}$ is the twist velocity of the rigid body. For underwater 
 vehicles at low speed where the the shape has three planes of symmetry, the

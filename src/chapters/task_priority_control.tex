@@ -18,7 +18,7 @@ A task refers to a specific objective or goal that a robotic system aims to achi
 The prioritization of tasks is a key aspect of task-priority control. When a task is assigned a higher priority, it must be executed without being disturbed or compromised by lower-priority tasks. This means that the control system must balance the objectives of multiple tasks, ensuring that the higher-priority tasks are achieved while still allowing the lower-priority tasks to be executed. In practice, higher priority tasks are resolved first, and the remaining degrees of freedom are used to achieve the lower-priority tasks. For example, a robotic manipulator tasked with avoiding obstacles might prioritize obstacle avoidance over maintaining an exact end-effector position.
 
 \sloppy{
-In the following sections, we will develop the mathematical foundations of task-priority control, exploring the concepts of velocity-, acceleration-, and force/torque-level control.
+In the following sections, we will develop the mathematical foundations of task-priority control, exploring the concepts of kinematic- and dynamic-level task-priority control.
 }
 
 % -----------------------------------------------------------------------------
@@ -27,7 +27,7 @@ In the following sections, we will develop the mathematical foundations of task-
 Kinematic-level redundancy resolution is a fundamental concept in task-priority control.
 It is one of the first methods proposed for handling redundancy in a task-priority framework.
 A fundamental assumption in kinematic-level redundancy resolution is that there
-already exists a controller that can generate the desired joint velocities $\dot{\bm{q}}_d(t)$.
+already exists a controller that can generate the desired generalized velocities \(\bm{\zeta}_d(t)\).
 Considerations around this assumption will be discussed in later sections.
 The mathematical concepts introduced in this section are presented in introductory
 chapters in many of the articles and books on task-priority control, such as
@@ -38,9 +38,9 @@ presented in \cite{chiaverini1997}.
 \label{sec:velocity_level_control}
 
 A task variable $\bm{\sigma}(t) \in \mathbb{R}^m$ is defined as a function of the robot's
-joint variables $\bm{q}(t) \in \mathbb{R}^n$:
+state $\bm{\xi}(t) \in \mathbb{R}^n$:
 \begin{align}
-    \bm{\sigma}(t) = \bm{f}(\bm{q}(t)) \label{eq:def_task}.
+    \bm{\sigma}(t) = \bm{f}(\bm{\xi}(t)) \label{eq:def_task}.
 \end{align}
 A task can then be defined as the objective of keeping the task variable $\bm{\sigma}(t)$
 close to a desired value $\bm{\sigma}_d(t) \in \mathbb{R}^m$. For instance, a task could
@@ -48,34 +48,40 @@ be the end-effector position of a robot manipulator or the orientation of a came
 on a robot. By differentiating \autoref{eq:def_task} with respect to time, the task velocity
 can be defined as
 \begin{align}
-    \dot{\bm{\sigma}}(t) = \frac{\partial \bm{f}(\bm{q}(t))}{\partial \bm{q}}
-    \dot{\bm{q}}(t)= \bm{J}(\bm{q}(t)) \dot{\bm{q}}(t) \label{eq:def_task_jacobian}.
+    \dot{\bm{\sigma}}(t) = \frac{\partial \bm{f}(\bm{\xi}(t))}{\partial \bm{\xi}}
+    \dot{\bm{\xi}}(t)= \left(\frac{\partial \bm{f}(\bm{\xi}(t))}{\partial \bm{\xi}}
+    \bm{J}_{\Theta/q}(\bm{\xi}(t)) \right)\bm{\zeta}(t) \label{eq:def_task_jacobian},
 \end{align}
-
-The matrix $\bm{J}(\bm{q}(t)) \in \mathbb{R}^{n \times m}$ is called the
-\emph{task Jacobian}, or simply the \emph{Jacobian}, and maps the joint
-velocities $\dot{\bm{q}}(t)$ to the task velocity $\dot{\bm{\sigma}}(t)$.
-The Jacobian is a function of the robot's joint variables $\bm{q}(t)$.
-In the case where only one task is considered, one can use the pseudoinverse
-to compute the minimum norm joint velocities that will achieve the desired
-task velocity. The joint velocities are then given by
+where \(\bm{J}_{\Theta/q}\) describes the relation between \(\bm{\xi}\) and \(\bm{\zeta}\)
+as shown in \autoref{eq:mod:jac}. Collecting the big parenthesis in a matrix
+\(\bm{J}(\bm{\xi}(t))\), we get the following relation;
 \begin{align}
-    \dot{\bm{q}}_d(t) = \bm{J}^{+}(\bm{q}(t)) \dot{\bm{\sigma}}_d(t) \label{eq:task_priority}
+    \dot{\bm{\sigma}}(t) = \bm{J}(\bm{\xi}(t))\bm{\zeta}(t).
 \end{align}
-where $\bm{J}^{+}(\bm{q}(t))$ is the pseudoinverse of the Jacobian at the current
-joint configuration $\bm{q}(t)$. From now on the dependencies of $\bm{J}$, $\bm{q}$
+The matrix \(\bm{J}(\bm{\xi}(t)) \in \mathbb{R}^{n \times m}\) is called the
+\emph{task Jacobian}, or simply the \emph{Jacobian}, and maps the generalised
+velocities $\bm{\zeta}(t)$ to the task velocity $\dot{\bm{\sigma}}(t)$.
+The Jacobian is a function of the robot's state \(\bm{\xi}(t)\).
+In the case where only one task is considered, one can use the pseudoinverse
+to compute the minimum norm generalized velocities that will achieve the desired
+task velocity. The generalized velocities are then given by
+\begin{align}
+    \bm{\zeta}_d(t) = \bm{J}^{+}(\bm{\xi}(t)) \dot{\bm{\sigma}}_d(t) \label{eq:task_priority}
+\end{align}
+where \(\bm{J}^{+}(\bm{\xi}(t))\) is the pseudoinverse of the Jacobian at the current
+state \(\bm{\xi}(t)\). From now on the dependencies of $\bm{J}$, \(\bm{\xi}\)
 and $\bm{\sigma}$ will be omitted for brevity.
 
-In practice the Jacobian might not represent the true kinematics of the robot.
+In practice, the Jacobian might not represent the true kinematics of the robot.
 Furthermore, depending on the task, the desired task velocity might not be feasible,
-and there might be model errors and noise in the estimated joint velocities making
-the joint velocities not equal to the desired joint velocities. Because of this,
+and there might be model errors and noise in the estimated generalized velocities making
+the generalized velocities not equal to the desired generalized velocities. Because of this,
 a feedback controller is needed to ensure that the desired task velocity is
-achieved. Substituting the desired task velocity $\dot{\bm{\sigma}}_d(t)$ in 
+achieved. Substituting the desired task velocity \(\dot{\bm{\sigma}}_d(t)\) in 
 \autoref{eq:task_priority} with
-a feedforward term and a feedback term, the joint velocities can be computed as
+a feedforward term and a feedback term, the generalized velocities can be computed as
 \begin{align}
-    \dot{\bm{q}}_d = \bm{J}^{+} \left(\dot{\bm{\sigma}}_d + \bm{\Lambda}\tilde{\bm{\sigma}}\right),
+    \bm{\zeta}_d = \bm{J}^{+} \left(\dot{\bm{\sigma}}_d + \bm{\Lambda}\tilde{\bm{\sigma}}\right),
 \end{align}
 where $\tilde{\bm{\sigma}} = \bm{\sigma} - \bm{\sigma}_d$ is the error in the
 task and the constant matrix $\bm{\Lambda}$ is a matrix that determines the
@@ -83,18 +89,18 @@ feedback gains.
 Generalizing this to multiple tasks, we note that \autoref{eq:def_task_jacobian}
 has a more general solution than \autoref{eq:task_priority} when $n > m$:
 \begin{align}
-    \dot{\bm{q}}_d = \bm{J}^{+} \dot{\bm{\sigma}}_d + (\mathbb{I} - \bm{J}^{+} \bm{J}) \bm{z},
+    \bm{\zeta}_d = \bm{J}^{+} \dot{\bm{\sigma}}_d + (\mathbb{I} - \bm{J}^{+} \bm{J}) \bm{z},
 \end{align}
 for some arbitrary vector $\bm{z} \in \mathbb{R}^n$. The term
 $(\mathbb{I}_n - \bm{J}^{+} \bm{J}) \bm{z}$ is recognized as the null space projection
 of $\bm{z}$ onto the null space of the Jacobian matrix $\bm{J}$. By setting
-$\bm{z}$ to some desired value, such as the joint velocities of a lower-priority task,
+$\bm{z}$ to some desired value, such as the generalized velocities of a lower-priority task,
 one can achieve prioritization of tasks. To present the basic idea, consider the
 tasks
 \begin{subequations}
 \begin{align}
-    \bm{\sigma}_i &= \bm{f}_i(\bm{q}) \in \mathbb{R}^{m_i} &i &= 1, 2, \ldots, k \\
-    \dot{\bm{\sigma}}_i &= \bm{J}_i(\bm{q}) \dot{\bm{q}} \in \mathbb{R}^{m_i} &i &= 1, 2, \ldots, k
+    \bm{\sigma}_i &= \bm{f}_i(\bm{\xi}) \in \mathbb{R}^{m_i} &i &= 1, 2, \ldots, k \\
+    \dot{\bm{\sigma}}_i &= \bm{J}_i(\bm{\xi}) \bm{\zeta} \in \mathbb{R}^{m_i} &i &= 1, 2, \ldots, k
 \end{align}
 \end{subequations}
 with corresponding desired tasks
@@ -103,9 +109,9 @@ with corresponding desired tasks
 \end{align}
 Let $\bm{N}_i = \mathbb{I}_n - \bm{J}_i^{+} \bm{J}_i$ be the null space projection
 matrix onto the null space of the Jacobian $\bm{J}_i$.
-The desired joint velocities are then given by
+The desired generalized velocities are then given by
 \begin{align}
-    \dot{\bm{q}}_d = \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right) \label{eq:task_priority_vel}
+    \bm{\zeta}_d = \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right) \label{eq:task_priority_vel}
 \end{align}
 comparing this to the single task case, $\bm{N}_i^{\#}$ is the null space projection matrix
 projecting a task onto the null space of all the higher-priority tasks.
@@ -162,16 +168,15 @@ From a computational perspective, the successive method is typically more effici
 \subsection{Acceleration-level control}
 
 The previous chapter discusses the velocity-level control of tasks. It is also 
-possible to determine the double derivative of the joint-space variables corresponding to some
+possible to determine the double derivative of the state variables corresponding to some
 desired task acceleration. This is referred to as acceleration-level control.
 To see this, consider \autoref{eq:def_task_jacobian} and differentiate
 with respect to time once more:
 \begin{align}
-    \ddot{\bm{\sigma}} = \frac{d}{dt}\left(\bm{J} \dot{\bm{q}}\right) = \dot{\bm{J}} \dot{\bm{q}} + \bm{J} \ddot{\bm{q}}
+    \ddot{\bm{\sigma}} = \frac{d}{dt}\left(\bm{J} \bm{\zeta}\right) = \dot{\bm{J}} \bm{\zeta} + \bm{J} \dot{\bm{\zeta}}
     \label{eq:task_acc_jacobian}
 \end{align}
-%Writing the general solution to this equation solving for the joint accelerations
-Solving this equation for the joint accelerations $\ddot{\bm{q}}$ gives
+Solving this equation for the derivative of the generalized velocities \(\dot{\bm{\zeta}}\) gives
 \begin{align}
     \ddot{\bm{q}} = \bm{J}^{+} \left(\ddot{\bm{\sigma}} - \dot{\bm{J}}\dot{\bm{q}}\right) +
     \left(\mathbb{I} - \bm{J}^{+}\bm{J}\right) \bm{z} \label{eq:task_acc_control},
