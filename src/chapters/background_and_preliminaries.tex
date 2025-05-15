@@ -448,16 +448,130 @@ systems in this thesis.
 
 \section{Quaternions}
 
-\begin{enumerate}
-    \item definition
-    \item angle axis
-    \item gimbal lock
-    \item problems having parameterized the orientation with four variables
-\end{enumerate}
+There are several ways to parameterize rotations in three dimensions. One of 
+the more intuitive approaches is through Euler angles. However, a key drawback 
+of Euler angles is the occurrence of singularities when the pitch angle 
+reaches $\pm90^\circ$, a phenomenon known as gimbal lock. While this may be 
+acceptable in some applications, it poses challenges for general \gls{aiauv} 
+systems.
 
-Angle axis \((\theta, \bm{k})\), where \(||k||_2 = 1\)
+A widely used and effective alternative is to represent rotations using unit 
+quaternions. Following Hamilton’s formulation, a quaternion is expressed as
 \begin{align}
-    \bm{R_{\theta,\bm{k}}} = \exp{\left(\theta \cross{\bm{k}}\right)} =
-    \I + \sin\theta \cross{\bm{k}} + \left(1-\cos\theta\right) \cross{\bm{k}}\cross{\bm{k}} 
+    \bm{q} = \eta + \varepsilon_1 \bm{i} + \varepsilon_2 \bm{j} + \varepsilon_3 \bm{k},
 \end{align}
+where $\eta \in \mathbb{R}$ is the scalar part, and \(\bm{i}, \bm{j}, \bm{k}\) 
+form the vector (imaginary) part. The multiplication rules for these imaginary 
+units are defined as
+\begin{align}
+    && \bm{i}^2 = \bm{j}^2 = &\bm{k}^2 = \bm{i}\bm{j}\bm{k} = -1 &&\\
+    \bm{i}\bm{j} = &-\bm{j}\bm{i} = \bm{k} & \bm{j}\bm{k} = -&\bm{k}\bm{j} = \bm{i} & \bm{k}\bm{i} = -&\bm{i}\bm{k} = \bm{j}
+\end{align}
+
+For convenience, quaternions are often written in vector form:
+\begin{align}
+    \bm{q} &= \begin{bmatrix}
+        \eta \\
+        \bm{\varepsilon}
+    \end{bmatrix} & \bm{\varepsilon} &= \begin{bmatrix}
+        \varepsilon_1 \\
+        \varepsilon_2 \\
+        \varepsilon_3
+    \end{bmatrix}
+\end{align}
+
+The quaternion product \(\otimes\) is defined as follows:
+\begin{align}
+    \bm{q}_1 \otimes \bm{q}_2 &=
+    \begin{bmatrix}
+        \eta_1 \\
+        \bm{\varepsilon}_1
+    \end{bmatrix} \otimes
+    \begin{bmatrix}
+        \eta_2 \\
+        \bm{\varepsilon}_2
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \eta_1\eta_2 - \bm{\varepsilon}_1^T\bm{\varepsilon}_2 \\
+        \eta_1\bm{\varepsilon}_2 + \eta_2\bm{\varepsilon}_1 + \bm{\varepsilon}_1\times\bm{\varepsilon}_2
+    \end{bmatrix} 
+\end{align}
+
+A quaternion is considered a unit quaternion if its norm equals one:
+\begin{align}
+    ||\bm{q}||_2 = \sqrt{\eta^2 + \bm{\varepsilon}^T \bm{\varepsilon}} = 1.
+\end{align}
+
+Unit quaternions are particularly useful because they can represent any 
+rotation in three-dimensional space. This can be shown by expressing a 
+quaternion in terms of a rotation angle \(\theta\) and an axis \(\bm{k}\), 
+where \(\bm{k}\) is a unit vector:
+\begin{align}
+    \begin{bmatrix}
+        \eta \\
+        \bm{\varepsilon}
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \cos\left(\frac{\theta}{2}\right) \\
+        \sin\left(\frac{\theta}{2}\right)\bm{k}
+    \end{bmatrix}. \label{eq:quaternion_angle_axis}
+\end{align}
+
+By applying \autoref{eq:quaternion_angle_axis} and Rodrigues’ formula, the 
+rotation matrix \(\bm{R}\) corresponding to a quaternion \(\bm{q}\) can be 
+written as:
+\begin{align}
+    \bm{R} &= \I + \sin\theta [\bm{k}]_{\times} + (1-\cos\theta)[\bm{k}]_{\times}[\bm{k}]_{\times} \\
+    &= \I + 2 \eta [\bm{\varepsilon}]_{\times} + 2 [\bm{\varepsilon}]_{\times} [\bm{\varepsilon}]_{\times}.
+\end{align}
+
+When using unit quaternions, the quaternion product represents the composition 
+of the two corresponding rotations. As a result, the product is associative 
+but not commutative. The inverse of a unit quaternion, which corresponds to the 
+inverse rotation, is simply its conjugate:
+\begin{align}
+    \bm{q}^* = \begin{bmatrix}
+        \eta \\
+        \bm{\varepsilon}
+    \end{bmatrix}^* = \begin{bmatrix}
+        \eta \\
+        -\bm{\varepsilon}
+    \end{bmatrix}
+\end{align}
+These equations highlight the computational advantages of using quaternions 
+for rotation representation. Operations such as inversion and multiplication 
+reduce to simple calculations in \(\R^4\). Additionally, unlike other 
+parameterizations, quaternions avoid kinematic singularities.
+
+The relationship between the time derivative of the quaternion, \(\dot{\bm{q
+}}\), and the body-fixed angular velocity \(\bm{\omega}^b\) is given by
+\cite{modsim}:
+\begin{align}
+    \dot{\eta} &= -\frac{1}{2} \bm{\varepsilon}^T \bm{\omega}^b &
+    \dot{\bm{\varepsilon}} &= \frac{1}{2} \left(\eta \I + [\bm{\varepsilon}]_{\times}\right),
+\end{align}
+which can be written in matrix form as:
+\begin{align}
+    \dot{\bm{q}} = \frac{1}{2} \begin{bmatrix}
+        -\bm{\varepsilon}^T \\
+        \I + [\bm{\varepsilon}]_{\times}
+    \end{bmatrix}
+    \bm{\omega}^b
+\end{align}
+Notably, the bottom \(3 \times 3\) block of this matrix has an inverse:
+\begin{align}
+    \left(
+        \I + [\bm{\varepsilon}]_{\times}
+    \right)^{-1}
+    = 
+    \I + \frac{1}{1+||\bm{\varepsilon}||_2^2}\left([\bm{\varepsilon}]_{\times}[\bm{\varepsilon}]_{\times}
+    - [\bm{\varepsilon}]_{\times}\right),
+\end{align}
+which confirms that the kinematic equation is well-posed and free from 
+singularities. Concepts from this section will be foundational when 
+formulating the kinematic equations for \gls{aiauv}s. They will also be 
+important in the development of the lower-level \gls{pd} controller in
+\autoref{sec:lower_level_pd_controller}, and when working with Jacobian 
+matrices in \autoref{sec:jacobian_matrices}.
+
 
