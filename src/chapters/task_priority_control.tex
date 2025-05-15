@@ -53,7 +53,9 @@ can be defined as
     \bm{J}_{\Theta/q}(\bm{\xi}(t)) \right)\bm{\zeta}(t) \label{eq:def_task_jacobian},
 \end{align}
 where \(\bm{J}_{\Theta/q}\) describes the relation between \(\bm{\xi}\) and \(\bm{\zeta}\)
-as shown in \autoref{eq:mod:jac}. Collecting the big parenthesis in a matrix
+as shown in \autoref{eq:mod:jac}. It is important no note that this jacobian is dependent
+on the parametrization choosen for the orientation; quaternion or Euler angles.
+Collecting the parenthesis of \autoref{eq:def_task_jacobian} in a matrix
 \(\bm{J}(\bm{\xi}(t))\), we get the following relation;
 \begin{align}
     \dot{\bm{\sigma}}(t) = \bm{J}(\bm{\xi}(t))\bm{\zeta}(t).

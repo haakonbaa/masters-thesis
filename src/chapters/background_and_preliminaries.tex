@@ -447,3 +447,17 @@ This method is used to simulate the dynamics of the underwater vehicle-manipulat
 systems in this thesis.
 
 \section{Quaternions}
+
+\begin{enumerate}
+    \item definition
+    \item angle axis
+    \item gimbal lock
+    \item problems having parameterized the orientation with four variables
+\end{enumerate}
+
+Angle axis \((\theta, \bm{k})\), where \(||k||_2 = 1\)
+\begin{align}
+    \bm{R_{\theta,\bm{k}}} = \exp{\left(\theta \cross{\bm{k}}\right)} =
+    \I + \sin\theta \cross{\bm{k}} + \left(1-\cos\theta\right) \cross{\bm{k}}\cross{\bm{k}} 
+\end{align}
+

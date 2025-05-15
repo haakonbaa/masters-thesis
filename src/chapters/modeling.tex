@@ -382,7 +382,7 @@ be usefull to differentiate them when doing task-priority control. Differentiati
 \autoref{eq:recursive_link_jacobians} with respect to time, we get
 \begin{align}
     \dot{\bm{J}}_1(\bm{\theta}) &= \bm{0}_{6\times(6+n)} \\
-    \dot{\bm{J}}_{i+1}(\bm{\theta}) &= -[\bm{a}_i]_{\wedge}\bm{J}_{i+1}(\bm{\theta})\dot{\theta}_i +
+    \dot{\bm{J}}_{i+1}(\bm{\theta}) &= -\ad(\bm{a}_i)\bm{J}_{i+1}(\bm{\theta})\dot{\theta}_i +
         \Ad^{-1}(\bm{A}_i(\theta_i))\dot{\bm{J}}_i(\bm{\theta},\dot{\bm{\theta}})
 \end{align}
 It is important no note that in the general case, $\bm{\theta}_i$ is a vector of
@@ -534,7 +534,7 @@ system described in the previous subchapter can be modeled as
         \bm{C}(\bm{\theta}, \bm{\zeta}) \bm{\zeta} +
         \bm{D}(\bm{\theta}, \bm{\zeta}) \bm{\zeta} +
         \bm{g}(\bm{\xi}) =
-        \bm{\tau} + \bm{\tau}_{\mathrm{ext}}.
+        \bm{\tau}.
 \end{align}
 $\bm{M}(\bm{\theta}) \in \R^{(6+n)\times(6+n)}$  is the inertia matrix of the
 system, $\bm{C}(\bm{\theta}, \bm{\zeta}) \in \R^{(6+n)\times(6+n)}$ is the
