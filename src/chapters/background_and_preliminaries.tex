@@ -453,7 +453,7 @@ the more intuitive approaches is through Euler angles. However, a key drawback
 of Euler angles is the occurrence of singularities when the pitch angle 
 reaches $\pm90^\circ$, a phenomenon known as gimbal lock. While this may be 
 acceptable in some applications, it poses challenges for general \gls{aiauv} 
-systems.
+systems. Another advantage of using quaternions is that they are often computationally more efficient and numerically stable. 
 
 A widely used and effective alternative is to represent rotations using unit 
 quaternions. Following Hamilton’s formulation, a quaternion is expressed as
@@ -536,8 +536,9 @@ inverse rotation, is simply its conjugate:
     \end{bmatrix}^* = \begin{bmatrix}
         \eta \\
         -\bm{\varepsilon}
-    \end{bmatrix}
+    \end{bmatrix}.
 \end{align}
+This is clear from looking at the angle-axis comparison shown in \autoref{eq:quaternion_angle_axis}.
 These equations highlight the computational advantages of using quaternions 
 for rotation representation. Operations such as inversion and multiplication 
 reduce to simple calculations in \(\R^4\). Additionally, unlike other 

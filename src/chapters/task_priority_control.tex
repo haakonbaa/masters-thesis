@@ -211,81 +211,45 @@ and doing this for each task, one can get the desired joint accelerations:
 This method is called acceleration-level task priority control. The method can
 be generalized to multiple tasks by using the same methods as presented in \autoref{sec:tpc_intro}.
 
-\subsection{Low level joint-space control}
 
-The aforementioned methods are, as previously mentioned, based on the assumption
-that a controller exists that can generate the desired joint velocities $\dot{\bm{q}}(t)$ from $\dot{\bm{q}}_d(t)$.
-In practice, this is not always the case, and there is certainly no guarantee that
-$\dot{\bm{q}}(t) = \dot{\bm{q}}_d(t)$ at all times. This introduces the need for a
-low-level joint-space controller that aims to track the desired joint velocities.
-A simple PD controller is a simple way to achieve this:
-\begin{align}
-    \bm{\tau}_d(t) :=  \bm{\tau}_{\mathrm{PD}}(t) =
-        \bm{K}_p \left( \bm{q}_d(t) - \bm{q}(t) \right)
-        + \bm{K}_d \left( \dot{\bm{q}}_d(t) - \dot{\bm{q}}(t)\right) \label{eq:Kp_Kd}.
-\end{align}
-Here, $\bm{K}_d$ and $\bm{K}_p$ are positive definite gain matrices to be tuned
-and $\bm{\tau}_d(t)$ is the desired generalized torques acting on the robot. A
-thruster allocation algorithm can be used to convert the generalized torques to
-actuator commands \cite{fossen2021}. $\bm{q}_d(t)$ and $\dot{\bm{q}}_d(t)$, can be calculated by
-integrating the desired joint velocities and accelerations
+\subsection{Low level control}
+
+The methods discussed above assume the existence of a controller capable of tracking the desired joint velocities \(\bm{\zeta}_d\). This implies that a lower-level controller must be designed and implemented, and its performance will directly affect the ability to follow the specified tasks.
+
+A straightforward approach to tracking the desired generalized velocities is to use a simple \gls{pd} controller. However, because the robot’s state includes a unit quaternion and the generalized velocities are defined in the body frame—while the robot's state itself is defined in the \gls{ned} frame—some care must be taken during controller design. The controller can be written as:
+
 \begin{subequations}
+\label{eq:tau_pd}
 \begin{align}
-    \bm{q}_d(t) = \int_0^t \dot{\bm{q}}_d(t) \, d\tau \\
-    \dot{\bm{q}}_d(t) = \int_{0}^t \ddot{\bm{q}}_d(t)\, d\tau.
+    \begin{bmatrix}
+        \bm{p}_{nb,d}^n & {\bm{q}_{b,d}^n}^T & {\bm{\theta}_d}^T
+    \end{bmatrix}^T
+    &:=
+    \bm{\xi}_{q,d}(t) := \int_{0}^{t} \bm{J}_q(\bm{q}_b^n(\tau))\bm{\zeta}_d(\tau)\,d\tau
+    \\
+    \begin{bmatrix} \eta_e & \bm{\varepsilon}_e^T\end{bmatrix}^T &:= \left(\bm{q}_{b,d}^n\right)^* \otimes \bm{q}_b^n
+    \\
+    \bm{\tau}_{PD} &= 
+    \bm{K}_p \begin{bmatrix}
+        \bm{R}_b^n(\bm{q}_b^n)^T\left(\bm{p}_{nb,d}^n - \bm{p}_{nb}^n\right) \\
+        -\sgn{(\eta_e)} \bm{\varepsilon}_e \\
+        \bm{\theta}_d - \bm{\theta}
+    \end{bmatrix} + 
+    \bm{K}_d  \left(\bm{\zeta}_d - \bm{\zeta} \right), 
 \end{align}
 \end{subequations}
-A simple way to improve this controller is to compensate for the gravity-, and
-optionally the buoyancy-forces acting on the robot. This can be done by adding
-a feedforward term to the controller:
-\begin{align}
-    \bm{\tau}_d(t) = \bm{\tau}_{\mathrm{PD+}}(t) :=
-    \bm{\tau}_{\mathrm{PD}}(t) + \bm{g}(\bm{q}(t)),
-\end{align}
-where $\bm{g}(\bm{q}(t))$ is the gravity vector acting on the robot. Assuming the
-model is on the very general form
-\begin{align}
-    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) = \bm{\tau},
-\end{align}
-substituting $\bm{\tau}$ with $\bm{\tau}_d(t)$ gives
-\begin{subequations}
-\begin{align}
-    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) &= \bm{\tau}_{\mathrm{PD+}}(t) \\
-    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} &= \bm{\tau}_{\mathrm{PD}}(t),
-\end{align}
-\end{subequations}
-effectively compensating for the gravity forces acting on the robot. Integral
-action can be added to the controller to improve tracking performance, but this
-should be done with caution as integral action can introduce instability in the
-system. This is especially true in cases where some form of integral action is
-present in the redundancy resolution algorithm \cite{fossen2021}.
 
-It is also possible to use a feedback linearization technique to achieve the
-desired joint velocities. By assuming that the robot's dynamic model is known,
-one can set the desired joint acceleration by formulating the generalized
-torques $\bm{\tau}$ as
-\begin{align}
-    \bm{\tau} = \bar{\bm{M}}(\bm{q}) \ddot{\bm{q}}_d + \bar{\bm{C}}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bar{\bm{g}}(\bm{q}) \label{eq:torque_feedback_lin}
-\end{align}
-where $\bar{\bm{M}}(\bm{q})$, $\bar{\bm{C}}(\bm{q}, \dot{\bm{q}})$ and
-$\bar{\bm{g}}(\bm{q})$ are approximations of the robot's mass matrix, Coriolis
-and centripetal forces (and damping), and gravity vector, respectively. Assuming
-that the approximations are exact, and that the torque is feasible, one can easily
-see that the joint acceleration is given by:
-\begin{subequations}
-\begin{align}
-    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) &= 
-    \bar{\bm{M}}(\bm{q}) \ddot{\bm{q}}_d + \bar{\bm{C}}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bar{\bm{g}}(\bm{q}) \\
-    \implies \bm{M}(\bm{q}) \ddot{\bm{q}} &= \bm{M}(\bm{q}) \ddot{\bm{q}}_d
-\end{align}
-\end{subequations}
-Since the mass matrix is positive definite, there is an equivalence between the
-desired joint acceleration and the actual joint acceleration. In practice
-however, the approximations are not exact, and the torque might be inaccurate or
-not feasible due to actuator limits. Furthermore, the estimated joint velocities
-and accelerations might be noisy, making the input torques inaccurate.
+where \(\bm{\tau} \in \R^{10}\) denotes the desired generalized forces on the body. The desired state \(\bm{\xi}_d\) is obtained by integrating the desired generalized velocities \(\bm{\zeta}_d\). The remaining symbols are defined in \autoref{sec:diff_kin}.
 
+It's important to note that this controller does not account for low-frequency disturbances such as waves, ocean currents, or hydrodynamic forces. These will introduce low-frequency tracking errors. However, this limitation is mitigated by the higher-level, velocity-based task-priority controller, which includes feedback that adapts the desired velocity based on state error.
 
+Minor improvements to the controller can still be made. While modeling the full dynamics of an \gls{aiauv} is challenging, gravity and buoyancy forces can be accurately captured if the vehicle’s mass and volume distributions are known. This leads to an extended controller, referred to as \gls{pd}+, which augments the original controller from \autoref{eq:tau_pd} with a compensation term:
+
+\begin{align}
+    \bm{\tau}_{PD+} = \bm{\tau}_{PD} + \bm{g}(\bm{\xi}(t)),
+\end{align}
+
+where \(\bm{g}(\bm{\xi}(t))\) is defined in \autoref{eq:modeling:g}. Provided the gravity and buoyancy forces are modeled correctly, this addition improves the steady-state tracking error, particularly in the vertical (downward) direction.
 
 % -----------------------------------------------------------------------------
 \newpage

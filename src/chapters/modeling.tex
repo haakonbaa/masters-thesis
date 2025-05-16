@@ -142,6 +142,8 @@ first draft of \cite{schmidt2018}. The following chapter will use notation adopt
 
 % -----------------------------------------------------------------------------
 \subsection{Differential Kinematics}
+\label{sec:diff_kin}
+
 
 Consider a system with $n$ rigid links connected together with $n-1$ joints. The
 links are indexed from $1$ to $n$, where the base
@@ -534,7 +536,7 @@ system described in the previous subchapter can be modeled as
         \bm{C}(\bm{\theta}, \bm{\zeta}) \bm{\zeta} +
         \bm{D}(\bm{\theta}, \bm{\zeta}) \bm{\zeta} +
         \bm{g}(\bm{\xi}) =
-        \bm{\tau}.
+        \bm{\tau}. \label{eq:robot_dynamics}
 \end{align}
 $\bm{M}(\bm{\theta}) \in \R^{(6+n)\times(6+n)}$  is the inertia matrix of the
 system, $\bm{C}(\bm{\theta}, \bm{\zeta}) \in \R^{(6+n)\times(6+n)}$ is the
@@ -565,7 +567,7 @@ The damping matrix can be expressed as
 and the gravitational forces and buoyancy forces and moments can be expressed as
 \begin{align}
     \bm{g}(\bm{\xi}) &=
-    \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{g}_i(\bm{\xi}).
+    \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{g}_i(\bm{\xi}). \label{eq:modeling:g}
 \end{align}
 The control inputs $\bm{u}$ are mapped to the generalized forces $\bm{\tau}$ by
 the actuator configuration matrix $\bm{B}(\bm{\theta})$ as
