@@ -214,6 +214,16 @@ be generalized to multiple tasks by using the same methods as presented in \auto
 
 \subsection{Low level control}
 
+{
+\color{red}
+\begin{itemize}
+    \item Add citations
+    \item Decoupling of the quaternion vector in control
+    \item Include chapter about set-based TPC
+    \item Include chapter about how task-jacobians can be created.
+\end{itemize}
+}
+
 The methods discussed above assume the existence of a controller capable of tracking the desired joint velocities \(\bm{\zeta}_d\). This implies that a lower-level controller must be designed and implemented, and its performance will directly affect the ability to follow the specified tasks.
 
 A straightforward approach to tracking the desired generalized velocities is to use a simple \gls{pd} controller. However, because the robot’s state includes a unit quaternion and the generalized velocities are defined in the body frame—while the robot's state itself is defined in the \gls{ned} frame—some care must be taken during controller design. The controller can be written as:
@@ -367,28 +377,6 @@ accelerations in the non-conflicting directions in the $p$-space.
 The method presented above has been generalized to multiple tasks in \cite{sentis2004}.
 This will not be discussed in this thesis, but the essence of the method is the same
 as presented above.
-
-% -----------------------------------------------------------------------------
-\section{Optimization Objective as Tasks}
-
-Tasks can be generalized from the form presented in \autoref{eq:def_task}, where
-the main objective of the task is to make a certain point attached to the robot
-manipulator follow a certain trajectory. The task can be generalized to be the
-orientation of the end-effector and/or some optimization objective. As presented
-in\cite{nakamura1987}, the task can be defined as the gradient of an optimization
-function. Consider an artificial potential function $P(\bm{q})$ and and a dissipative function
-$D(\dot{\bm{q}})$. The task can then be defined as
-\begin{align}
-    \bm{\sigma} = -\nabla_{\bm{q}} P(\bm{q}) - \nabla_{\dot{\bm{q}}}D(\dot{\bm{q}})
-\end{align}
-In \cite{nakamura1987}, the authors show that, in simulation, a 4-jointed planar
-manipulator can successfully avoid a rectangular obstacle using this method. This is
-also shown in \cite{siciliano1991} where a 7-DOF planar manipulator has a path
-following task with priority 1 and a circular obstacle avoidance task with priority 2.
-Although this method does not use a dissipative function in the optimization objective.
-
-
-
 
 % -----------------------------------------------------------------------------
 \section{Singularity Robustness}

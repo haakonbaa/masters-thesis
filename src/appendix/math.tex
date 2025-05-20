@@ -1,19 +1,20 @@
 \chapter{Math}
 
 The following theorem was found to be very usefull when implementing the kinematics
-of a general \gls{aiauv}. Although the proof is simple, and probably has been
+of a general \gls{aiauv}. Although the proof is simple, and has probably been
 derived many times, it is left here for reference.
 \begin{theorem}
 Let
 \begin{subequations}
-\begin{align}
+\begin{align*}
 \bm{\omega} &= \begin{bmatrix}\omega_1 & \omega_2 & \omega_3 \end{bmatrix}^T,
 \bm{v} = \begin{bmatrix}v_1 & v_2 & v_3 \end{bmatrix}^T \in \R^3 \\
-\bm{k} &= \begin{bmatrix}\bm{v}^T & \bm{\omega}^T\end{bmatrix}^T \in \R^6
-\end{align}
+\bm{k} &= \begin{bmatrix}\bm{v}^T & \bm{\omega}^T\end{bmatrix}^T \in \R^6.
+\end{align*}
 \end{subequations}
-then,
+Suppose \(\bm{\omega} \neq \bm{0}\), then
 \begin{subequations}
+\label{eq:app:math:proof1}
 \begin{align}
     \exp{\left([\bm{k}]_{\wedge}\right)} &= 
     \exp{\left(\begin{bmatrix}
@@ -29,7 +30,7 @@ then,
 \end{subequations}
 where
 \begin{subequations}
-\begin{align}
+\begin{align*}
     \bm{R} &= \I
     + \frac{\sin{||\bm{\omega}||}}{||\bm{\omega}||}[\bm{\omega}]_{\times}
     + \frac{1-\cos{||\bm{\omega}||}}{||\bm{\omega}||^2}
@@ -37,33 +38,39 @@ where
     \bm{V} &= \I
     + \frac{1-\cos||\bm{\omega}||}{||\bm{\omega}||^2}[\bm{\omega}]_{\times}
     + \frac{1-\sin||\bm{\omega}||}{||\bm{\omega}||^3}[\bm{\omega}]_{\times}[\bm{\omega}]_{\times}
-\end{align}
+\end{align*}
 \end{subequations}
 \end{theorem}
 
 \begin{proof}
 \begin{subequations}
-\begin{align}
+\begin{align*}
     \exp{[\bm{k}]_{\wedge}} &:= \sum_{n=0}^{\infty} \frac{1}{n!}[\bm{k}]_{\wedge}^n \\
     &= \I + [\bm{k}]_{\wedge} + \frac{1}{2}[\bm{k}]_{\wedge}^2 + \frac{1}{6}[\bm{k}]_{\wedge}^3 + \frac{1}{24}[\bm{k}]_{\wedge}^4 + \cdots \\
     &= \I + \begin{bmatrix}[\bm{\omega}]_{\times} & \bm{v} \\ \bm{0} & 0\end{bmatrix}
        + \frac{1}{2}\begin{bmatrix}[\bm{\omega}]_{\times}^2 & [\bm{\omega}]_{\times}\bm{v} \\ \bm{0} & 0\end{bmatrix}
        + \frac{1}{6}\begin{bmatrix}[\bm{\omega}]_{\times}^3 & [\bm{\omega}]_{\times}^2\bm{v} \\ \bm{0} & 0\end{bmatrix}
-       + \cdots
-\end{align}
+       + \cdots\\
+       &= \begin{bmatrix}
+\sum_{n=0}^{\infty} \frac{1}{n!}[\bm{\omega}]_{\times}^n &
+\left(\sum_{n=0}^{\infty} \frac{1}{\left(n+1\right)!}[\bm{\omega}]_{\times}^n \right) \bm{v}\\
+\bm{0} & 1 \\
+       \end{bmatrix}
+\end{align*}
 \end{subequations}
-\(\implies\)
+\(\implies \exp{[\bm{k}]_{\wedge}}\) can be written in the form of \autoref{eq:app:math:proof1},
+where
 \begin{subequations}
-\begin{align}
+\begin{align*}
     \bm{R} &= \sum_{n=0}^{\infty} \frac{1}{n!}[\bm{\omega}]_{\times}^n =: \exp{[\bm{\omega}]_{\times}}\\
     \bm{V} &= \sum_{n=0}^{\infty} \frac{1}{\left(n+1\right)!}[\bm{\omega}]_{\times}^n
-\end{align}
+\end{align*}
 \end{subequations}
-The formula for \(\bm{R}\) is well known and can i derived in the following manner
+The closed-form formula for \(\bm{R}\) is well known and can i derived in the following manner
 using that \([\bm{\omega}]_{\times}^3 = -||\bm{\omega}||^2[\bm{\omega}]_{\times}\),
 \begin{subequations}
 \begin{align*}
-&\bm{R}\\ &= \I + [\bm{\omega}]_{\times} + \frac{1}{2}[\bm{\omega}]_{\times}^2 + \frac{1}{6}[\bm{\omega}]_{\times}^3 + \frac{1}{24}[\bm{\omega}]_{\times}^4 + \frac{1}{120}[\bm{\omega}]_{\times}^5 + \cdots \\
+\bm{R} &= \I + [\bm{\omega}]_{\times} + \frac{1}{2}[\bm{\omega}]_{\times}^2 + \frac{1}{6}[\bm{\omega}]_{\times}^3 + \frac{1}{24}[\bm{\omega}]_{\times}^4 + \frac{1}{120}[\bm{\omega}]_{\times}^5 + \cdots \\
        &= \I + [\bm{\omega}]_{\times} + \frac{1}{2}[\bm{\omega}]_{\times}^2 -\frac{||\bm{\omega}||^2}{6}[\bm{\omega}]_{\times} - \frac{||\bm{\omega}||^2}{24}[\bm{\omega}]_{\times}^2 + \frac{||\bm{\omega}||^4}{120}[\bm{\omega}]_{\times} + \cdots \\
        &= \I + [\bm{\omega}]_{\times}\left(\frac{1}{1!} - \frac{||\bm{\omega}||^2}{3!} + \frac{||\bm{\omega}||^4}{5!} \cdots\right)
        + [\bm{\omega}]_{\times}^2\left(\frac{1}{2!} - \frac{||\bm{\omega}||^2}{4!} + \frac{||\bm{\omega}||^4}{6!} \cdots\right)\\
