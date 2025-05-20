@@ -5,6 +5,7 @@
 \usepackage{graphicx}                  % For including images
 \usepackage{amsmath}                   % Math symbols and environments
 \usepackage{amsfonts}                  % Math fonts
+\usepackage{amsthm}                    % Theorems
 \usepackage{bm}                        % Bold math symbols
 \usepackage{fancyhdr}                  % Custom headers and footers
 \usepackage[inkscapelatex=false]{svg}  % For including SVG images
@@ -18,6 +19,9 @@
 \usepackage{subcaption}                % For subfigures
 \usepackage{placeins}                  % For \FloatBarrier
 \usepackage[acronym]{glossaries}       % For acronyms
+
+% For theorems
+\newtheorem{theorem}{Theorem}[section]
 
 % List of acronyms (glossaries)
 \makeglossaries
