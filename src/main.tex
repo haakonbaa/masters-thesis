@@ -23,13 +23,8 @@
 \newpage
 
 \section*{\huge{Preface}}
-\addcontentsline{toc}{chapter}{sammendrag}
-\input{./chapters/preface}
-\newpage
-
-\section*{\huge{Acknowledgements}}
 \addcontentsline{toc}{chapter}{Preface}
-\input{./chapters/acknowledgements}
+\input{./chapters/preface}
 \DTMlangsetup{showdayofmonth=false}
 \begin{flushright}
     \textit{Håkon Bårsaune} \\
@@ -40,7 +35,7 @@
 
 
 \tableofcontents
-\newpage
+%\newpage
 
 % List of figures and tables, they don't need take two pages each
 \begingroup
@@ -48,18 +43,18 @@
 \let\cleardoublepage\relax
 \let\clearpage\relax
 \listoffigures
-\addcontentsline{toc}{chapter}{List of Figures}
+%\addcontentsline{toc}{chapter}{List of Figures}
 
 \newpage
 \listoftables
-\addcontentsline{toc}{chapter}{List of Tables}
+%\addcontentsline{toc}{chapter}{List of Tables}
 
 %\newpage
 %\lstlistoflistings
 
 \newpage
 \printglossary[type=\acronymtype]
-\addcontentsline{toc}{chapter}{List of Acronyms}
+%\addcontentsline{toc}{chapter}{List of Acronyms}
 
 \endgroup
 

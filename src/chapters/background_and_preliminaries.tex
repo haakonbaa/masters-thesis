@@ -1,36 +1,8 @@
-\iffalse
 \chapter{Background and {Preliminaries}}
-
-\section{$\operatorname{SO}(3)$}
-
-\begin{subequations}
-\label{eq:bp:so3:rotations}
-\begin{align}
-    \bm{R}_x(\theta) &= \begin{bmatrix}
-        1 & 0 & 0 \\
-        0 & \cos(\theta) & -\sin(\theta) \\
-        0 & \sin(\theta) & \cos(\theta)
-    \end{bmatrix}, \\
-    \bm{R}_y(\theta) &= \begin{bmatrix}
-        \cos(\theta) & 0 & \sin(\theta) \\
-        0 & 1 & 0 \\
-        -\sin(\theta) & 0 & \cos(\theta)
-    \end{bmatrix}, \\
-    \bm{R}_z(\theta) &= \begin{bmatrix}
-        \cos(\theta) & -\sin(\theta) & 0 \\
-        \sin(\theta) & \cos(\theta) & 0 \\
-        0 & 0 & 1
-    \end{bmatrix}.
-\end{align}
-\end{subequations}
-
-\section{$\operatorname{SE}(3)$}
-\fi
-
-\chapter{Background and {Preliminaries}}
+\label{sec:background}
 
 % -----------------------------------------------------------------------------
-\section{SO(3)}
+\section{Special Orthogonal Group in 3 dimensions}
 \label{sec:bp:so3_se3}
 
 The special orthogonal group in three dimensions, $\SO$, and the special
@@ -69,7 +41,7 @@ $\bm{R}_b^i$ that rotates a vector from the body-fixed frame $b$ to some inertia
 frame $i$. The body-fixed angular velocity $\bm{\omega}_{ib}^b$ is then defined
 as
 \begin{align}
-    \bm{\omega}_{ib}^b := \bm{R}_i^b \dot{\bm{R}}_b^i.
+    \cross{\bm{\omega}_{ib}^b} = \bm{R}_i^b \dot{\bm{R}}_b^i.
 \end{align}
 When specifying reference frames, we say that
 \begin{align}
@@ -128,7 +100,7 @@ different angle representation when the system approaches gimbal lock. In this
 work we avoid this issue by not controlling the system to these singularities.
 
 % -----------------------------------------------------------------------------
-\section{SE(3)}
+\section{Special Euclidean Group in 3 dimensions}
 \label{sec:bp:se3}
 
 The special Euclidean group in three dimensions, $\SE$, is the group of all
@@ -447,6 +419,7 @@ This method is used to simulate the dynamics of the underwater vehicle-manipulat
 systems in this thesis.
 
 \section{Quaternions}
+\label{sec:background:quaternions}
 
 There are several ways to parameterize rotations in three dimensions. One of 
 the more intuitive approaches is through Euler angles. However, a key drawback 
