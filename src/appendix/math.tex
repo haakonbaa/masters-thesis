@@ -1,4 +1,4 @@
-\chapter{Math}
+\chapter{Proof}
 
 The following theorem was found to be very usefull when implementing the kinematics
 of a general \gls{aiauv}. Although the proof is simple, and has probably been
@@ -37,7 +37,7 @@ where
        [\bm{\omega}]_{\times}[\bm{\omega}]_{\times} \\
     \bm{V} &= \I
     + \frac{1-\cos||\bm{\omega}||}{||\bm{\omega}||^2}[\bm{\omega}]_{\times}
-    + \frac{1-\sin||\bm{\omega}||}{||\bm{\omega}||^3}[\bm{\omega}]_{\times}[\bm{\omega}]_{\times}
+    + \frac{||\bm{\omega}||-\sin||\bm{\omega}||}{||\bm{\omega}||^3}[\bm{\omega}]_{\times}[\bm{\omega}]_{\times}
 \end{align*}
 \end{subequations}
 \end{theorem}
@@ -92,7 +92,7 @@ The formula for \(\bm{V}\) can be derived in a similar manner
     &= \I + \frac{\cross{\bm{\omega}}}{||\bm{\omega}||^2}\left(\frac{||\bm{\omega}||^2}{2!} - \frac{||\bm{\omega}||^4}{4!} + \frac{||\bm{\omega}||^6}{6!} \cdots\right)
 + \frac{\cross{\bm{\omega}}^2}{||\bm{\omega}||^3}\left(\frac{||\bm{\omega}||^3}{3!} - \frac{||\bm{\omega}||^5}{5!} + \frac{||\bm{\omega}||^7}{7!}\cdots\right) \\
     &= \I + \frac{\cross{\bm{\omega}}}{||\bm{\omega}||^2}\left(1 - \cos{||\bm{\omega}||}\right)
-+ \frac{\cross{\bm{\omega}}^2}{||\bm{\omega}||^3}\left(1-\sin{||\bm{\omega}||}\right)
+    + \frac{\cross{\bm{\omega}}^2}{||\bm{\omega}||^3}\left(||\bm{\omega}||-\sin{||\bm{\omega}||}\right)
 \end{align*}
 \end{subequations}
 \end{proof}

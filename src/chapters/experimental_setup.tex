@@ -1,5 +1,52 @@
 \chapter{Experimental Setup}
 
+This chapter presents the experimental setup used to evaluate the task-
+priority control framework developed in this thesis. It begins with an 
+overview of the Eelume robot, including its mechanical structure, sensor suite
+, communication systems, and suitability for underwater manipulation tasks. 
+Following that, the software tools and interfaces used to control the robot 
+and simulate its behavior are described. The chapter also outlines key 
+assumptions and limitations in the experimental environment, including sensor 
+noise and system constraints. Finally, the experimental procedures are detailed
+, describing how specific robot behaviors will be tested and what kinds of 
+responses are expected. Together, these sections provide the necessary context 
+for understanding the practical validation of the proposed control approach.
+
+% -----------------------------------------------------------------------------
 \section{The Eelume Robot}
+
+\begin{itemize}
+    \item Model and Name
+    \item DOF - joint-types, workspace dimensions
+    \item Some kinematics
+    \item sensor suite
+    \item communication and battery
+    \item TBS, water depth and wave influence
+    \item Why it is so great for TPC
+\end{itemize}
+
+% -----------------------------------------------------------------------------
 \section{Tools and software}
+\begin{itemize}
+    \item the Eelume low-level api over ethernet
+    \item C/C++
+    \item developed simulator and connection to Eely
+    \item visualizer?
+\end{itemize}
+
+% -----------------------------------------------------------------------------
 \section{Assumptions and Limitations}
+\begin{itemize}
+    \item navigation system (jittery angles and noisy velocities)
+    \item frequency limitations
+    \item no feedback on how slow/fast the lower-level controllers are
+\end{itemize}
+
+% -----------------------------------------------------------------------------
+\section{Experimental Procedures}
+\begin{itemize}
+    \item show the response of the lower-level DP+ controller.
+    \item Head + Tail stretching out
+    \item Bending with joint constraints
+    \item Expected results?
+\end{itemize}
