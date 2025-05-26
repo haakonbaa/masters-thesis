@@ -420,7 +420,7 @@ $\bm{J}$ and its pseudoinverse can be written as
 \end{subequations}
 From this, it is clear that when $\sigma_i$ is close to zero, the pseudoinverse
 will be very sensitive to small changes in $\sigma_i$. One proposed solution to
-this problem is the so-called \emph{damped pseudoinverse} which is defined as
+this problem is the so-called \gls{dlsi} which is defined as
 \begin{align}
     \bm{J}^* := \sum_{i=1}^r \frac{\sigma_i}{\sigma_i^2 + \lambda^2} \bm{v}_i \bm{u}_i^T.
 \end{align}
@@ -433,14 +433,14 @@ and for small values of $\sigma_i$,
     \frac{\sigma_i}{\sigma_i^2 + \lambda^2} \approx 0.
 \end{align}
 This will make the pseudoinverse well-conditioned for all values of $\sigma_i$.
-The trade-off is that the damped pseudoinverse will not be the true pseudoinverse.
+The trade-off is that the \gls{dlsi} will not be the true pseudoinverse.
 This might lead to tasks with lower priority affecting the higher-priority tasks and
 breaking some of the assumptions made when proving stability and task consistency.
 
 A way to make the pseudoinverse more accurate when far from singularities is to
-use the \emph{variable damped least-squares inverse} (VDLSI) proposed by \cite{chiaverini1997}.
+use the \gls{vdlsi} proposed by \cite{chiaverini1997}.
 This uses the fact that there is no need to damp the pseudoinverse when far from singularities.
-The VDLSI is defined as
+The gls{vdlsi} is defined as
 \begin{subequations}
 \begin{align}
     \bm{J}^{\circ} := \sum_{i=1}^r \frac{\sigma_i}{\sigma_i^2 + \lambda_i^2(\sigma_i)} \bm{v}_i \bm{u}_i^T \\
@@ -454,12 +454,12 @@ where $\lambda_{max}^2$ and $\varepsilon$ are parameters that can be tuned. $\la
 determines the maximum damping factor and $\varepsilon$ determines a threshold for when
 to start damping the pseudoinverse based on how close the singular values are to zero.
 To better illustrate the difference between the different methods, see \autoref{fig:1_x}
-showing the LSI, VLSI and VDLSI on a scalar matrix for $\lambda=\epsilon=0.1$.
+showing the \gls{lsi}, \gls{dlsi} and \gls{vdlsi} on a scalar matrix for $\lambda=\epsilon=0.1$.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{assets/singval.pdf}
-    \caption{Comparison of the LSI, VLSI and VDLSI on a scalar matrix.}
+    \caption{Comparison of the \gls{lsi}, gls{dlsi} and gls{vdlsi} on a scalar matrix.}
     \label{fig:1_x}
 \end{figure}
 
