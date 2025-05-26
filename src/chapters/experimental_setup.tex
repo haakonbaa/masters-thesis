@@ -67,23 +67,21 @@ the head and tail links are useful for defining hydrodynamic damping forces,
 while the remaining three frames are primarily used for task definitions.
 
 \begin{figure}[h!]
-\centering
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=\textwidth]{assets/ignored/s-1.png}
-\caption{The Eelume robot bending joints about the $z$-axis.}
-\label{fig:eelume:joints:1}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.45\textwidth}
-\centering
-\includegraphics[width=\textwidth]{assets/ignored/s-2.png}
-\caption{The Eelume robot bending joints about the $y$-axis.}
-\label{fig:eelume:joints:2}
-\end{subfigure}
-\caption{
-The Eelume robot with its two joints shown in different configurations.
-}
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{assets/ignored/s-1.png}
+        \caption{The Eelume robot bending joints about the $z$-axis.}
+        \label{fig:eelume:joints:1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{assets/ignored/s-2.png}
+        \caption{The Eelume robot bending joints about the $y$-axis.}
+        \label{fig:eelume:joints:2}
+    \end{subfigure}
+    \caption{The Eelume robot with its two joints shown in different configurations.}
 \label{fig:eelume:joints}
 \end{figure}
 
@@ -113,12 +111,56 @@ strong coupling, making it a compelling testbed for task-priority control.
 
 % -----------------------------------------------------------------------------
 \section{Tools and software}
-\begin{itemize}
-    \item the Eelume low-level api over ethernet
-    \item C/C++
-    \item developed simulator and connection to Eely
-    \item visualizer?
-\end{itemize}
+
+The Eelume robot is controlled using a low-level \gls{api} that Eelume AS made
+available in the beginning of 2025. This api provides access to low-level methods
+for controlling the robot's thrusters and joints, as well as for reading sensor
+data. The \gls{api} is implemented in C/C++ and communicates with the robot over
+an ethernet connection. Because the \gls{api} is low-level, a lot of code had
+to be written to implement the task-priority control framework, everyting from
+lower-level controllers, task definitions, and kinematics. The collection of
+code used to control the Eelume robot is created as a standalone C++ library
+and is refered to as \gls{eck}.
+
+The control kit is designed to be modular, allowing for easy integration of
+new tasks and controllers. The library provides a set of virtual base classes,
+one for a controller and one for a connection to the Eelume robot, along with
+a set of concrete implementations for these classes. Setting and reading data
+from the robot is done through the \gls{api} using a connection class, while 
+a simulator is also provided for testing the controllers without the need for
+a physical robot. Lower level \gls{dp} controllers, as well as higher-level
+task-priority controllers are also implemented.
+
+The simulator is designed to mimic the behavior of the Eelume robot as closely
+as possible, without much time spent on modeling the hydrodynamics and coupling
+between the links. The kinematics of the robot is tought to be accurately
+implemented. Because of the virtual base classes, the real robot can be used
+interchangeably without recompiling the code. This allows for easy testing of
+the controllers after veryfing that they work in the simulator.
+
+In addition to the control kit, the need for vizualization of the robot and
+the tasks was identified. A simple visualizer was created to display the robot
+in real time as experiments are conducted. The visualizer is implemented in
+C++ using the OpenGL graphics library. The control kit communicates with the
+visualizer over \gls{udp} sockets, sending the robot's state and task definitions.
+Eelume robot that are presented in this thesis are created using this visualizer.
+An example of the visualizer as it is used during experiments is shown in
+\autoref{fig:eelume:visualizer}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{assets/eely-visualizer.png}
+    \caption{A screenshot of the Eelume visualizer.}
+    \label{fig:eelume:visualizer}
+\end{figure}
+
+
+%\begin{itemize}
+%    \item the Eelume low-level api over ethernet
+%    \item C/C++
+%    \item developed simulator and connection to Eely
+%    \item visualizer?
+%\end{itemize}
 
 % -----------------------------------------------------------------------------
 \section{Assumptions and Limitations}
