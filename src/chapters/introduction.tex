@@ -1,3 +1,4 @@
+\label{ch:introduction}
 This chapter introduces the core motivation behind the thesis and outlines the
 context and importance of the work. The driving factors and key challenges that
 led to the thesis are presented. A brief overview of the literature that is
@@ -8,8 +9,11 @@ as well as an outline of the subsequent chapters.
 
 % ------------------------------------------------------------------ Motivation
 \section{Motivation}
+\label{sec:introduction:motivation}
 
-Lightweight UVMSs, and specifically AIAUVs, are highly redundant systems.
+{
+\color{red}
+Lightweight \gls{uvms}s, and specifically \gls{aiauv}s, are highly redundant systems.
 While this redundancy offers flexibility in task execution—allowing the system
 to avoid obstacles, optimize 
 energy consumption, and maintain stability, it also introduces significant 
@@ -18,22 +22,23 @@ the coupling effects between the vehicle's base and its manipulator arms,
 especially in lightweight systems where coupling is more pronounced. 
 Task-priority control emerges as an effective solution by allowing 
 multiple objectives to be prioritized and executed simultaneously. However, how 
-well TPC performs in the presence of modeling inaccuracies and disturbances 
+well \gls{tpc} performs in the presence of modeling inaccuracies and disturbances 
 remains an open question. This thesis aims to bridge this knowledge gap by 
-analyzing and comparing kinematic- and dynamic-level TPC approaches in
+analyzing and comparing kinematic- and dynamic-level \gls{tpc} approaches in
 simulated scenarios.
 
 The development of advanced control strategies requires a reliable and 
 realistic simulation environment to test and validate performance before 
-deploying controllers on physical systems. For light-UVMSs, accurately 
+deploying controllers on physical systems. For light-\gls{uvms}s, accurately 
 capturing hydrodynamic forces, coupling effects, and actuator dynamics is 
 crucial for minimizing the simulation-to-reality gap. Additionally, the high 
-computational demands of dynamic-level TPC algorithms necessitate efficient 
+computational demands of dynamic-level \gls{tpc} algorithms necessitate efficient 
 simulation tools capable of real-time execution. This facilitates the
-need for a custom-built simulation framework designed for light-UVMSs, 
+need for a custom-built simulation framework designed for light-\gls{uvms}s, 
 enabling robust comparisons between different control strategies while 
-providing a foundation for experimental validation on platforms such as NTNU’s 
-Eelume 500 AIAUV.
+providing a foundation for experimental validation on platforms such as \gls{ntnu}’s 
+Eelume 500 \gls{aiauv}.
+}
 
 In 2015, the United Nations adopted the 2030 Agenda for Sustainable Development
 \cite{UN2030Agenda}, which outlines 17 Sustainable Development Goals (SDGs) to
@@ -41,9 +46,9 @@ address global challenges such as poverty, inequality, climate change, and
 environmental degradation. The research and methods presented in this thesis
 contribute to the achievement of several of these goals. For example, \emph{SDG 14
 Life Below Water}, "Conserve and sustainably use the oceans, seas and marine
-resources for sustainable development.". UVMSs can monitor and inspect underwater
+resources for sustainable development.". \gls{uvms}s can monitor and inspect underwater
 infrastructure, reducing the risk associated with oil spills, structural failures,
-or leaks. Furthermore, UVMSs controlled in a task-priority manner can collect automated
+or leaks. Furthermore, \gls{uvms}s controlled in a task-priority manner can collect automated
 high resolution imagery and data, identifying and mitigating potential
 damage and disruptions to marine ecosystems.
 
@@ -56,9 +61,9 @@ in the field of maritime robotics, leading to more advanced technologies for
 sustainable ocean management.
 
 Finally, \emph{SDG 13 Climate Action} aims to "Take urgent action to combat climate
-change and its impacts". UVMSs can facilitate oceanographic research by collecting
+change and its impacts". \gls{uvms}s can facilitate oceanographic research by collecting
 environmental data and monitoring climate change, laying the groundwork for actions
-to combat the effects of climate change. UVMSs can support the development of
+to combat the effects of climate change. \gls{uvms}s can support the development of
 sustainable marine energy solutions, such as offshore wind farms and wave energy.
 
 In summary, by aligning with key SDGs, this research demonstrates the potential
@@ -67,6 +72,7 @@ and environmentally conscious future.
 
 % ------------------------------------------------------------ Literature Review
 \section{Literature Review}
+\label{sec:introduction:literature}
 
 Some of the earliest works on task-priority control were introduced in 
 \cite{hanafusa1981}. This study proposed a method for controlling redundant 
@@ -107,11 +113,11 @@ Stability analysis of kinematic-level priority-based control schemes for
 redundant manipulators was conducted in \cite{antonelli2009}. Using a 
 Lyapunov-based approach, the study provided sufficient conditions for stability 
 based on control gains and task design. However, the proposed method assumes 
-decoupled kinematics and dynamics, making it less directly applicable to UVMSs 
+decoupled kinematics and dynamics, making it less directly applicable to \gls{uvms}s 
 without additional assumptions regarding the relative speeds of robot dynamics 
 and inverse kinematics.
 
-A task-priority control scheme specifically applied to UVMSs was presented in 
+A task-priority control scheme specifically applied to \gls{uvms}s was presented in 
 \cite{antonelli1998}. This work employed a kinematic-level task-priority 
 control approach to control a 6-DOF articulated underwater vehicle (AUV) 
 equipped with a 3-DOF planar manipulator arm. While the simulation results were 
@@ -122,12 +128,19 @@ In recent years, approaches that incorporate dynamic considerations have been
 developed. For example, \cite{basso2020} introduced a method that uses control 
 Lyapunov function-based quadratic programming to address control allocation, 
 dynamic control, and redundancy resolution in redundant robotic systems. Given 
-the challenges posed by disturbances and modeling inaccuracies in UVMS 
+the challenges posed by disturbances and modeling inaccuracies in \gls{uvms} 
 dynamics, \cite{iversflaten2022} proposed a dynamic controller based on sliding 
 mode control. A simulation study demonstrated the effectiveness of this method 
-in handling these challenges. Regarding physical experiments on UVMSs, there 
+in handling these challenges. Regarding physical experiments on \gls{uvms}s, there 
 seem to be a lack of research comparing the performance of the proposed 
 task-priority control methods in a real-world setting.
+
+{
+\color{red}
+\begin{itemize}
+    \item This section could be expanded. Focus on experimental results.
+\end{itemize}
+}
 
 % --------------------------------------------------------------- Contributions
 \section{Contributions}

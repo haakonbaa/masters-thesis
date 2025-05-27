@@ -1,9 +1,8 @@
-\documentclass[10pt,b5paper,openright]{book}
+\documentclass[10pt,b5paper,twoside,openright]{book}
 \usepackage{packages}
 
 \begin{document}
 
-\pagenumbering{roman} 
 
 % Roman numbering for the front matter
 
@@ -12,9 +11,11 @@
 %\addcontentsline{toc}{chapter}{Problem Description}
 %\input{./chapters/problem_description}
 %\newpage
+\includepdf[fitpaper=true,pages=1]{./assets/ntnu-header.pdf}
+\includepdf[fitpaper=true,pages={2,3,4}]{./assets/ntnu-header.pdf}
 
-\cleardoublepage
-\setcounter{page}{1} % Reset page number to 1 for the front matter
+\frontmatter
+
 
 \section*{\Huge{Abstract}}
 \addcontentsline{toc}{chapter}{Abstract}
@@ -46,26 +47,27 @@
 
 \let\cleardoublepage\relax
 \let\clearpage\relax
+
 \listoffigures
 %\addcontentsline{toc}{chapter}{List of Figures}
 
-\newpage
+%\newpage
 \listoftables
 %\addcontentsline{toc}{chapter}{List of Tables}
 
 %\newpage
 %\lstlistoflistings
 
-\newpage
+%\newpage
 \printglossary[type=\acronymtype]
 %\addcontentsline{toc}{chapter}{List of Acronyms}
 
 \endgroup
 
-
 \newpage
 
 
+\mainmatter
 \chapter{Introduction}
 \pagenumbering{arabic} % Arabic numbering for the main matter
 % Change the page style to include the chapter number and title in the header
@@ -81,7 +83,6 @@
 \input{./chapters/task_priority_control}
 \input{./chapters/experimental_setup}
 \input{./chapters/results}
-\input{./chapters/discussion}
 \input{./chapters/conclusion_and_future_work}
 
 \printbibliography

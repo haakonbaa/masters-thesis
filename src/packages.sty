@@ -46,16 +46,25 @@
 \newacronym{api}{API}{Application Programming Interface}
 \newacronym{eck}{ECK}{Eely Control Kit}
 \newacronym{dp}{DP}{Dynamic Positioning}
+\newacronym{pd+}{DP+}{Proportional-Derivative with Hydrostatic Compensation}
 \newacronym{udp}{UDP}{User Datagram Protocol}
 \newacronym{tcp}{TCP}{Transmission Control Protocol}
+\newacronym{ntnu}{NTNU}{Norwegian University of Science and Technology}
+\newacronym{tpc}{TPC}{Task-Priority Control}
 
 \hypersetup{
     % Sets the displayed title
     pdftitle={Task-Priority Control of Underwater Vehicle-Manipulator Systems},    
     pdfauthor={Håkon Bårsaune},              % Sets the author
     pdfsubject={Task-Priority Control},      % Sets the subject
-    pdfkeywords={LaTeX, Thesis}              % Sets keywords (optional)
+    pdfkeywords={Thesis}              % Sets keywords (optional)
 }
+
+% Capitalize \autoref names
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Subsection}
+\renewcommand{\subsubsectionautorefname}{Subsubsection}
+\renewcommand{\chapterautorefname}{Chapter}
 
 % Format chapters to be displayed as "Chapter <number> - <title>" (titlesec)
 \titleformat{\chapter}[display]
@@ -76,7 +85,7 @@
     inkscapepath=../build/,
 }
 % Place numbers on the bottom of the page (fancyhdr)
-\pagestyle{fancy}
+%\pagestyle{fancy}
 \fancyhf{}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt} % Remove the horizontal line in the header
