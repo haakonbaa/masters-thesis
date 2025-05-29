@@ -91,7 +91,31 @@ the closest to the head while joint \(4\) is the closest to the tail.
 features two sets of $4$ thrusters: one set on the tail and another on the 
 body link near the head joint. Each thruster can be independently controlled 
 and provides bidirectional thrust. The thruster arrangement is shown in
-\autoref{fig:eelume:thrusters}. When the robot is in a straight configuration, 
+\autoref{fig:eelume:thrusters}. The thrusters are numbered from \(1\) to \(8\),
+this is not an internal numbering, but rather a numbering used in this thesis
+to distinguish the thrusters. The numbering is shown in \autoref{tab:eelume:numbering:thrusters}.
+\begin{table}
+    \centering
+    \begin{tabular}{|c|l|l|}
+        \hline
+        Thruster & Location & Thrust Direction \\ \hline \hline
+        \(1\) & Body Starboard & Forward - Up \\ \hline
+        \(2\) & Body Port & Forward - Down \\ \hline
+        \(3\) & Body Bottom & Port \\ \hline
+        \(4\) & Body Top & Starboard \\ \hline
+        \(5\) & Tail Starboard & Forward - Down \\ \hline
+        \(6\) & Tail Port & Forward - Up \\ \hline
+        \(7\) & Tail Bottom & Starboard \\ \hline
+        \(8\) & Tail Top & Port  \\ \hline
+        \hline
+    \end{tabular}
+    \caption{The thruster numbering on the Eelume robot.}
+    \label{tab:eelume:numbering:thrusters}
+\end{table}
+
+
+
+When the robot is in a straight configuration, 
 forces and moments can be generated independently in all $6$ \gls{dof}s. 
 Together with the $2 \times 2$ \gls{dof}s from the joints, this results in a 
 total of $10$ \gls{dof}s for this Eelume configuration. The joints are 
@@ -100,19 +124,20 @@ $8$ thrusters and $4$ joint actuators. Some key parameters of the Eelume robot
 are summarized in \autoref{tab:eelume:keynumbers}.
 \begin{table}[h]
     \centering
-    \begin{tabular}{|c|c|c|}
+    \begin{tabular}{|l|r|c|}
         \hline
         Parameter  & Value & Unit   \\ \hline \hline
-        Total length & 6.05 & m     \\ \hline
+        Total length & 605 &  cm    \\ \hline
         Total weight & 190  & kg    \\ \hline
         Diameter & 20 & cm    \\ \hline
-        Joint length & x & cm    \\ \hline
-        Length head link & x & m     \\ \hline
-        Length body link & x & m     \\ \hline
-        Length tail link & x & m     \\ \hline
-        Weight head link & x & kg     \\ \hline
-        Weight body link & x & kg     \\ \hline
-        Weight tail link & x & kg     \\ \hline
+        Length joint     & 55 & cm    \\ \hline
+        Length head link & 101 & cm     \\ \hline
+        Length body link & 233 & cm     \\ \hline
+        Length tail link & 160 & cm     \\ \hline
+        Weight join      & 14 & kg     \\ \hline
+        Weight head link & 40 & kg     \\ \hline
+        Weight body link & 75 & kg     \\ \hline
+        Weight tail link & 44 & kg     \\ \hline
         Maximum thruster wattage & \(125\) & W     \\ \hline
         Maximum joint torque & \(16\) & Nm     \\ \hline
         \hline
@@ -120,6 +145,7 @@ are summarized in \autoref{tab:eelume:keynumbers}.
     \caption{Key parameters of the Eelume robot.}
     \label{tab:eelume:keynumbers}
 \end{table}
+
 The Eelume robot is an excellent platform for testing task-priority controllers.
 This is largely due to its high number of \gls{dof}s, allowing for the 
 execution of multiple tasks before kinematic constrains limit the robot. Additionally, 
@@ -366,7 +392,50 @@ not experience a brownout during experiments. The wattage limit is set using the
 
 % -----------------------------------------------------------------------------
 \section{Experimental Procedures}
-\subsection*{Launch and test procedures}
+
+% -----------------------------------------------------------------------------
+\subsection*{Launch and Test Procedures}
+The experiments are conducted at \gls{tbs}, from a concrete pier. The Eelume 
+robot has a custom build cradle that is used to launch it from the pier into the water. The
+robot is placed in the cradle, and a crane is used to lift the cradle into the sea.
+When the cradle is in the water, the robot is controlled in \gls{rov} mode, using
+the fiber-optic tether to communicate with the robot. The robot is then moved to the test suite,
+and placed in \gls{dp} mode. The cradle is landed on the pier, and the crane is used to lift the
+\(\mu\)-PAP into the water. When it is time to run experiments, the robot is placed in
+----- mode and the control kit is started. From the control software of the Eelume
+robot it is possible to abort the control kit, and abort the experiment at any time.
+When a run is finished, the robot is moved back to the initial position and experiments can be repeated.
+The recovery procedure is similar to the launch procedure, but in reverse. The robot
+is moved back to the cradle, and the crane is used to lift the cradle out of the water.
+The launch and recovery procedures requires \(2\) to \(3\) people, and takes about \(30\) minutes each to complete.
+\autoref{fig:eelume:cradle-and-float} shows some pictures of the launch procedure.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.384\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{assets/launch/32.jpeg}
+        \caption{The Eelume robot in the cradle, ready to be launched.}
+    \end{subfigure}
+    \begin{subfigure}{0.26\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{assets/launch/2.jpeg}
+        \caption{Manoeuvring the cradle using a crane.}
+    \end{subfigure}
+    \begin{subfigure}{0.26\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{assets/launch/1.jpeg}
+        \caption{Eelume robot in the water with \(\mu\)-PAP.}
+    \end{subfigure}
+    \caption{Images from the launch procedure.}
+    \label{fig:eelume:cradle-and-float}
+\end{figure}
+
+\subsection*{Response of the Lower-Level DP+ Controller}
+\subsection*{Head + Tail Stretching Out}
+\subsection*{Bending with Joint Constraints}
+
+\iffalse
 \begin{itemize}
     \item Launch and test procedures
     \item show the response of the lower-level DP+ controller.
@@ -374,4 +443,4 @@ not experience a brownout during experiments. The wattage limit is set using the
     \item Bending with joint constraints
     \item Expected results?
 \end{itemize}
-
+\fi
