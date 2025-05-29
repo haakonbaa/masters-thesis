@@ -109,7 +109,7 @@ are summarized in \autoref{tab:eelume:keynumbers}.
         Joint length & x & cm    \\ \hline
         Length head link & x & m     \\ \hline
         Length body link & x & m     \\ \hline
-        Length tail link & x & kg     \\ \hline
+        Length tail link & x & m     \\ \hline
         Weight head link & x & kg     \\ \hline
         Weight body link & x & kg     \\ \hline
         Weight tail link & x & kg     \\ \hline
@@ -178,6 +178,7 @@ an axis system in the center showing the \gls{ned} frame origin.
 
 % -----------------------------------------------------------------------------
 \section{Assumptions and Limitations}
+\label{sec:experimental_setup:assumptions_and_limitations}
 In this section, key assumptions and limitations of the experimental setup are 
 outlined to provide transparency and context for interpreting the results. 
 These factors include both hardware and software constraints, as well as 
@@ -218,43 +219,120 @@ The jittering seems to be more prominent for the first joint, although it is abo
 If this is the cause of some misconfiguration, broken encoders or some other issue is not known.
 The high frequency contents in the joint measurements as a result of jittering
 contributes to high frequency contents in the task-priority control signals. To
-mitigate this, a first order lowpass filter is applied to the joint angles. The
-lowpass filter is implemented in the control kit, and is applied to the joint angles before
-they are used in the task-priority control framework. The lowpass can be
+mitigate this, a first order low-pass filter is applied to the joint angles. The
+low-pass filter is implemented in the control kit, and is applied to the joint angles before
+they are used in the task-priority control framework. The low-pass filter can be
 described by the following equation, where \(\alpha \in (0, 1)\) is the filter coefficient:
+\begin{subequations}
 \begin{align}
-    \bm{\theta}_{\textrm{filtered}}[k] &= \alpha \bm{\theta}[k-1] + (1 - \alpha)\bm{\theta}_{\text{filtered}}[k].
+    \bm{\theta}_{\textrm{filtered}}[k] &= \alpha \bm{\theta}[k] + (1 - \alpha)\bm{\theta}_{\text{filtered}}[k-1] \\
+    &= \bm{\theta}_{\textrm{filtered}}[k-1] + \alpha\left( \bm{\theta}[k] - \bm{\theta}_{\textrm{filtered}}[k-1] \right).
 \end{align}
+\end{subequations}
 For the joint angles, the filter coefficient is set to \(\alpha = 0.39\). The
-result of the lowpass filtering is shown in \autoref{fig:eelume:encoder-jitter-lowpass}.
+result of the low-pass filtering is shown in \autoref{fig:eelume:encoder-jitter-low-pass}.
 We observe that the filtered joint angles closely follow the original angles,
 and that some of the high frequency contents of the jitter is removed. Some discussion
 about this method and alternative approaches are presented in \autoref{sec:conclusion:future_work}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/jitter.pdf}
-    \caption{Lowpass filtered joint angles to remove jitter.}
-    \label{fig:eelume:encoder-jitter-lowpass}
+    \caption{Low-pass filtered joint angles to remove jitter.}
+    \label{fig:eelume:encoder-jitter-low-pass}
 \end{figure}
 
 \subsection*{Topological Limitations}
-\begin{itemize}
-    \item want to be right below \(\mu\)-papp, for good accuracy, but not
-        possible as it is stuck to the crate on the harbour.
-    \item Want to go as deep as possible to optimze \(\mu\)-papp angle, but
-        not possible to to seabed depth.
-\end{itemize}
+As part of the aiding system for the \gls{ins}, the Eelume robot is equipped 
+with a cNode transponder from Kongsberg for underwater acoustic positioning. 
+This transponder communicates with a Kongsberg \(\mu\)-PAP acoustic positioning 
+system, which provides periodic position corrections to the onboard \gls{ins}. 
+The system achieves its highest accuracy when the transponder is positioned 
+directly beneath the \(\mu\)-PAP.
 
+In practice, however, the \(\mu\)-PAP is mounted on a crane at the harbor, while the 
+Eelume robot is typically deployed about 10 meters away to allow space for 
+experimentation. This offset results in a suboptimal angle between the \(\mu\)-PAP 
+and the cNode transponder. To reduce the impact of this angle, the robot is 
+positioned as deep as possible in the water—while still maintaining enough 
+clearance for experiments—thereby minimizing the angle and improving 
+positioning accuracy.
+
+During experiments, forwarding from the acoustic positioning system is 
+temporarily disabled for two main reasons. First, the system remains 
+sufficiently accurate over the duration of the experiments. Second, when 
+enabled, the system introduces periodic jumps in position data, which is 
+disadvantagous when collecting data.
+
+% -----------------------------------------------------------------------------
 \subsection*{Velocity Measurement Noise}
+The velocity measurements from the \gls{ins} were found to be noisy. Some measurements
+from a typical run are shown in \autoref{fig:eelume:velocity-noise}. The linear
+velocity of the \gls{aiauv} seems to be the smoothest, while there is some noise
+on the angular velocity measurements. The noise is the most poromentent on
+the angular velocity of the joints. From the figure one can se spikes reaching
+velocities more than \(50\) degrees per second in absolute value, which is not realistic. Although the
+reason for this noise is not known, it is likely related to the jitter on the 
+joint measurements discussed in the previous sections, as the jitter seem to correlate in time
+with the angular velocity spikes.
 
-\subsection*{\gls{ins} limitations}
+To mitigate the noise, a low-pass filter is applied to the velocity measurements.
+The filter is first order, and is implemented in the control kit following the
+same approach as for the joint angles. Because of the observed difference in
+noise level between the linear, angular, and joint velocities, each of these
+three components are filtered with different filter coefficients. The coefficients
+are presented in \autoref{tab:eelume:vel-filters}.
 
-\begin{itemize}
-    \item roll rate limitations in the INS configuration
-    \item  bottom lock DVL \(\rightarrow\) need bottom lock to accurately measure relative velocities
- without bottom lock, we get innacurate position and orientation over time, especially
- without aiding from the aucustic positioning system, or the surface-level GPS.
-\end{itemize}
+%0.334511
+%0.273779
+%0.0245166
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Velocity Component & Filter Coefficient \(\alpha\) \\ \hline \hline
+        Linear Velocity & \(0.33\) \\ \hline
+        Angular Velocity & \(0.27\) \\ \hline
+        Joint Velocity & \(0.025\) \\ \hline
+        \hline
+    \end{tabular}
+    \caption{Filter coefficients for the low-pass filtering of velocity measurements.}
+    \label{tab:eelume:vel-filters}
+\end{table}
+
+The result of the low-pass filtering is shown in \autoref{fig:eelume:velocity-noise-low-pass}.
+The low-pass filtered velocities are much smoother, and the spikes in the angular
+velocities are removed to a large extent. A side-by-side comparison of the unfiltered
+and low-pass filtered velocities is shown in \autoref{fig:eelume:velocity-noise-low-pass-comp}.
+From this figure, it is clear that much of the high-frequency contents in the velocity measurements
+is removed without causing significant delay in the measurements. The advantages and disadvantages
+of using a low-pass filter on the velocity measurements are discussed in more detail in \autoref{sec:results:lowpass_filtering}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,page=1]{assets/ignored/plots/velnoise.pdf}
+    \caption{Unfiltered velocity measurements from the \gls{ins} during experiments.}
+    \label{fig:eelume:velocity-noise}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/velnoise.pdf}
+    \caption{Low-pass filtered velocity measurements.}
+    \label{fig:eelume:velocity-noise-low-pass}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,page=3]{assets/ignored/plots/velnoise.pdf}
+    \caption{Comparison of unfiltered and low-pass filtered velocity measurements.}
+    \label{fig:eelume:velocity-noise-low-pass-comp}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection*{\gls{ins} Limitations}
+The Sunstone \gls{ins} used in the Eelume robot offers several configuration options that can impact experimental performance. One key feature is a roll rate limitation: if the \gls{ins} detects that the roll rate exceeds a certain threshold, it assumes the measurements are unreliable and disables control inputs. This is a built-in safety mechanism, which makes sense during normal operation when rapid rolling is not expected. However, this limitation is not particularly problematic in this context, as the experimental tasks are designed to be relatively low-frequency and thus naturally avoid high roll rates. It is mentioned here as an important consideration during testing, since avoiding large roll rates can prevent unnecessary interruptions and time-consuming recalibrations.
+
+A crucial component of the \gls{ins} is the \gls{dvl}, which measures the robot’s velocity relative to the sea floor. Due to the mounting orientation of the \gls{dvl}, large roll or pitch angles can reduce its accuracy, a condition commonly referred to as losing \textit{bottom lock}. Without bottom lock, the \gls{ins} becomes significantly less reliable. To maintain bottom lock during experiments, the robot is kept at low roll and pitch angles, and large vertical movements are avoided.
 
 \subsection*{Wave Influence and Water Salinity}
 The experiments were conducted at \gls{tbs}, located in the fjord just outside 
@@ -271,12 +349,6 @@ the \gls{pd+} controller. To reduce the impact of salinity changes, tests were
 carried out at depths where the water column exhibited relatively stable 
 salinity levels.
 
-
-{
-    \color{red}
-    Include some weather data from the two days of the experiments?
-}
-
 \subsection*{Lower-Level Thruster and Joint Motor Control}
 The Eelume \gls{api} provides a way to set thruster force references and joint
 torque references. However, it is not known how well these references are
@@ -292,21 +364,6 @@ to have a wattage limit of \(125\) W each, ensuring that the Eelume robot does
 not experience a brownout during experiments. The wattage limit is set using the
 \gls{api} and is not a hard limit, but was chosen for safety reasons.
 
-
-
-\begin{itemize}
-    \item navigation system (jittery angles and noisy velocities)
-    \item frequency limitations
-    \item Topological limitations (cNode)
-    \item roll rate limitations
-    \item DVL bottom lock / accuracy in roll and pitch
-    \item TBS, water depth and wave influence
-    \item Don't know how well the thrusters/joint motors follows the reference.
-    \item DataModel only 10 Hz, but the control loop runs at 50 Hz, 20 ms.
-    \item Thruster and joint limits.
-\end{itemize}
-
-The experiments are conducted at \gls{tbs} in the fjord outside Trondheim, Norway.
 % -----------------------------------------------------------------------------
 \section{Experimental Procedures}
 \subsection*{Launch and test procedures}
