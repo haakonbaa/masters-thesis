@@ -1,8 +1,8 @@
 \chapter{Modeling}
 \label{chap:modeling}
 
-This chapter delves into the mathematical modeling of light-\gls{uvms}s. Starting with the foundational 
-principles of rigid body dynamics, the chapter expands into the kinematic and 
+This chapter presents the mathematical modeling of \gls{uvms}s. Starting with the foundational 
+principles of rigid-body dynamics, the chapter expands into the kinematic and 
 dynamic modeling of \gls{aiauv}s, highlighting the coupling 
 effects between manipulator arms and the vehicle's base. Hydrodynamic forces, 
 including added mass and damping effects, are addressed to ensure an accurate 
@@ -11,14 +11,15 @@ blocks for developing advanced control algorithms discussed in later chapters.
 
 \section{Rigid Body Kinetics}
 
-Before modeling a general \gls{uvms} with multiple links, we will model
-a rigid body under water. As it turns out, the equations describing the motion
+Before modeling a general \gls{uvms} with multiple links,
+first consider the dynamics of a single rigid body underwater.
+As it turns out, the equations describing the motion
 of a system with multiple links is very much related to the dynamic properties
 of each individual link. This will become apparent when describing the mass
 and Coriolis matrices, as well as the forces acting on the general system.
-Consider a rigid body with mass $m$. Denote by $\bm{v}_{ng}^b$ the body's translational
+Consider a rigid-body with mass $m$. Denote by $\bm{v}_{ng}^b$ the body's translational
 velocity, and by $\bm{\omega}_{ng}^b$ its angular velocity in the
-body-fixed frame. We can find the kinetic energy of the body by integrating the
+body-fixed frame. The kinetic energy of the body can be found by integrating the
 kinetic energy of every infinitesimal mass element. The kinetic energy
 of whole body is then given by
 \begin{equation}
@@ -39,7 +40,7 @@ mass. By defining $\bm{\nu} = \bm{\nu}_{bg}^b = \begin{bmatrix}(\bm{v}_{ng}^b)^T
     \end{bmatrix}
     \bm{\nu}\label{eq:T_body}.
 \end{align}
-Since the twist is defined in the center of gravity, we have that
+Since the twist is defined in the center of gravity, the following holds
 \begin{align}
     \int [\bm{r}_m]_{\times} \,dm &= \bm{0},
 \end{align}
@@ -50,9 +51,8 @@ expressed as
     T(\bm{\nu}) &= \frac{1}{2} \bm{\nu}^T \bm{M} \bm{\nu} \label{eq:TM_body} &
     \bm{M} &= \begin{bmatrix} m\I_{3} & \bm{0} \\ \bm{0} & \bm{I}_g^b \end{bmatrix}.
 \end{align}
-The matrix $\bm{M}$ in \autoref{eq:TM_body} is called the spatial inertia matrix of the rigid body.
-Using Lagrange's method, being careful when differentiating in a rotating frame,
-we can find the equations of motion for the rigid body as \cite{fossen2021}:
+The matrix $\bm{M}$ in \autoref{eq:TM_body} is called the spatial inertia matrix of the rigid-body.
+Using Lagrange's method the equations of motion can be derived from the kinetic energy \cite{fossen2021}:
 \begin{align}
     \underbrace{
     \begin{bmatrix}
@@ -69,8 +69,8 @@ we can find the equations of motion for the rigid body as \cite{fossen2021}:
 }_{\bm{C}_{RB}^{CG}}\bm{\nu} = \bm{\tau}
     \label{eq:rigid_body_eom_cg}
 \end{align}
-where $\bm{\tau}$ is the generalized forces and moments acting on the body. We call the matrices
-pre-multiplying $\dot{\bm{\nu}}$ and $\bm{\nu}$ for $\bm{M}_{RB}^{CG}$ and $\bm{C}_{RB}^{CG}$ respectively. In general one might want to consider the equations of motion
+where $\bm{\tau}$ is the generalized forces and moments acting on the body. The matrices
+pre-multiplying $\dot{\bm{\nu}}$ and $\bm{\nu}$ are called $\bm{M}_{RB}^{CG}$ and $\bm{C}_{RB}^{CG}$ respectively. In general one might want to consider the equations of motion
 about a different point than the center of gravity. The twist of the body is
 related to the twist in the new point, $b$, by the matrix \cite{fossen2021}
 \begin{align}
@@ -87,7 +87,7 @@ related to the twist in the new point, $b$, by the matrix \cite{fossen2021}
 where $\bm{r}_{ng}^{b}$ is the position of the center of gravity relative to the
 new point and $\bm{\nu}_{nb}^{b}$ is the twist in the new point. By
 pre-multiplying \autoref{eq:rigid_body_eom_cg} by the inverse of the matrix
-in \autoref{eq:fossen_H} we get the equations of motion about the new point:
+in \autoref{eq:fossen_H} the equations of motion about the new point are expressed as:
 \begin{align}
     \underbrace{
         \bm{H}^T(\bm{r}_{bg}^b) \bm{M}_{CG}^{RB} \bm{H}(\bm{r}_{bg}^b)
@@ -128,15 +128,17 @@ written as \cite{sagatun1991}:
         -\left[\bm{M}_{21}\bm{v}_{nb}^{b} + \bm{M}_{22}\bm{\omega}_{nb}^b \right]_{\times}
     \end{bmatrix},
 \end{align}
-Where $\bm{M}_{ij}$ are the $3 \times 3$ submatrices of the $\bm{M}_{RB}$ matrix.
+where $\bm{M}_{ij}$ are the $3 \times 3$ submatrices of the $\bm{M}_{RB}$ matrix.
 
 % -----------------------------------------------------------------------------
 \newpage
 \section{AIAUV Modeling}
 
 A comprehensive description of the kinematics and dynamics of
-\gls{aiauv}'s can be found in \cite{schmidt2018}. Much of this section
-will be based on the work of \cite{from2014} and \cite{schmidt2018}, as well as an unpublished
+\gls{aiauv}s can be found in \cite{schmidt2018}.
+This section presents the essential elements of kinematic and dynamic modeling of \gls{aiauv}s, with a more comprehensive
+treatment available in \cite{from2014} and \cite{schmidt2018}.
+Aditionally, the section draws on an unpublished
 first draft of \cite{schmidt2018}. The following chapter will use notation adopted from
 \cite{from2014}.
 
@@ -155,19 +157,19 @@ has index $1$ and the head has index $n$.
     \caption{Frames attached to the links of a snake-like robot.}
     \label{fig:frames}
 \end{figure}
-We denote some inertial \gls{ned} frame by $\{0\}$, and associate a frame to each link,
+Some inertial \gls{ned} frame is denoted by $\{0\}$, and a frame is associate to each link,
 setting the frame number the same as the link number.
 \autoref{fig:frames} shows an example of such a setup. Here, the system has
 three links connected by two joints. To highlight the importance of the $\{0\}$-
-and $\{n\}$-frames, they will also be reffered to as the $\{n\}$, for \gls{ned}, and
+and $\{1\}$-frames, they will also be refered to as the $\{n\}$, for \gls{ned}, and
 $\{b\}$, for body, respectively. The numbering and lettering will be used interchangeably
 depending on the context.
 
 A common way to describe the configuration of the base link is by the \gls{ned}
-position and a set of Euler angles. Alterneatively, the rotation of the base link
+position and a set of Euler angles. Alternatively, the rotation of the base link
 can be described by a unit quaternion. It will be assumed that the transformations
-between links are functions of a vector of joint angles, where we define
-$n_j \in \mathbb{N}$ to be the total number of joint angles. Putting this together,
+between links are functions of a vector of joint angles, where
+$n_j \in \mathbb{N}$ is defined to be the total number of joint angles. Putting this together,
 the necessary variables to describe the configuration of the entire system are
 collected in the vector $\bm{\xi}_{\Theta} \in \R^{6+n_j}$:
 %we define the configuration of the entire system as $\bm{\xi} \in \R^{6+n_j}$:
@@ -181,7 +183,7 @@ collected in the vector $\bm{\xi}_{\Theta} \in \R^{6+n_j}$:
 where $\bm{\eta} \in \R^6$ is a collection of the the NED position $\bm{p}_{nb}^n \in \R^3$,
 and Euler angles $\bm{\Theta}_{nb} \in \R^3$, of the base
 link. $\bm{\theta} \in \R^{n_j}$ is the vector of joint angles, and $\bm{\theta}_i$, $i = 1,\cdots,n-1$
-is a vector of joint angles for link $i$. We note that each joint can be a function of $1$ or
+is a vector of joint angles for link $i$. It is noted that each joint can be a function of $1$ or
 more joint angles.
 %In the case of a unit quaternion representation of the base link,
 %rotation, the vector $\bm{\Theta}_{nb}$ is replaced by a unit quaternion $\bm{q}_b^n$.
@@ -200,30 +202,30 @@ The quaternion satisfies the constraint $||\bm{q}_b^n||_2 = 1$. The homogeneous
 transformation matrix from the base link to the inertial frame can be expressed as
 \begin{align}
     \bm{H}_1^0(\bm{\eta}_{\Theta}) &= \begin{bmatrix}
-        \bm{R}_b^n(\bm{\Theta})& \bm{p}_{nb}^n \\
+        \bm{R}_{\Theta}(\bm{\Theta}_{nb})& \bm{p}_{nb}^n \\
         \bm{0}_{1\times3} & 1
     \end{bmatrix} &
     \bm{H}_1^0(\bm{\eta}_{q}) &= \begin{bmatrix}
-        \bm{R}_b^n(\bm{q}_{b}^n)& \bm{p}_{nb}^n \\
+        \bm{R}_{q}(\bm{q}_{b}^n)& \bm{p}_{nb}^n \\
         \bm{0}_{1\times3} & 1
     \end{bmatrix},
     \label{eq:H1}
 \end{align}
 using Euler angles and unit quaternion, respectively. In the case of Euler angles,
-$\bm{R}_b^n$ uses the $x$-, $y$- and $z$-axis rotation matrices:
+$\bm{R}_{\Theta}$ uses the $x$-, $y$- and $z$-axis rotation matrices:
 \begin{align}
-    \bm{R}_b^n(\bm{\Theta}_{nb}) &= \bm{R}_z(\psi) \bm{R}_y(\theta) \bm{R}_x(\phi),
+    \bm{R}_{\Theta}(\bm{\Theta}_{nb}) &= \bm{R}_z(\psi) \bm{R}_y(\theta) \bm{R}_x(\phi),
 \end{align}
-as defined in \autoref{eq:bp:so3:rotations}. Explicitly, the rotation matrix $\bm{R}_b^n$
-is given by
+as defined in \autoref{eq:bp:so3:rotations}. Explicitly, the rotation matrices $\bm{R}_{\Theta}$ and \(\bm{R}_{q}\)
+are given by
 \begin{subequations}
 \begin{align}
-    \bm{R}_b^n(\bm{\Theta}) &= \begin{bmatrix}
+    \bm{R}_{\Theta}(\bm{\Theta}_{nb}) &= \begin{bmatrix}
         c\psi\, c\theta & -s\psi\, c\phi + c\psi\, s\theta\, s\phi & s\psi\, s\phi + c\psi\, c\phi\, s\theta \\
         s\psi\, c\theta & c\psi\, c\phi + s\psi\, s\theta\, s\phi & -c\psi\,s\phi + s\psi\, c\phi\, s\theta \\
         -s\theta & c\theta\, s\phi & c\theta\, c\phi
     \end{bmatrix} \\
-    \bm{R}_b^n(\bm{q}_b^n) &= \begin{bmatrix}
+    \bm{R}_{q}(\bm{q}_b^n) &= \begin{bmatrix}
         1 - 2(\epsilon_2^2 + \epsilon_3^2) & 2(\epsilon_1\epsilon_2 - \epsilon_3\eta) & 2(\epsilon_1\epsilon_3 + \epsilon_2\eta) \\
         2(\epsilon_1\epsilon_2 + \epsilon_3\eta) & 1 - 2(\epsilon_1^2 + \epsilon_3^2) & 2(\epsilon_2\epsilon_3 - \epsilon_1\eta) \\
         2(\epsilon_1\epsilon_3 - \epsilon_2\eta) & 2(\epsilon_2\epsilon_3 + \epsilon_1\eta) & 1 - 2(\epsilon_1^2 + \epsilon_2^2)
@@ -231,13 +233,13 @@ is given by
 \end{align}
 \end{subequations}
 where $c$ and $s$ are abbreviations for the $\cos$ and $\sin$ functions, respectively. The body
-frame twist $\bm{\nu}_{nb}^b$ can be found by means of \autoref{eq:def_twist}:
+frame twist $\bm{\nu}_{nb}^b$ can be found by means of \autoref{eq:body_twist_def}:
 \begin{align}
     \label{eq:modeling:body_twist}
     \bm{\nu}_{nb}^b &= \bm{H}_b^n(\bm{\eta})^{-1} \dot{\bm{H}}_b^n(\bm{\eta}).
 \end{align}
 Using \autoref{eq:modeling:body_twist}, it can be shown that the body twist can be expressed
-as a matrix-vector product with the state vector $\bm{\xi}$. Thist holds when $\bm{H}_b^n$ is parameterized by Euler angles,
+as a matrix-vector product with the state vector $\bm{\xi}$. This holds when $\bm{H}_b^n$ is parameterized by Euler angles,
 as well as when it is parameterized by unit quaternions. The body twist
 $\bm{\nu}_{nb}^b \in \R^6$ of the base link as well as the joint velocities
 $\dot{\bm{\theta}} \in \R^{n-1}$ are collected in the vector $\bm{\zeta} \in \R^{6+n_j}$:
@@ -253,14 +255,14 @@ the differential kinematics of the system can be expressed as \cite{fossen2021}:
 \begin{align}
     \dot{\bm{\xi}}_{\Theta} &= \bm{J}_{\Theta}(\bm{\Theta}_{nb})\bm{\zeta} &
     \bm{J}_{\Theta}(\bm{\Theta}_{nb}) &= \begin{bmatrix}
-        \bm{R}_{b}^n(\bm{\Theta}_{nb}) & \bm{0}_{3 \times 3} & \bm{0}_{3 \times n_j} \\
-        \bm{0}_{3 \times 3} & \bm{T}_{b}^n(\bm{\Theta}_{nb}) & \bm{0}_{3 \times n_j} \\
+        \bm{R}_{\Theta}(\bm{\Theta}_{nb}) & \bm{0}_{3 \times 3} & \bm{0}_{3 \times n_j} \\
+        \bm{0}_{3 \times 3} & \bm{T}_{\Theta}(\bm{\Theta}_{nb}) & \bm{0}_{3 \times n_j} \\
         \bm{0}_{n_j \times 3} & \bm{0}_{n_j \times 3} & \I_{n_j}
     \end{bmatrix} \\
     \dot{\bm{\xi}}_{q} &= \bm{J}_{q}(\bm{q}_{b}^n)\bm{\zeta} &
     \bm{J}_{q}(\bm{q}_{b}^n) &= \begin{bmatrix}
-        \bm{R}_{b}^n(\bm{q}_{b}^n) & \bm{0}_{3 \times 3} & \bm{0}_{3 \times n_j} \\
-        \bm{0}_{4 \times 3} & \bm{T}_{b}^n(\bm{q}_{b}^n) & \bm{0}_{4 \times n_j} \\
+        \bm{R}_{q}(\bm{q}_{b}^n) & \bm{0}_{3 \times 3} & \bm{0}_{3 \times n_j} \\
+        \bm{0}_{4 \times 3} & \bm{T}_{q}(\bm{q}_{b}^n) & \bm{0}_{4 \times n_j} \\
         \bm{0}_{n_j \times 3} & \bm{0}_{n_j \times 3} & \I_{n_j}
     \end{bmatrix}.
 \end{align}
@@ -269,49 +271,19 @@ The $\bm{T}_b^n$ matrix transforms the body fixed angular velocities to the deri
 rotation parameters and is given by \cite{fossen2021}:
 \begin{subequations}
     \begin{align}
-        \bm{T}_b^n(\bm{\Theta}_{nb}) &= \begin{bmatrix}
+        \bm{T}_{\Theta}(\bm{\Theta}_{nb}) &= \begin{bmatrix}
             1 & \sin\phi \tan\theta & \cos \phi \tan \theta \\
             0 & \cos \phi & -\sin\phi \\
             0 & \sin \phi / \cos \theta & \cos \phi / \cos \theta
         \end{bmatrix} \\
-        \bm{T}_b^n(\bm{q}_{b}^n) &= \frac{1}{2}\begin{bmatrix}
+        \bm{T}_{q}(\bm{q}_{b}^n) &= \frac{1}{2}\begin{bmatrix}
             -\epsilon_1 & -\epsilon_2 & -\epsilon_3 \\
             \eta & -\epsilon_3 & \epsilon_2 \\
             \epsilon_3 & \eta & -\epsilon_1 \\
             -\epsilon_2 & \epsilon_1 & \eta
-        \end{bmatrix}
+        \end{bmatrix}.
     \end{align}
 \end{subequations}
-
-\iffalse
-Where $\bm{R}_{nb}(\bm{\Theta}_{nb})$ is the rotation matrix from the body-fixed frame to the NED frame
-using the Euler angles $\bm{\Theta}_{nb}$ as described in \autoref{sec:bp:so3_se3}.
-The $\bm{T}_{nb}(\bm{\Theta}_{nb})$ matrix transforms the body fixed angular velocities
-of the base link to the derivative of the Euler angles and is given by \cite{fossen2021}:
-\begin{align}
-    \bm{T}_{nb}(\bm{\Theta}_{nb}) = \begin{bmatrix}
-        1 & \sin\phi \tan\theta & \cos \phi \tan \theta \\
-        0 & \cos \phi & -\sin\phi \\
-        0 & \sin \phi / \cos \theta & \cos \phi / \cos \theta
-    \end{bmatrix}.
-\end{align}
-
-\begin{align}
-    \bm{H}_1^0(\bm{\eta}) &= \begin{bmatrix}
-        \bm{R}_z(\psi) \bm{R}_y(\theta) \bm{R}_x(\phi) & \bm{p}_{nb}^b \\
-        \bm{0}_{1\times3} & 1
-    \end{bmatrix} &
-    \bm{p}_{nb}^b = \begin{bmatrix}x^n \\ y^n \\ z^n \end{bmatrix},
-\end{align}
-
-where $\phi$, $\theta$ and $\phi$ are the Euler angles, $x^n$, $y^n$ and $z^n$
-is the position of the base link in the \gls{ned}-frame , collected
-int the vector $\bm{\theta} \in \R^{n_j}$:
-\fi
-
- 
-
-
 
 % -----------------------------------------------------------------------------
 \subsection{Forward Kinematics}
@@ -319,7 +291,7 @@ int the vector $\bm{\theta} \in \R^{n_j}$:
 % 
 The goal of this subchapter is to express the relations between velocities in
 the previously defined frames. The most important takeaway will
-be the defintion of the link-jacobians, which will be very usefull when expressing
+be the definition of the link jacobians, which will be very useful when expressing
 the dynamics of a general \gls{aiauv}.
 Let
 \begin{align}
@@ -338,18 +310,18 @@ as the transformation matrix from frame $i+1$ to frame $i$ such that
     \bm{H}_{i+1}^k &= \bm{H}_i^k \bm{A}_i(\bm{\theta}_i). \label{eq:mod:Hi}
 \end{align}
 Before generalizing the joint transformations to be functions of an arbitrary number of parameters,
-it will be asumed that they are functions of one variable, more specifically,
+it will be assumed that they are functions of one variable, more specifically,
 \begin{align}
-    \bm{A}_i(\theta_i) &= \bm{A}_i(0) \exp(\theta_i[\bm{a}_i]_{\wedge}) & \bm{A}_i(0) &\in \SE & \bm{a}_i&\in \R^6
+    \bm{A}_i(\theta_i) &= \bm{A}_i(0) \exp(\theta_i[\bm{a}_i]_{\wedge}) & \bm{A}_i(0) &\in \SE & \bm{a}_i&\in \R^6.
 \end{align}
-We define the body twist $\bm{\nu}_i$ of link $i$ as
+The body twist of link \(i\) is defined as $\bm{\nu}_i$, and is given by
 \begin{align}
-    [\bm{\nu}_i]_{\wedge} := [\bm{\nu}_{ni}^i]_{\wedge} := (\bm{H}_i^b)^{-1}(\dot{\bm{H}}_i^b)
+    [\bm{\nu}_i]_{\wedge} := [\bm{\nu}_{ni}^i]_{\wedge} := (\bm{H}_i^b)^{-1}(\dot{\bm{H}}_i^b).
 \end{align}
-and note that
+The body twist of the base link can be expressed as
 \begin{align}
     \bm{\nu}_1 &= \bm{\nu}_{nb}^b = \bm{J}_1 \bm{\zeta} &
-    \bm{J}_1 &= \begin{bmatrix}\I_{6} & \bm{0}_{n_1\times6}\end{bmatrix}
+    \bm{J}_1 &= \begin{bmatrix}\I_{6} & \bm{0}_{n_1\times6}\end{bmatrix}.
 \end{align}
 It turns out that the body twist of link $i+1$ can be recursively calculated from
 the previous links twist:
@@ -369,33 +341,34 @@ the previous links twist:
 where the dependencies of the matrices are dropped for sake of brevity.
 The step after \autoref{eq:eta:induction} is valid through an argument of induction, and
 implicity defines the $\bm{J}_i(\bm{\theta})$ matrices.
-By inspection of \autoref{eq:H_recursive}, we can conclude that
+By inspection of \autoref{eq:H_recursive}, it can be concluded that
 \begin{subequations}
+\label{eq:recursive_link_jacobians}
 \begin{align}
     \bm{\nu}_{i+1} &= \bm{J}_{i+1}(\bm{\theta}) \bm{\zeta} \\
     \bm{J}_{i+1}(\bm{\theta}) &= 
     \Ad^{-1}(\bm{A}_i(\bm{\theta}))\bm{J}_i\left(\bm{\theta}\right) + \begin{bmatrix}\bm{0}_{6\times6+(i-1)} & \bm{a}_i & \bm{0}_{6\times n_j-i}\end{bmatrix}.
-        \label{eq:recursive_link_jacobians}
 \end{align}
 \end{subequations}
 The matrices $\bm{J}_i(\bm{\theta})$ are important for control purposes and for expressing the 
-dynamics of the system. They are reffered to as the link jacobians. It will also 
-be usefull to differentiate them when doing task-priority control. Differentiating
-\autoref{eq:recursive_link_jacobians} with respect to time, we get
+dynamics of the system. They are reffered to as the link Jacobians. It will also 
+be useful to differentiate them when doing task-priority control. Differentiating
+\autoref{eq:recursive_link_jacobians} with respect to time gives the following
+expression for the time derivative of the link Jacobians:
 \begin{align}
     \dot{\bm{J}}_1(\bm{\theta}) &= \bm{0}_{6\times(6+n)} \\
     \dot{\bm{J}}_{i+1}(\bm{\theta}) &= -\ad(\bm{a}_i)\bm{J}_{i+1}(\bm{\theta})\dot{\theta}_i +
         \Ad^{-1}(\bm{A}_i(\theta_i))\dot{\bm{J}}_i(\bm{\theta},\dot{\bm{\theta}})
 \end{align}
-It is important no note that in the general case, $\bm{\theta}_i$ is a vector of
+It is important to note that in the general case, $\bm{\theta}_i$ is a vector of
 joint parameters, not a scalar. The parameters will uniquely describe the transformation from one link
-to another. We will assume that every transformation matrix $\bm{A}_i(\bm{\theta}_i)$ consits of $l_i \in \N$ transformations
+to another. It is assumed that every transformation matrix $\bm{A}_i(\bm{\theta}_i)$ consits of $l_i \in \N$ transformations
 of zero or one variable.
 \begin{align}
     \bm{A}_i(\bm{\theta}_i) = \bm{B}_{i,1} \bm{B}_{i,2} \cdots \bm{B}_{i,l_i}.
 \end{align}
 For instance, the transformation $\bm{A}_1(\bm{\bm{\theta}_1}) = \bm{H}_2^1(\bm{\theta})$
-in \autoref{fig:frames} can be written as the following sequance of transforms;
+in \autoref{fig:frames} can be written as the following sequence of transformations;
 translation along the x-axis, rotation about the y-axis, rotation about the z-axis, and finally,
 a translation along the x-axis. This can be seen in \autoref{fig:transforms_all}, where the shape
 attached to the axis represents where the coordinate origin is.
@@ -412,11 +385,11 @@ It will be assumed that all the $\bm{B}_{i,j}(\theta)$ transformations can be wr
 where $\bm{b}_{i,j} \in \R^6$ is a constant vector. It it important to note that
 this simple form can represent a lot of transformations in $\SE$. For instance,
 a constant transform can be expressed by setting $\bm{b}_{i,j} = \bm{0}$ and choosing $\bm{B}_{i,j}(0)$.
-Pure rotations of one variable can be parameterized using angle-axis parameters, using $\bm{b}_{i,j} =
+Pure rotations of one variable can be parameterized using angle-axis parameters, i.e. $\bm{b}_{i,j} =
 \begin{bmatrix}\bm{0}^T & \bm{k}^T &\end{bmatrix}^T$, where $\bm{k}$ is the axis. Translations
-are acheived by setting $\bm{b}_{i,j} = \begin{bmatrix} \bm{k}^T & \bm{0}^T \end{bmatrix}^T$.
+are achieved by setting $\bm{b}_{i,j} = \begin{bmatrix} \bm{k}^T & \bm{0}^T \end{bmatrix}^T$.
 More complex transforms, such as the one between frame $2$ and $1$ in \autoref{fig:transforms_all}
-are acheived by consecutive transformations on this form. To illustrate this point, the transformation
+are achieved by consecutive transformations on this form. To illustrate this point, the transformation
 from frame $2$ to frame $1$ in \autoref{fig:transforms_all} can be expressed as
 \begin{align}
     \begin{bmatrix}1 & 0 & 0 & l_1 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}
@@ -424,93 +397,18 @@ from frame $2$ to frame $1$ in \autoref{fig:transforms_all} can be expressed as
     \exp\left(\theta_2\begin{bmatrix}\bm{0} \\ 0 \\ 1 \\ 0\end{bmatrix}_{\wedge}\right)
     \begin{bmatrix}1 & 0 & 0 & l_2 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1\end{bmatrix}.
 \end{align}
-Althoug the system has become much more general by allowing joint transformations to
-be functions of an arbitrary number of parameters, computation of the link jacobians can
+Although the system has become much more general by allowing joint transformations to
+be functions of an arbitrary number of parameters, computation of the link Jacobians can
 be done in a very similar way as previously shown. This is because the sequence of
 transforms from frame $i+1$ to $i$ is parameterized in exactly the same way as
 from $n$ to $1$ when the robot has joints of one parameter.
 
 % ----------------
-\iffalse
-We define $\bm{\theta} = \begin{bmatrix}\theta_1 & \theta_2 & \cdots & \theta_{n-1}\end{bmatrix}^T$
-and
-\begin{align}
-    \bm{A}_{i:j}(\bm{\theta}) =
-    \begin{cases}
-        \bm{A}_i(\theta_i) \bm{A}_{i+1}(\theta_{i+1}) \cdots \bm{A}_{j-1}(\theta_{j-1}) & i \leq j \\
-        \bm{0}_{4 \times 4} & i > j \\
-    \end{cases}.
-\end{align}
-It can be shown that the transformation matrix $\bm{A}_{i}(\theta_i)$ can be
-expressed as \cite{murray2017}:
-\begin{align}
-    \bm{A}_i(\theta_i) &= \bm{A}_i(0) \exp([\bm{a}_i]_{\wedge} \theta_i), \label{eq:expmap}
-\end{align}
-for some $\bm{a}_i \in \R^6$. The body twist
-of link $i+1$ relative to the inertial frame $n$ can be expressed as
-\begin{subequations}
-\begin{align}
-    \bm{\nu}_{n(i+1)}^{i+1} &= \left(\bm{H}_{i+1}^n\right)^{-1} \dot{\bm{H}}_{i+1}^n \\
-    &= \bm{A}_{1:i}^{-1}(\bm\theta) \bm{H}_1^{-1} \dot{\bm{H}}_{1} \bm{A}_{1:i}(\bm\theta) \nonumber \\
-    &+ \bm{A}_{2:i}^{-1}(\bm\theta) [\bm{a}_1]_{\wedge}\bm{A}_{2:i}(\bm\theta) \dot{\theta}_1 \nonumber \\
-    &\vdots \label{eq:body_twist_def} \\
-    &+ \bm{A}_{i:i}^{-1}(\bm\theta) [\bm{a}_{i-1}]_{\wedge}\bm{A}_{i:i}(\bm\theta) \dot{\theta}_{i} \nonumber \\
-    &+ [\bm{a}_{i}]_{\wedge} \dot{\theta}_i. \nonumber
-\end{align}
-\end{subequations}
-Defining $\bm{\nu}_i := \bm{\nu}_{ni}^i$ as the body twist of link $i$ relative to
-the inertial frame $n$, \autoref{eq:body_twist_def} can be written recursively as:
-\begin{subequations}
-    \label{eq:body_twist_recursive}
-\begin{align}
-    \bm{\nu}_{1} &= \bm{\nu}_{n1}^1 \\
-    \bm{\nu}_{i+1} &= \Ad^{-1}(\bm{A}_i(\theta_i)) \bm{\nu}_i + [\bm{a}_i]_{\wedge} \dot{\theta}_i.
-\end{align}
-\end{subequations}
-This motivates the definition of the link Jacobians that are defined in a way
-such that
-\begin{align}
-    \bm{\nu}_{i} = \bm{J}_i(\bm{\theta}) \bm{\zeta}
-\end{align}
-where the body twist $\bm{\nu}$ and the joint velocities $\dot{\bm{\theta}}$ are
-collected in the vector $\bm{\zeta}$:
-\begin{align}
-    \bm{\zeta} = \begin{bmatrix}\bm{\nu} \\ \dot{\bm{\theta}}\end{bmatrix} \in \R^{6+(n-1)}.
-\end{align}
-From \autoref{eq:body_twist_recursive} we can see that the link Jacobians can be
-defined as
-\begin{subequations}
-    \label{eq:link_jacobian}
-\begin{align}
-    \bm{J}_1(\bm{\theta}) &= \begin{bmatrix} \bm{I}_6 & \bm{0}_{6 \times n} \end{bmatrix} \\
-        \bm{J}_{i+1}(\bm{\theta}) &= \begin{bmatrix}
-            \Ad^{-1}(\bm{A}_{1:i}(\bm{\theta}))  &  \Ad^{-1}(\bm{A}_{2:i}(\bm{\theta})) \bm{a}_1 &
-            \cdots & \bm{a}_i & \bm{0}_{6 \times (n-i)}
-        \end{bmatrix} \\
-    &= \Ad^{-1}(\bm{A}_i(\theta_i)) \bm{J}_i(\bm{\theta}) + \begin{bmatrix}
-        \bm{0}_{6 \times (5+i)} & \bm{a}_i & \bm{0}_{6 \times (n-i)}
-    \end{bmatrix}.
-\end{align}
-\end{subequations}
-The derivatives of the link Jacobians are needed for control purposes and
-calculation of the Coriolis matrix. By differentiating \autoref{eq:link_jacobian}
-with respect to time, we get
-\begin{subequations}
-\begin{align}
-    \dot{\bm{J}}_1(\bm{\theta}) &= \bm{0}_{6\times(6+n)} \\
-    \dot{\bm{J}}_{i+1}(\bm{\theta},\dot{\bm{\theta}}) &= -[\bm{a}_i]_{\wedge} \Ad^{-1}(\bm{A}_i(\theta_i))
-        \bm{J}_i(\bm{\theta})\dot{\theta}_i + \Ad^{-1}(\bm{A}_i(\theta_i))\dot{\bm{J}}_i(\bm{\theta},\dot{\bm{\theta}}) \\
-    &= -[\bm{a}_i]_{\wedge}\bm{J}_{i+1}(\bm{\theta})\dot{\theta}_i +
-        \Ad^{-1}(\bm{A}_i(\theta_i))\dot{\bm{J}}_i(\bm{\theta},\dot{\bm{\theta}}).
-\end{align}
-\end{subequations}
-
-\fi %--------------------------
 
 
 \subsection{Dynamics}
 
-For each link, $i$, defined in the previous subchapter, we associate the following
+For each link, $i$, defined in the previous subchapter, associate the following
 properties: $\bm{M}_i \in \R^{6 \times 6}$ is the inertia matrix of the link,
 $\bm{J}_i \in \R^{6 \times (6+n)}$ is the link jacobian, $\bm{C}_i \in \R^{6 \times 6}$
 is the Coriolis matrix, $\bm{D}_i \in \R^{6 \times 6}$ is the damping matrix and
@@ -520,13 +418,13 @@ $\bm{M}_i$ takes into account the added mass of the link
 \begin{align}
     \bm{M}_i &= \bm{M}_{RB,i} + \bm{M}_{A,i},
 \end{align}
-where $\bm{M}_{RB,i}$ is the rigid body inertia matrix of the link and $\bm{M}_{A,i}$
+where $\bm{M}_{RB,i}$ is the rigid-body inertia matrix of the link and $\bm{M}_{A,i}$
 is the added mass matrix of the link. As a result of the added mass, the Coriolis
 matrix is given by
 \begin{align}
     \bm{C}_i &= \bm{C}_{RB,i} + \bm{C}_{A,i}
 \end{align}
-where $\bm{C}_{RB,i}$ is the Coriolis matrix of the rigid body and $\bm{C}_{A,i}$
+where $\bm{C}_{RB,i}$ is the Coriolis matrix of the rigid-body and $\bm{C}_{A,i}$
 is a function of the added mass matrix. The added mass matrix and the damping matrix
 for each link is the topic of \autoref{sec:hydrodynamics}. The dynamics of the
 system described in the previous subchapter can be modeled as
@@ -542,29 +440,29 @@ $\bm{M}(\bm{\theta}) \in \R^{(6+n)\times(6+n)}$  is the inertia matrix of the
 system, $\bm{C}(\bm{\theta}, \bm{\zeta}) \in \R^{(6+n)\times(6+n)}$ is the
 Coriolis matrix, $\bm{D}(\bm{\theta}, \bm{\zeta}) \in \R^{(6+n)\times(6+n)}$ is
 the damping matrix, $\bm{g}(\bm{\xi}) \in \R^{6+n}$ is the gravitational forces
-and buoyancy forces and moments acting on the system, $\bm{\tau} \in \R^{n}$ is the generalized
+and buoyancy forces and moments acting on the system, $\bm{\tau} \in \R^{n}$ is the vector of generalized
 forces acting on the system as a result of the actuators,
 and $\bm{\tau}_{\mathrm{ext}} \in \R^{6+n}$ is the
 generalized external forces acting on the system. Let $\bm{J}_{i}(\bm{\theta})$
-be the link Jacobians as defined in \autoref{eq:link_jacobian}.
+be the link Jacobians as defined in \autoref{eq:recursive_link_jacobians}
 The inertia matrix
-can be expressed as
+can then be expressed as
 \begin{align}
     \bm{M}(\bm{\theta}) &= \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{M}_i \bm{J}_{i}(\bm{\theta}).
 \end{align}
 Note that if the Jacobians are full rank, the inertia matrix is positive definite.
-Furthermore, it is always symmetric. The Coriolis matrix can be expressed as
+Furthermore, it is always symmetric. The Coriolis matrix can then be expressed as
 \begin{align}
     \bm{C}(\bm{\theta}, \bm{\zeta}) &=
     \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{M}_i \dot{\bm{J}}_{i}(\bm{\theta},\dot{\bm{\theta}})
     -\bm{J}_{i}^T(\bm{\theta}) \bm{C}_i(\bm{\theta},\bm{\zeta})_i \bm{J}_{i}(\bm{\theta}) \bm{\zeta}.
 \end{align}
-The damping matrix can be expressed as
+The damping matrix is expressed as
 \begin{align}
     \bm{D}(\bm{\theta}, \bm{\zeta}) &=
     \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{D}_i(\bm{\theta},\bm{\zeta}) \bm{J}_{i}(\bm{\theta}).
 \end{align}
-and the gravitational forces and buoyancy forces and moments can be expressed as
+The gravitational forces and buoyancy forces and moments can be expressed as
 \begin{align}
     \bm{g}(\bm{\xi}) &=
     \sum_{i=1}^{n} \bm{J}_{i}^T(\bm{\theta}) \bm{g}_i(\bm{\xi}). \label{eq:modeling:g}
@@ -579,7 +477,7 @@ the actuator configuration matrix $\bm{B}(\bm{\theta})$ as
 \end{align}
 where $\bm{B}_i$ is the actuator configuration matrix for link $i$. For a simple
 thruster configuration, such as in the case where all thrusters are fixed with
-respect to some link, the $\bm{B}_i$ matrices are constant and can be expressed
+respect to some link, the $\bm{B}_i$ matrices are constant and are expressed
 as
 \begin{align}
     \bm{B}_i &= \begin{bmatrix}
@@ -601,13 +499,13 @@ is the point of application of the thrust.
 Hydrodynamics is the study of the forces acting on a body in a fluid. The forces
 can be modeled as potential forces, giving rise to the added mass matrix, and
 damping forces. This chapter will focus on how to model the hydrodynamic forces
-acting on a rigid body in a fluid.
+acting on a rigid-body in a fluid.
 
 \subsection{Added Mass}
 
-When a rigid body accelerates in a fluid, the fluid is accelerated as well. 
+When a rigid-body accelerates in a fluid, the fluid is accelerated as well. 
 This contributes to the total kinetic energy of the system \cite{antonelli2018}.
-To account for these effects, the spatial inertia matrix of the rigid body
+To account for these effects, the spatial inertia matrix of the rigid-body
 can be augmented to approximate the total kinetic energy of the system: 
 \begin{equation}
     \bm{M} = \bm{M}_{RB} + \bm{M}_{A}.
@@ -625,7 +523,7 @@ as
 \begin{align}
     T_a &= \frac{1}{2}\bm{\nu}^T\bm{M}_A\bm{\nu} & \dot{\bm{M}}_A &= \bm{0},
 \end{align}
-where $\bm{\nu}$ is the twist velocity of the rigid body. For underwater 
+where $\bm{\nu}$ is the twist velocity of the rigid-body. For underwater 
 vehicles at low speed where the the shape has three planes of symmetry, the
 added mass matrix can be approximated as \cite{fossen2021}:
 \begin{align}
@@ -635,9 +533,7 @@ added mass matrix can be approximated as \cite{fossen2021}:
 \end{align}
 According to \cite{fossen2021} this approximation is found to be quite good for
 many applications due to the fact that the off diagonal coupling terms are small
-compared to the diagonal terms.
-
-By applying strip theory the added mass matrix for a cylindrical rigid body of
+compared to the diagonal terms. By applying strip theory the added mass matrix for a cylindrical rigid-body of
 mass $m$, length along the x-axis $l$ and radius $r$ can be derived as \cite{fossen1994}:
 \begin{align}
  X_{\dot{u}} &= -0.1 m &
@@ -661,7 +557,7 @@ can be approximated as \cite{fossen2021}:
 
 \subsection{Damping}
 
-There are several phenomena that contribute to the damping of a rigid body in
+There are several phenomena that contribute to the damping of a rigid-body in
 a fluid. Among these are potential damping, skin friction, wave drift damping,
 damping due to vortex shedding and lifting forces. In many cases
 all of these effects can be approximated using a linear damping matrix $\bm{D}$ and
@@ -671,9 +567,9 @@ as
     \bm{D}(\bm{\nu}_r) &= \bm{D} + \bm{D}_n(\bm{\nu}_r) \\
     \bm{\tau}_d &= \bm{D}(\bm{\nu}_r)\bm{\nu}_r
 \end{align}
-for a 6-DOF rigid body, $\bm{D}(\bm{\nu}_r)$ is a $6\times 6$ matrix, $\bm{\nu}_r$
-is the twist of the rigid body relative to the fluid and $\bm{\tau}_d \in \R^6$
-is a vector of the damping forces and moments acting on the rigid body. \cite{antonelli2018}
+for a 6-DOF rigid-body, $\bm{D}(\bm{\nu}_r)$ is a $6\times 6$ matrix, $\bm{\nu}_r$
+is the twist of the rigid-body relative to the fluid and $\bm{\tau}_d \in \R^6$
+is a vector of the damping forces and moments acting on the rigid-body. \cite{antonelli2018}
 states that the damping matrix can be approximated as
 \begin{subequations}
 \begin{align}
@@ -711,47 +607,3 @@ damping matrix for a cylinder as \cite{schmidt2018}:
 \label{eq:damping_cyl}
 \end{align}
 where $C_D$, $v_{ref}$, $\beta$, $\gamma$ are constants to be determined.
-
-% -----------------------------------------------------------------------------
-\iffalse
-\section{UVMS Kinematics}
-
-The following chapter will descibe the kinematics of an \gls{uvms}
-The \gls{uvms} consists of a rigid base and is connected to
-a manipulator with $n$ links. This makes the \gls{uvms} have a snake-like structure.
-Adopting notation from \cite{fossen2021}, the rigid base can be uniquely described
-by a set of $6$ coordinates
-\begin{align}
-    \bm{\eta} &= \begin{bmatrix} \bm{p} \\ \bm{\Theta} \end{bmatrix} \in \R^6 &
-        \bm{p} &= \begin{bmatrix} x^n \\ y^n \\ z^n \end{bmatrix} \in \R^3 &
-    \bm{\Theta} &= \begin{bmatrix} \phi \\ \theta \\ \psi \end{bmatrix} \in \R^3,
-\end{align}
-where $\bm{p}$ is the position of the base described in a NED frame and $\bm{\Theta}$
-are the Euler angles describing the orientation of the base. Note that the Euler
-angles are singular at $\theta = \pm \pi/2$, and that using quaternions
-would avoid this problem. Introducing quaternions would however add an extra
-equality constraint to the system, making the system harder to simulate. Because
-of this, Euler angles are used in this thesis. 
-
-We assume the position of the manipulator links relative to the base are uniquely
-described by a set of $n$
-
-
-% -----------------------------------------------------------------------------
-\section{UMS Dynamics}
-
-
-
-% mention that the damping matrix is a function of the velocity of the body
-% mention that for UVMs the damping matrix can be assumed decoupled for all links.
-
-{
-    \color{red}
-    \begin{itemize}
-        \item Multi-body dynamics
-        \item Hydrodynamics (damping)
-        \item Jacobians
-        \item Inspiration from Henrik?
-    \end{itemize}
-}
-\fi

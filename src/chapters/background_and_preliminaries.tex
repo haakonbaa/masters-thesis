@@ -1,6 +1,28 @@
 \chapter{Background and {Preliminaries}}
 \label{ch:background}
 
+\iffalse
+This chapter provides an overview of the mathematical background and
+preliminaries needed to understand the rest of the thesis. The chapter is
+structured as follows: \autoref{sec:bp:so3_se3} and \autoref{sec:bp:se3} introduce the
+special orthogonal group in three dimensions, $\SO$, and the special Euclidean
+group in three dimensions, $\SE$, respectively. These groups are essential for
+modeling the kinematics and dynamics of \gls{uvms}s. \autoref{sec:pseudoinverse} introduces the
+Moore-Penrose pseudo-inverse and the null-space projection, which are extensively used
+in the \gls{tpc} framework. \autoref{sec:lagrange} presents Lagrange's equations of motion, which are used to derive the equations of motion for the \gls{uvms}s. \autoref{sec:runge-kutta} introduces Runge-Kutta methods, which are used to numerically solve the equations of motion. Finally, \autoref{sec:background:quaternions} introduces the quaternion representation of rotations, which is used to represent the orientation of the \gls{uvms}s in this thesis. The quaternion representation is also used
+in the definition of tasks and the lower-levl \gls{dp} controller presented in
+\autoref{sec:tpc:low_level_control}
+The contents of this section, as well as all previous sections
+are heavily used in the implementation of the controllers and simulator presented in this thesis.
+\fi
+
+This chapter provides a comprehensive overview of the mathematical foundations and preliminaries necessary for understanding the remainder of this thesis. The chapter is organized as follows: \autoref{sec:bp:so3_se3} and \autoref{sec:bp:se3} introduce the Special Orthogonal group in three dimensions, $\SO$, and the Special Euclidean group in three dimensions, $\SE$, respectively. These groups are fundamental for modeling the kinematics and dynamics of \gls{uvms}s.
+\autoref{sec:pseudoinverse} presents the Moore-Penrose pseudo-inverse and null-space projection techniques, which are extensively employed within the \gls{tpc} framework. \autoref{sec:lagrange} discusses Lagrange's equations of motion, which form the basis for deriving the dynamic equations of \gls{uvms}s. \autoref{sec:runge-kutta} introduces the Runge-Kutta family of methods, which are used for the numerical integration of these equations of motion.
+Finally, \autoref{sec:background:quaternions} introduces the quaternion representation of rotations, which is utilized to describe the orientation of \gls{uvms}s throughout this thesis. The quaternion representation also plays a central role in task definition and in the design of the low-level \gls{dp} controller discussed in \autoref{sec:tpc:low_level_control}.
+
+The mathematical concepts introduced in this chapter are important for the implementation of the control strategies and simulation environment developed in this work.
+
+
 % -----------------------------------------------------------------------------
 \section{Special Orthogonal Group in 3 dimensions}
 \label{sec:bp:so3_se3}
@@ -57,7 +79,12 @@ of $\bm{R}_a^b \in \SO$ are as follows \cite{modsim}:
 
 Rotations in three-dimensional space can be parameterized using various methods,
 including Euler angles, quaternions, angle-axis representations, and
-Rodrigues parameters. In this thesis, Euler angles are used for simplicity.
+Rodrigues parameters.
+In this thesis, quaternions are used to represent rotations. It is however
+useful to understand the Euler angle representation, as tasks
+are often expressed in terms of Euler angles. This is because the equality
+constraint imposed on the quaternion representation makes it less convenient
+to define tasks in terms of quaternions.
 Euler angles are a set of three angles that describe a sequence of three
 rotations about the principal axes of a reference frame. These rotations are
 performed in a specific order: typically about the $x$-axis, followed by the $y$
@@ -97,7 +124,9 @@ lose a degree of freedom. We say that the system has lost a degree of freedom
 when this happens. In practice it is often possible to avoid this issue by not
 controlling the system to a $\pm90^\circ$ pitch angle, or by switching to a
 different angle representation when the system approaches gimbal lock. In this
-work we avoid this issue by not controlling the system to these singularities.
+work the issue is avoided by using a quaternion-based representation of the
+rotation, which does not suffer from gimbal lock. Quaternions are presented
+in \autoref{sec:background:quaternions}.
 
 % -----------------------------------------------------------------------------
 \section{Special Euclidean Group in 3 dimensions}
@@ -254,7 +283,7 @@ and for a full-row rank matrix $\bm{A}$, the pseudo-inverse is
     \bm{A}^{+} = \bm{A}^T (\bm{A} \bm{A}^T)^{-1}.
 \end{align}
 In the general case, whether or not $\bm{A}$ is full rank, the pseudo-inverse can always
-be computed using the singular value decomposition (SVD) of $\bm{A}$. The SVD of $\bm{A}$ is
+be computed using the \gls{svd} of $\bm{A}$. The \gls{svd} of $\bm{A}$ is
 \begin{subequations}
 \begin{align}
     \bm{A} &= \bm{U} \bm{\Sigma} \bm{V}^T \\
@@ -294,14 +323,14 @@ This is a fact that will be used extensively when formulating the task-priority
 controllers in later chapters.
 
 % -----------------------------------------------------------------------------
-\section{Lagrange's Equation of Motion}
+\section{Lagrange's Equations of Motion}
 \label{sec:lagrange}
-Lagrange's equation of motion is a formulation of the equations of motion of a
+Lagrange's equations of motion is a formulation of the equations of motion of a
 system in terms of generalized coordinates. The equations are derived from the
 d'Alembert principle. It can be shown that the equations of motion derived from
-Lagrange's equation are equivalent to the equations of motion derived from
+Lagrange's equations are equivalent to the equations of motion derived from
 the classical Newton-Euler equations \cite{modsim}. There are however some advantages to using
-Lagrange's equation. For example, the equations are easier to derive for complex
+Lagrange's equations. For example, the equations are easier to derive for complex
 systems where the kinetic and potential energy is known. With modern computer
 algebra systems, the equations can be derived automatically, which is
 a great advantage for complex systems.
@@ -346,7 +375,8 @@ written as
     \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{C}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) = \bm{\tau}
 \end{align}
 where $\bm{M}(\bm{q})$ is symmetric and positive definite, $\bm{g}(\bm{q})$ is the
-gradient of the potential field.
+gradient of the potential field, and $\bm{C}(\bm{q}, \dot{\bm{q}})$ models the
+coriolis and centrifugal forces, which will be defined later.
 
 \section{Runge-Kutta Methods}
 \label{sec:runge-kutta}
@@ -415,8 +445,10 @@ which has the following coefficients:
     \end{matrix}
 \end{align}
 
-This method is used to simulate the dynamics of the underwater vehicle-manipulator
-systems in this thesis.
+This method is often referred to as RK4, and it is widely used due to its
+balance between accuracy and computational efficiency. The method is
+useful for simulating the dynamics of \gls{uvms}s.
+
 
 \section{Quaternions}
 \label{sec:background:quaternions}
@@ -545,7 +577,7 @@ which confirms that the kinematic equation is well-posed and free from
 singularities. Concepts from this section will be foundational when 
 formulating the kinematic equations for \gls{aiauv}s. They will also be 
 important in the development of the lower-level \gls{pd} controller in
-\autoref{sec:lower_level_pd_controller}, and when working with Jacobian 
-matrices in \autoref{sec:jacobian_matrices}.
+\autoref{sec:tpc:low_level_control}, and when defining task Jacobians 
+for experiments.
 
 

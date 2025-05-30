@@ -2,7 +2,7 @@
 \label{ch:tpc}
 \label{chap:tpc}
 
-This chapter explores various methods for task priority control, beginning with
+This chapter explores various methods for \gls{tpc}, beginning with
 an introduction to its fundamental concepts and a presentation of one of the
 earliest and most straightforward techniques. It then continues into more advanced
 approaches and concludes with a discussion of key implementation considerations,
@@ -16,22 +16,23 @@ Task priority control addresses the problem of managing multiple objectives simu
 
 A task refers to a specific objective or goal that a robotic system aims to achieve. Tasks can represent a wide variety of objectives, such as moving an end-effector to a desired position and orientation, maintaining a specific posture, avoiding joint limits, preventing collisions, or controlling specific velocities or accelerations at specific points. The tasks are typically described using functions, which map system states to task-specific outputs. These outputs are then often compared to desired values to determine the error and guide the control system towards achieving the task.
 
-The prioritization of tasks is a key aspect of task-priority control. When a task is assigned a higher priority, it must be executed without being disturbed or compromised by lower-priority tasks. This means that the control system must balance the objectives of multiple tasks, ensuring that the higher-priority tasks are achieved while still allowing the lower-priority tasks to be executed. In practice, higher priority tasks are resolved first, and the remaining degrees of freedom are used to achieve the lower-priority tasks. For example, a robotic manipulator tasked with avoiding obstacles might prioritize obstacle avoidance over maintaining an exact end-effector position.
+The prioritization of tasks is a key aspect of \gls{tpc}. When a task is assigned a higher priority, it must be executed without being disturbed or compromised by lower-priority tasks. This means that the control system must balance the objectives of multiple tasks, ensuring that the higher-priority tasks are achieved while still allowing the lower-priority tasks to be executed. In practice, higher priority tasks are resolved first, and the remaining degrees of freedom are used to achieve the lower-priority tasks. For example, a robotic manipulator tasked with avoiding obstacles might prioritize obstacle avoidance over maintaining an exact end-effector position.
 
 \sloppy{
-In the following sections, we will develop the mathematical foundations of task-priority control, exploring the concepts of kinematic- and dynamic-level task-priority control.
+In the following sections, we will develop the mathematical foundations of \gls{tpc}, exploring the concepts of kinematic- and dynamic-level \gls{tpc}.
 }
 
 % -----------------------------------------------------------------------------
 \section{Kinematic-level Redundancy Resolution}
 
-Kinematic-level redundancy resolution is a fundamental concept in task-priority control.
+Kinematic-level redundancy resolution is a fundamental concept in \gls{tpc}.
 It is one of the first methods proposed for handling redundancy in a task-priority framework.
-A fundamental assumption in kinematic-level redundancy resolution is that there
-already exists a controller that can generate the desired generalized velocities \(\bm{\zeta}_d(t)\).
+A fundamental assumption is kinematic-level redundancy resolution is that there
+already exists a controller that can track the desired generalized velocities
+\(\bm{\zeta}_d(t)\).
 Considerations around this assumption will be discussed in later sections.
 The mathematical concepts introduced in this section are presented in introductory
-chapters in many of the articles and books on task-priority control, such as
+chapters in many of the articles and books on \gls{tpc}, such as
 \cite{hanafusa1981}, \cite{nakamura1987}, \cite{khatib1987}. An overview is
 presented in \cite{chiaverini1997}.
 
@@ -62,7 +63,7 @@ Collecting the parenthesis of \autoref{eq:def_task_jacobian} in a matrix
     \dot{\bm{\sigma}}(t) = \bm{J}(\bm{\xi}(t))\bm{\zeta}(t).
 \end{align}
 The matrix \(\bm{J}(\bm{\xi}(t)) \in \mathbb{R}^{n \times m}\) is called the
-\emph{task Jacobian}, or simply the \emph{Jacobian}, and maps the generalised
+\emph{task Jacobian}, or simply the \emph{Jacobian}, and maps the generalized
 velocities $\bm{\zeta}(t)$ to the task velocity $\dot{\bm{\sigma}}(t)$.
 The Jacobian is a function of the robot's state \(\bm{\xi}(t)\).
 In the case where only one task is considered, one can use the pseudoinverse
@@ -72,8 +73,8 @@ task velocity. The generalized velocities are then given by
     \bm{\zeta}_d(t) = \bm{J}^{+}(\bm{\xi}(t)) \dot{\bm{\sigma}}_d(t) \label{eq:task_priority}
 \end{align}
 where \(\bm{J}^{+}(\bm{\xi}(t))\) is the pseudoinverse of the Jacobian at the current
-state \(\bm{\xi}(t)\). From now on the dependencies of $\bm{J}$, \(\bm{\xi}\)
-and $\bm{\sigma}$ will be omitted for brevity.
+state \(\bm{\xi}(t)\). For the sake of brevity, the dependencies of $\bm{J}$, \(\bm{\xi}\) and $\bm{\sigma}$ will be omitted
+in the following equations.
 
 In practice, the Jacobian might not represent the true kinematics of the robot.
 Furthermore, depending on the task, the desired task velocity might not be feasible,
@@ -114,17 +115,20 @@ Let $\bm{N}_i = \mathbb{I}_n - \bm{J}_i^{+} \bm{J}_i$ be the null space projecti
 matrix onto the null space of the Jacobian $\bm{J}_i$.
 The desired generalized velocities are then given by
 \begin{align}
-    \bm{\zeta}_d = \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right) \label{eq:task_priority_vel}
+    \bm{\zeta}_d = \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right), \label{eq:task_priority_vel}
 \end{align}
-comparing this to the single task case, $\bm{N}_i^{\#}$ is the null space projection matrix
-projecting a task onto the null space of all the higher-priority tasks.
+where \(\bm{N}_i^{\#}\) and \(\bm{J}_i^{\#}\) are placeholders for the
+variations of the null space projection matrix and generalized inverse of the Jacobian
+which remain to be defined.
+Comparing \autoref{eq:task_priority_vel} to the single task case, $\bm{N}_i^{\#}$ is the null space projection matrix
+projecting a task onto the null space of all the higher-priority tasks:
 \begin{align}
-    \bm{N}_i^{\#} = \bm{N}_1 \bm{N}_2 \cdots \bm{N}_{i-1}
+    \bm{N}_i^{\#} = \bm{N}_1 \bm{N}_2 \cdots \bm{N}_{i-1},
 \end{align}
 and the $\bm{J}_i^{\#}$ matrix is the projection matrix projecting a task onto the
-subspace spanned by the task Jacobian.
+subspace spanned by the task Jacobian
 \begin{align}
-    \bm{J}_i^{\#} = \bm{J}_i^+
+    \bm{J}_i^{\#} = \bm{J}_i^+.
 \end{align}
 In general, several slightly different task priority control frameworks have
 been proposed, following the same basic form as \autoref{eq:task_priority_vel}.
@@ -181,14 +185,14 @@ with respect to time once more:
 \end{align}
 Solving this equation for the derivative of the generalized velocities \(\dot{\bm{\zeta}}\) gives
 \begin{align}
-    \ddot{\bm{q}} = \bm{J}^{+} \left(\ddot{\bm{\sigma}} - \dot{\bm{J}}\dot{\bm{q}}\right) +
+    \ddot{\bm{\zeta}} = \bm{J}^{+} \left(\ddot{\bm{\sigma}} - \dot{\bm{J}}\dot{\bm{\zeta}}\right) +
     \left(\mathbb{I} - \bm{J}^{+}\bm{J}\right) \bm{z} \label{eq:task_acc_control},
 \end{align}
 for some arbitrary vector $\bm{z} \in \mathbb{R}^n$. Inspired from the
 velocity-level control, one can define the desired joint accelerations as
 \begin{align}
-    \ddot{\bm{q}}_d = \bm{J}^{+} \left(\ddot{\bm{\sigma}}_d
-    - \dot{\bm{J}}\dot{\bm{q}}\right) \label{eq:task_priority_acc}.
+    \ddot{\bm{\zeta}}_d = \bm{J}^{+} \left(\ddot{\bm{\sigma}}_d
+    - \dot{\bm{J}}\dot{\bm{\zeta}}\right) \label{eq:task_priority_acc}.
 \end{align}
 One can impose the closed-loop characteristic of the task by defining the desired
 task acceleration implicitly as
@@ -202,11 +206,11 @@ where $\bm{K}_d$ and $\bm{K}_p$ are positive definite matrices. Substituting
 and doing this for each task, one can get the desired joint accelerations:
 \begin{subequations}
 \begin{align}
-    \bm{J}_i\ddot{\bm{q}} &= -\dot{\bm{J}}_i\dot{\bm{q}} + \ddot{\bm{\sigma}}_{i,d} 
+    \bm{J}_i\ddot{\bm{\zeta}} &= -\dot{\bm{J}}_i\dot{\bm{\zeta}} + \ddot{\bm{\sigma}}_{i,d} 
     + \bm{K}_{d,i}\left(\dot{\bm{\sigma}}_{i,d} - \dot{\bm{\sigma}}_i\right)
     + \bm{K}_{p,i}\left(\bm{\sigma}_{i,d} - \bm{\sigma}_i\right) \\
-    &=: \bm{h}_i(\bm{q}, \dot{\bm{q}}, t) \\
-    \ddot{\bm{q}}_d &= \bm{J}_1^{+} \bm{h}_1 + \left(\mathbb{I} - \bm{J}_1^+\bm{J}_1\right) \bm{J}_2^{+} \bm{h}_2.
+    &=: \bm{h}_i(\bm{\zeta}, \dot{\bm{\zeta}}, t) \\
+    \ddot{\bm{\zeta}}_d &= \bm{J}_1^{+} \bm{h}_1 + \left(\mathbb{I} - \bm{J}_1^+\bm{J}_1\right) \bm{J}_2^{+} \bm{h}_2.
 \end{align}
 \end{subequations}
 This method is called acceleration-level task priority control. The method can
@@ -214,6 +218,7 @@ be generalized to multiple tasks by using the same methods as presented in \auto
 
 
 \subsection{Low-level control}
+\label{sec:tpc:low_level_control}
 
 {
 \color{red}
@@ -260,10 +265,20 @@ Minor improvements to the controller can still be made. While modeling the full 
     \bm{\tau}_{PD+} = \bm{\tau}_{PD} + \bm{g}(\bm{\xi}(t)),
 \end{align}
 
-where \(\bm{g}(\bm{\xi}(t))\) is defined in \autoref{eq:modeling:g}. Provided the gravity and buoyancy forces are modeled correctly, this addition improves the steady-state tracking error, particularly in the vertical (downward) direction.
+where \(\bm{g}(\bm{\xi}(t))\) is defined in \autoref{eq:modeling:g}. Provided the gravity and buoyancy forces are modeled correctly, this addition improves the steady-state tracking error, particularly along the direction of gravity.
 
 % -----------------------------------------------------------------------------
 \section{Set-Based Task-Priority Control}
+
+{
+    \color{red}
+    \begin{itemize}
+        \item creating jacobians
+        \item set-based TPC
+        \item how the choice of base affects the algorithm
+    \end{itemize}
+}
+
 
 % -----------------------------------------------------------------------------
 \section{Dynamic-level Redundancy Resolution}
@@ -440,7 +455,7 @@ breaking some of the assumptions made when proving stability and task consistenc
 
 A way to make the pseudoinverse more accurate when far from singularities is to
 use the \gls{vdlsi} proposed by \cite{chiaverini1997}.
-This uses the fact that there is no need to damp the pseudoinverse when far from singularities.
+This uses the fact that there is no need to dampen the pseudoinverse when far from singularities.
 The gls{vdlsi} is defined as
 \begin{subequations}
 \begin{align}
@@ -451,7 +466,7 @@ The gls{vdlsi} is defined as
     \end{cases}
 \end{align}
 \end{subequations}
-where $\lambda_{max}^2$ and $\varepsilon$ are parameters that can be tuned. $\lambda_{max}$
+where $\lambda_{max}^2$ and $\varepsilon$ are tunable parameters. $\lambda_{max}$
 determines the maximum damping factor and $\varepsilon$ determines a threshold for when
 to start damping the pseudoinverse based on how close the singular values are to zero.
 To better illustrate the difference between the different methods, see \autoref{fig:1_x}

@@ -1,27 +1,28 @@
 \chapter{Experimental Setup}
 
-This chapter presents the experimental setup used to evaluate the task-
-priority control framework developed in this thesis. It begins with an 
+This chapter presents the experimental setup used to evaluate the 
+\gls{tpc} framework implemented in this thesis. It begins with an 
 overview of the Eelume robot, including its mechanical structure, sensor suite
-, communication systems, and suitability for underwater manipulation tasks. 
+, communication systems, and suitability for underwater tasks. 
 Following that, the software tools and interfaces used to control the robot 
 and simulate its behavior are described. The chapter also outlines key 
 assumptions and limitations in the experimental environment, including sensor 
-noise and system constraints. Finally, the experimental procedures are detailed
-, describing how specific robot behaviors will be tested and what kinds of 
-responses are expected. Together, these sections provide the necessary context 
-for understanding the practical validation of the proposed control approach.
+noise and system constraints. 
+Finally, the experimental procedures are detailed, describing how specific 
+robot behaviors are tested and the corresponding system responds.
+Together, these sections provide the necessary context 
+for understanding the practical validation of the implemented control approach.
 
 % -----------------------------------------------------------------------------
 \section{The Eelume Robot}
 
 The Eelume \(500\) model M robot is a snake-like underwater vehicle developed by 
 the company Eelume AS. It is designed for subsea inspection and light 
-intervention tasks, and can be deployed in a variety of environments, 
+intervention tasks, and is meant to be deployed in a variety of environments, 
 including offshore wind farms, fish farms, and oil and gas installations. The 
 system is highly modular, enabling a wide range of use cases.
 The robot can operate either as an \gls{auv}, using an acoustic communication 
-link, or as an \gls{rov} via a fiber-optic tether. A computer rendering of the 
+link, or as a \gls{rov} via a fiber-optic tether. A computer rendering of the 
 Eelume robot is shown in \autoref{fig:eelume:stopdown}.
 
 \begin{figure}[h!]
@@ -32,13 +33,14 @@ Eelume robot is shown in \autoref{fig:eelume:stopdown}.
 \end{figure}
 
 The Eelume robot can be equipped with a wide range of sensors, including a \gls{dvl},
-\gls{imu}, \gls{uhi}, sonar, echo-sounder, fluorometer, \gls{ct}, and 
-cameras. It uses an onboard Sunstone \gls{ins} from Kongsberg for navigation, supported by the \gls{dvl}
-and an acoustic positioning system. At the surface, it is equipped with an 
-antenna for satellite communication via Iridium, as well as \gls{gps}. Ballast 
-modules allow for buoyancy control, enabling the robot to remain slightly 
-positively buoyant in both fresh and salt water, depending on the configuration.
-The onboard battery supports up to $8$ hours of operation, depending on 
+\gls{imu}, \gls{uhi}, sonar, fluorometer, \gls{ct}, and 
+cameras. It uses an onboard \textit{Sunstone} \gls{ins} from Kongsberg for navigation, supported by the \gls{dvl}
+and an acoustic positioning system.
+It is equipped with an integrated antenna module, combining GNSS positioning and Iridium satellite communication at the surface.
+Ballast modules with a variable set of weights are used to adjust the robot's bouyancy,
+enabling the robot to remain slightly 
+positively buoyant in both fresh and salt water, depending on its configuration.
+The onboard battery supports up to eight hours of operation, depending on 
 usage and setup.
 
 The configuration used in the experiments described in this thesis is similar 
@@ -49,15 +51,14 @@ thruster and joint placement, remains close to what is depicted. In this
 configuration, the Eelume robot weighs approximately $190$ kg and measures 
 about $6.05$ m in length. From left to right in the image, we define the three 
 links as \textit{tail}, \textit{body}, and \textit{head}, respectively. The 
-following $5$ coordinate frames are attached to the robot:
+following five coordinate frames are attached to the robot:
 \begin{itemize}
 \item \textbf{tail} – the very end of the tail link, located on the left in \autoref{fig:eelume:stopdown}.
-\item \textbf{tail center} – the center of the tail link.
-\item \textbf{body} – the center of the body link.
-\item \textbf{head center} – the center of the head link.
+\item \textbf{tail center} – the geometric center of the tail link.
+\item \textbf{body} – the geometric center of the body link.
+\item \textbf{head center} – the geometric center of the head link.
 \item \textbf{head} – the very end of the head link, located on the right in \autoref{fig:eelume:stopdown}.
 \end{itemize}
-
 The $x$-axes of these frames align with the robot, pointing "forward." The $z$-
 axes point downward toward the shadow, which also corresponds to the downward 
 direction in \autoref{fig:eelume:stopdown}. The $y$-axes are defined by the 
@@ -84,14 +85,13 @@ while the remaining three frames are primarily used for task definitions.
 \label{fig:eelume:joints}
 \end{figure}
 The three links are connected by two joints, each with two degrees of freedom—
-allowing rotation about both the $y$ and $z$ axes. We number the individual joints from
-\(1\) to \(4\), indicating its location along the robot; joint \(1\) is
+allowing rotation about both the $y$- and $z$-axes. We number the individual joints from
+\(1\) to \(4\), indicating their locations along the robot; joint \(1\) is
 the closest to the head while joint \(4\) is the closest to the tail.
 \autoref{fig:eelume:joints} illustrates the joints in two different rotational configurations. The robot 
 features two sets of $4$ thrusters: one set on the tail and another on the 
 body link near the head joint. Each thruster can be independently controlled 
-and provides bidirectional thrust. The thruster arrangement is shown in
-\autoref{fig:eelume:thrusters}. The thrusters are numbered from \(1\) to \(8\),
+and provides bidirectional thrust. The thrusters are numbered from \(1\) to \(8\),
 this is not an internal numbering, but rather a numbering used in this thesis
 to distinguish the thrusters. The numbering is shown in \autoref{tab:eelume:numbering:thrusters}.
 \begin{table}
@@ -112,11 +112,8 @@ to distinguish the thrusters. The numbering is shown in \autoref{tab:eelume:numb
     \caption{The thruster numbering on the Eelume robot.}
     \label{tab:eelume:numbering:thrusters}
 \end{table}
-
-
-
-When the robot is in a straight configuration, 
-forces and moments can be generated independently in all $6$ \gls{dof}s. 
+The thrusters are arranged in a way that allows for independent control of
+the robot's motion in all six \gls{dof}s.
 Together with the $2 \times 2$ \gls{dof}s from the joints, this results in a 
 total of $10$ \gls{dof}s for this Eelume configuration. The joints are 
 actuated by motors, bringing the total number of independent inputs to $12$:
@@ -146,28 +143,32 @@ are summarized in \autoref{tab:eelume:keynumbers}.
     \label{tab:eelume:keynumbers}
 \end{table}
 
-The Eelume robot is an excellent platform for testing task-priority controllers.
+The Eelume robot is an excellent platform for testing \gls{tpc}lers.
 This is largely due to its high number of \gls{dof}s, allowing for the 
 execution of multiple tasks before kinematic constrains limit the robot. Additionally, 
 the robot is highly coupled—motion in one link induces forces and moments in 
-others. Task-priority control is an elegant approach for managing this coupling
+others. Dynamic-level \gls{tpc} is an elegant approach for managing this coupling
 , as the controller architecture inherently accommodates such interactions. In 
 contrast, a typical large \gls{rov} with a manipulator arm exhibits minimal 
 coupling, allowing the arm and vehicle to be controlled separately. In this 
 respect, the Eelume robot is unique: it combines high \gls{dof} count with 
-strong coupling, making it a compelling testbed for task-priority control.
+strong coupling, making it a compelling testbed for \gls{tpc}.
 
 % -----------------------------------------------------------------------------
-\section{Tools and software}
+\section{Tools and Software}
 
 The Eelume robot is controlled using a low-level \gls{api} that Eelume AS made
-available in the beginning of 2025. This api provides access to low-level methods
-for controlling the robot's thrusters and joints, as well as for reading sensor
-data, and \gls{ins} measurements. The \gls{api} is implemented in C/C++ and communicates with the robot over
+available in the beginning of 2025.
+This \gls{api} privides access to an internal \gls{can} bus, which is used to
+communicate with the robot's thrusters, joints, and sensors. The \gls{api} provides
+a set of functions for packaging and unpacking messages to and from the bus, giving
+access to functions for generating, for example, thruster force references and
+joint torque references.
+The \gls{api} is implemented in C/C++ and communicates with the robot over
 an ethernet connection. Because the \gls{api} is low-level, a lot of code had
-to be written to implement the task-priority control framework, everyting from
+to be written to implement the \gls{tpc} framework, everything from
 lower-level controllers, task definitions, and kinematics. The collection of
-code used to control the Eelume robot is created as a standalone C++ library
+code used to control the Eelume robot is created as a C++ library
 and is refered to as \gls{eck}.
 
 The control kit is designed to be modular, allowing for easy integration of
@@ -176,22 +177,24 @@ one for a controller and one for a connection to the Eelume robot, along with
 a set of concrete implementations for these classes. Setting and reading data
 from the robot is done through the \gls{api} using a connection class, while 
 a simulator is also provided for testing the controllers without the need for
-a physical robot. Lower level \gls{dp} controllers, as well as higher-level
-task-priority controllers are also implemented.
+a physical robot. Lower-level \gls{dp} controllers, as well as higher-level
+\gls{tpc}lers are also implemented.
 
 The simulator is designed to mimic the behavior of the Eelume robot as closely
 as possible, without much time spent on modeling the hydrodynamics and coupling
-between the links. The kinematics of the robot is tought to be accurately
+between the links. The kinematics of the robot is thought to be accurately
 implemented. Because of the virtual base classes, the real robot can be used
 interchangeably without recompiling the code. This allows for easy testing of
-the controllers after veryfing that they work in the simulator.
+the controllers after verifying that they work in the simulator.
 
-In addition to the control kit, the need for vizualization of the robot and
+In addition to the control kit, the need for visualization of the robot and
 the tasks was identified. A simple visualizer was created to display the robot
 in real time as experiments are conducted. The visualizer is implemented in
 C++ using the OpenGL graphics library. The control kit communicates with the
 visualizer over \gls{udp} sockets, sending the robot's state and task definitions.
-Eelume robot that are presented in this thesis are created using this visualizer.
+
+All figures of the Eelume robot within this thesis have been created using this visualizer.
+
 An example of the visualizer as it is used during experiments is shown in
 \autoref{fig:eelume:visualizer}. One can see gridlines in the background, and
 an axis system in the center showing the \gls{ned} frame origin.
@@ -218,36 +221,39 @@ improvement or calibration.
 \subsection*{Control Loop Frequency}
 Internally in the Eelume robot there is a data bus where messages are sent
 between the different components of the robot. Messages setting references
-to the indiviual thrusters and joint motors are sent on this bus. The bandwidth
-limits on the bus puts constrains on how fast the controll loop can run. From
+to the individual thrusters and joint motors are sent on this bus. The bandwidth
+limit on the bus puts constrains on how fast the control loop can run. From
 experiments, it was found that the bus can handle \(50\) Hz, but at higher
 frequencies, degradations in performance were observed. The control loop is
 therefore set to run at \(50\) Hz, being equivalent to a \(20\) ms loop time.
 The continous-time controllers as presented in \autoref{ch:tpc} are called with
 the latest measurements and references at this frequency, implicitly assuming
 zero-order hold.
-It is taught that the choosen loop time places minimal limtations on the performance
+It is thought that the chosen loop time places minimal limitations on the performance
 observed in the experiments as the frequency contents of the tasks are typically
-very low, and underwater vehicles are typically not very fast systems. 
+very low, and underwater vehicles are typically not very fast systems. This is
+largely due to the large hydrodynamic damping forces as well as added mass effects.
 
 \subsection*{Encoder Jitter}
 The Eelume robot is equipped with encoders on the joints which are used to measure the joint angles.
 During experiments, it was observed that, sometimes, the joint angles jittered by up to \(10\) degrees,
-giving false readings of the joint angles. From the visualization it is clear that this is not due to the robot moving,
-as the the movement of the joints is smooth and continous. An example of the jitter is shown in \autoref{fig:eelume:encoder-jitter}.
+giving false readings of the joint angles. This is very clear from looking at
+the visualization of the robot, where the joints jump back and forth with unrealistic
+speed and amplitude.
+An example of the jitter is shown in \autoref{fig:eelume:encoder-jitter}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{assets/ignored/plots/jitter.pdf}
     \caption{An example of the encoder jitter observed during experiments.}
     \label{fig:eelume:encoder-jitter}
 \end{figure}
-The jittering seems to be more prominent for the first joint, although it is aboserved for all joints.
-If this is the cause of some misconfiguration, broken encoders or some other issue is not known.
-The high frequency contents in the joint measurements as a result of jittering
-contributes to high frequency contents in the task-priority control signals. To
-mitigate this, a first order low-pass filter is applied to the joint angles. The
+The jittering seems to be more prominent for the first joint, although it is observed for all joints.
+The cause of the issue is not known.
+The high-frequency contents in the joint measurements as a result of jittering
+contributes to high-frequency contents of the \gls{tpc} signals. To
+mitigate this, a first-order low-pass filter is applied to the joint angles. The
 low-pass filter is implemented in the control kit, and is applied to the joint angles before
-they are used in the task-priority control framework. The low-pass filter can be
+they are used in the \gls{tpc} framework. The low-pass filter can be
 described by the following equation, where \(\alpha \in (0, 1)\) is the filter coefficient:
 \begin{subequations}
 \begin{align}
@@ -256,10 +262,12 @@ described by the following equation, where \(\alpha \in (0, 1)\) is the filter c
 \end{align}
 \end{subequations}
 For the joint angles, the filter coefficient is set to \(\alpha = 0.39\). The
+coefficient was chosen based on a trade-off between removing the high-frequency
+contents of the jitter and not introducing too much delay in the measurements. The
 result of the low-pass filtering is shown in \autoref{fig:eelume:encoder-jitter-low-pass}.
 We observe that the filtered joint angles closely follow the original angles,
-and that some of the high frequency contents of the jitter is removed. Some discussion
-about this method and alternative approaches are presented in \autoref{sec:conclusion:future_work}
+and that some of the high-frequency contents of the jitter are removed. Some discussion
+about this method and alternative approaches are presented in \autoref{sec:conclusion:future_work}.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/jitter.pdf}
@@ -302,7 +310,7 @@ joint measurements discussed in the previous sections, as the jitter seem to cor
 with the angular velocity spikes.
 
 To mitigate the noise, a low-pass filter is applied to the velocity measurements.
-The filter is first order, and is implemented in the control kit following the
+The filter is first-order, and is implemented in the control kit following the
 same approach as for the joint angles. Because of the observed difference in
 noise level between the linear, angular, and joint velocities, each of these
 three components are filtered with different filter coefficients. The coefficients
@@ -356,7 +364,7 @@ of using a low-pass filter on the velocity measurements are discussed in more de
 
 % -----------------------------------------------------------------------------
 \subsection*{\gls{ins} Limitations}
-The Sunstone \gls{ins} used in the Eelume robot offers several configuration options that can impact experimental performance. One key feature is a roll rate limitation: if the \gls{ins} detects that the roll rate exceeds a certain threshold, it assumes the measurements are unreliable and disables control inputs. This is a built-in safety mechanism, which makes sense during normal operation when rapid rolling is not expected. However, this limitation is not particularly problematic in this context, as the experimental tasks are designed to be relatively low-frequency and thus naturally avoid high roll rates. It is mentioned here as an important consideration during testing, since avoiding large roll rates can prevent unnecessary interruptions and time-consuming recalibrations.
+The \textit{Sunstone} \gls{ins} used in the Eelume robot offers several configuration options that can impact experimental performance. One key feature is a roll rate limitation: if the \gls{ins} detects that the roll rate exceeds a certain threshold, it assumes the measurements are unreliable and disables control inputs. This is a built-in safety mechanism, which makes sense during normal operation when rapid rolling is not expected. However, this limitation is not particularly problematic in this context, as the experimental tasks are designed to be relatively low-frequency and thus naturally avoid high roll rates. It is mentioned here as an important consideration during testing, since avoiding large roll rates can prevent unnecessary interruptions and time-consuming recalibrations.
 
 A crucial component of the \gls{ins} is the \gls{dvl}, which measures the robot’s velocity relative to the sea floor. Due to the mounting orientation of the \gls{dvl}, large roll or pitch angles can reduce its accuracy, a condition commonly referred to as losing \textit{bottom lock}. Without bottom lock, the \gls{ins} becomes significantly less reliable. To maintain bottom lock during experiments, the robot is kept at low roll and pitch angles, and large vertical movements are avoided.
 
@@ -373,7 +381,8 @@ stabilizes—without using its thrusters—changed from day to day. This variati
 is important to account for, as the hydrostatic forces are compensated for in 
 the \gls{pd+} controller. To reduce the impact of salinity changes, tests were 
 carried out at depths where the water column exhibited relatively stable 
-salinity levels.
+salinity levels. It is also simple to observe the positioning over a run
+and adjust the compensation of the \gls{pd+} controller accordingly.
 
 \subsection*{Lower-Level Thruster and Joint Motor Control}
 The Eelume \gls{api} provides a way to set thruster force references and joint
@@ -389,6 +398,14 @@ joint torques do not exceed this limit by a large margin. The thrusters are set
 to have a wattage limit of \(125\) W each, ensuring that the Eelume robot does
 not experience a brownout during experiments. The wattage limit is set using the
 \gls{api} and is not a hard limit, but was chosen for safety reasons.
+
+{
+    \color{red}
+    \begin{itemize}
+        \item see comments from Markus about this chapter. Maybe add a section about the
+            simulator and a section in appendix about the visualizer.
+    \end{itemize}
+}
 
 % -----------------------------------------------------------------------------
 \section{Experimental Procedures}

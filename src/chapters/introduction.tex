@@ -6,6 +6,11 @@ relevant to the thesis is given, and the assumptions made are
 stated. The chapter concludes with a summary of the contributions of this thesis,
 as well as an outline of the subsequent chapters.
 
+{
+    \color{red}
+    Maybe rewrite the above text slightly
+}
+
 
 % ------------------------------------------------------------------ Motivation
 \section{Motivation}
@@ -74,6 +79,7 @@ and environmentally conscious future.
 \section{Literature Review}
 \label{sec:introduction:literature}
 
+\gls{tpc} of reduntant menipulators is a wellestabilshed concept.
 Some of the earliest works on task-priority control were introduced in 
 \cite{hanafusa1981}. This study proposed a method for controlling redundant 
 manipulators through a task-priority control scheme, enabling the simultaneous 
@@ -88,25 +94,28 @@ and others, the work in \cite{siciliano1991} extended the task-priority
 framework to accommodate an arbitrary number of tasks. The proposed formulation 
 employs a recursive approach, enabling efficient computation of joint 
 velocities. A simulation study demonstrated the method's effectiveness in 
-controlling a 7-DOF planar manipulator performing three tasks, including 
-obstacle avoidance. The challenges posed by algorithmic and kinematic 
-singularities were later addressed in \cite{chiaverini1997}. While kinematic 
-singularities can lead to excessively large joint velocities, algorithmic 
-singularities may cause strict task priority to break down. To mitigate these 
-issues, the study introduced damped pseudo-inverse matrices as a solution.
+controlling a 7-DOF planar manipulator executing three tasks simultaneously, including 
+obstacle avoidance.
+Kinematic and algorithmic singularities pose distinct challenges in task-
+priority control: the former can lead to excessively large joint velocities, 
+while the latter may cause a breakdown in strict task prioritization. To 
+address these issues, \cite{chiaverini1997} introduced the use of damped pseudo
+-inverse matrices.
 
 One notable limitation of the frameworks discussed so far is their assumption 
-of decoupled kinematics and dynamics. However, for some systems—
-particularly in underwater vehicle-manipulator systems—this 
+of decoupled kinematics and dynamics. This can be a good assumption for certain systems,
+such as manipulator arms, where good tracking of desired joint velocities is possible.
+However, for some systems—
+particularly for \gls{uvms}s—this 
 assumption does not hold. To address this limitation, \cite{khatib1987} 
 proposed a framework for redundancy resolution at the dynamic level. This 
 approach incorporates task dynamics, employs feedback linearization techniques, 
 and utilizes dynamically consistent generalized inverses \cite{khatib1995} to 
 maintain strict task priority.
-However, in order to address the couopled kinematics and dynamics of a system, one has to rely heavily on an accurate
+However, in order to address the coupled kinematics and dynamics of a system, one has to rely heavily on an accurate
 dynamic system model.
 The framework was further extended in \cite{khatib2004,sentis2004}, 
-allowing it to handle an arbitrary number of tasks efficiently. In this work, a 
+allowing it to handle an arbitrary number of tasks efficiently. In these works, a 
 high-DOF humanoid robot was successfully controlled in a simulation study.
 
 Stability analysis of kinematic-level priority-based control schemes for 
@@ -114,26 +123,27 @@ redundant manipulators was conducted in \cite{antonelli2009}. Using a
 Lyapunov-based approach, the study provided sufficient conditions for stability 
 based on control gains and task design. However, the proposed method assumes 
 decoupled kinematics and dynamics, making it less directly applicable to \gls{uvms}s 
-without additional assumptions regarding the relative speeds of robot dynamics 
-and inverse kinematics.
+without additional assumptions regarding the relative speeds of
+the robot's kinematics and dynamics.
 
-A task-priority control scheme specifically applied to \gls{uvms}s was presented in 
-\cite{antonelli1998}. This work employed a kinematic-level task-priority 
-control approach to control a 6-DOF articulated underwater vehicle (AUV) 
+A \gls{tpc} scheme specifically applied to \gls{uvms}s was presented in 
+\cite{antonelli1998}. This work employed a kinematic-level \gls{tpc}
+approach to control a 6-DOF \gls{auv} 
 equipped with a 3-DOF planar manipulator arm. While the simulation results were 
-promising, the study did not account for the system's dynamics, leaving the question
+promising, the study did not account for the system's dynamics, leaving open the question
 of how well the method performs when a dynamic model is considered.
 
-In recent years, approaches that incorporate dynamic considerations have been 
-developed. For example, \cite{basso2020} introduced a method that uses control 
+Recent research has focused on extending \gls{tpc} frameworks to incorporate
+dynamic effects, addressing limitations of purely kinematic approaches.
+For example, \cite{basso2020} introduced a method that uses control 
 Lyapunov function-based quadratic programming to address control allocation, 
 dynamic control, and redundancy resolution in redundant robotic systems. Given 
 the challenges posed by disturbances and modeling inaccuracies in \gls{uvms} 
 dynamics, \cite{iversflaten2022} proposed a dynamic controller based on sliding 
 mode control. A simulation study demonstrated the effectiveness of this method 
-in handling these challenges. Regarding physical experiments on \gls{uvms}s, there 
-seem to be a lack of research comparing the performance of the proposed 
-task-priority control methods in a real-world setting.
+in handling these challenges.
+Despite recent progress, there remains a lack of research evaluating \gls{tpc}
+methods for \gls{uvms}s in real-world experiments.
 
 {
 \color{red}
@@ -146,12 +156,23 @@ task-priority control methods in a real-world setting.
 \section{Contributions}
 
 The main contributions as presented in this thesis are as follows:
-\begin{itemize}
+\begin{enumerate}
     \item \emph{Implementing and experimentally validating a kinemtic-level task-priority control framework for the Eelume \gls{aiauv}.}
     \item \emph{Devlopment of a dynamical model and simulator for the Eelume \gls{aiauv}.}
     \item \emph{Development of a control framework interfacing with the newly developed \gls{api} for the Eelume robot.}
     \item \emph{Development of a tool showing a live visualization of the Eelume \gls{aiauv} along with desired task trajectories.}
-\end{itemize}
+\end{enumerate}
+
+The first contribution is significant as it adds to the limited body of work 
+on task-priority control of \gls{uvms}s, demonstrating the feasibility of 
+implementing such a framework on a real-world system. The remaining 
+contributions are crucial as they lay the foundation for the first contribution
+, as well as future work on task-priority control of \gls{uvms}s. The 
+development of a dynamic model and simulator allows for testing and validation 
+of control strategies in a simulated environment before deployment on physical 
+systems. The control framework and visualization tool enhance the usability 
+and accessibility of the Eelume \gls{aiauv}, facilitating further research and 
+development in this field.
 
 % -------------------------------------------------------------- Thesis Outline
 \section{Thesis Outline}
