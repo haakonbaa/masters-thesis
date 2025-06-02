@@ -262,6 +262,7 @@ It's important to note that this controller does not account for low-frequency d
 Minor improvements to the controller can still be made. While modeling the full dynamics of an \gls{aiauv} is challenging, gravity and buoyancy forces can be accurately captured if the vehicle’s mass and volume distributions are known. This leads to an extended controller, referred to as \gls{pd}+, which augments the original controller from \autoref{eq:tau_pd} with a compensation term:
 
 \begin{align}
+    \label{eq:tpc:pd_plus}
     \bm{\tau}_{PD+} = \bm{\tau}_{PD} + \bm{g}(\bm{\xi}(t)),
 \end{align}
 

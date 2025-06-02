@@ -408,10 +408,8 @@ not experience a brownout during experiments. The wattage limit is set using the
 }
 
 % -----------------------------------------------------------------------------
-\section{Experimental Procedures}
+\section{Launch Procedure}
 
-% -----------------------------------------------------------------------------
-\subsection*{Launch and Test Procedures}
 The experiments are conducted at \gls{tbs}, from a concrete pier. The Eelume 
 robot has a custom build cradle that is used to launch it from the pier into the water. The
 robot is placed in the cradle, and a crane is used to lift the cradle into the sea.
@@ -448,28 +446,110 @@ The launch and recovery procedures requires \(2\) to \(3\) people, and takes abo
     \label{fig:eelume:cradle-and-float}
 \end{figure}
 
-\subsection{Cases}
+% -----------------------------------------------------------------------------
+\section{Experimental Procedures}
 
-\subsection{Controllers}
+To highlight the work that has been done a series of experiments were performed
+These experiments can be devided into four groups based on when they aim to
+show. There four groups are
+\begin{enumerate}
+    \item The response of the lower-level \gls{pd+} controller.
+    \item A working velocity-level task-priority controller.
+    \item A working set-based velocity-level task-priority controller.
+    \item The need for low-pass filtering of the velocity measurements.
+\end{enumerate}
+For each group, a series of runs are conducted. The run refers to a single
+experiment, meaning that the robot is set to a specific position and orientation,
+and a specific controller and case is run to measure the response. Here, the word
+\textit{case} refers to a specific set of tasks, or, in the case for the first
+group, a specific setpoint. The four groups are described in more detail below.
 
-\subsection*{Response of the Lower-Level DP+ Controller}
-It is important to test the response of the lower-level \gls{pd+} controller before
-conducting experiments with the \gls{tpc} framework. This is done to ensure that
-the lower-level controller is working as expected, and that the robot is able to
-follow the references set by the task-priority controller. How fast the
-lower-level controller is will dictate how fast fast the tasks can be executed.
-To showcase the response of the lower-level controller, step responses 
+\subsection*{Lower-Level \gls{pd+} Controller}
+The first group of experiments aims to show that the lower-level \gls{pd+} controller
+is working as intended. This means that the controller is able to follow a setpoint
+in the position, attitude, and joint angles. How fast or slow the controller can follow
+the setpoint will have an impact on how high frequency contents the tasks can have:
+the better the lower-level controller follows the setpoint, the higher frequency contents
+the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
+as described in \autoref{sec:tpc:low_level_control}.
 
-\subsection*{Head + Tail Stretching Out}
+\subsection*{Velocity-Level Task-Priority Controller}
+The second group of experiments aims to show the performance of the velocity-level
+task-priority controller. To do this, a very typical setup is used. There are a total
+of three tasks, one being the position of the head, one being the position of the tail,
+and one begin the vector part of the quaternion defining the attitude of the base link.
+The tasks are, in order of priority:
+%The highest priority task is the position of the tail, which is set to a position
+%that slowly moves backwards along the south direction. The second task is the position of the head,
+%which is set to a fixed position. The third task is the attitude of the base link,
+%set have the same orientation as the inertial frame.
+\begin{enumerate}
+    \item The position of the tail. Moving backwards along the south direction.
+    \item The position of the head. Set to a fixed position.
+    \item The attitude of the base link. Set to have the same orientation as the inertial frame.
+\end{enumerate}
+The tasks are designed to
+show the strict priority of the controller, meaning that, ideally, all tasks
+should be able to be executed at the same time in the beginning of the run, but
+as the robot moves backwards and executing both tasks becomes kinematically infeasable,
+the tail task will take priority over the head task. For future reference, this
+case is referred to as \textit{stretch}, as the robot is stretched out over
+the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
+The tasks are designed such that both tasks are fullfilled at the beginning of the run,
+where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
+seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
 
-\subsection*{Bending with Joint Constraints}
+{
+    \color{red}
+    What controller is used?
+}
 
-\iffalse
-\begin{itemize}
-    \item Launch and test procedures
-    \item show the response of the lower-level DP+ controller.
-    \item Head + Tail stretching out
-    \item Bending with joint constraints
-    \item Expected results?
-\end{itemize}
-\fi
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth]{assets/side-view-45-joints.png}
+    \caption{Overview of head and tail tasks for case \textit{stretch}}
+    \label{fig:eelume:tpc:tasks:stretch:initial_pos}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth,page=1]{assets/ignored/plots/tasks.pdf}
+    \caption{Initial position of the Eelume robot in case \textit{stretch}.}
+    \label{fig:eelume:tpc:tasks:stretch}
+\end{figure}
+
+\FloatBarrier
+
+\subsection*{Set-Based Velocity-Level Task-Priority Controller}
+
+The third group of experiments aims to show the performance of the set-based
+velocity-level task-priority controller. This controller is used to set
+joint limits of \(\pm 45\) degrees on the \(y\)-axis joints. The task setup is,
+excluding the set-based tasks:
+\begin{enumerate}
+    \item The position of the tail. Moving downwards and forwards.
+    \item The position of the head. Moving downwards and backwards.
+    \item The attitude of the base link. Set to have the same orientation as the inertial frame.
+\end{enumerate}
+\autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
+the position of the head and the tail close each other as the time increases, meaning
+that the joints will have to bend to keep the tasks fullfilled. This means
+that the joint limits will become active at some point during the run. Because
+of the nature of the experiment, this case is referred to as \textit{bend}.
+The controller
+used for this group is the same as for the previous group, but with the set-based
+tasks taking priority over the position and attitude tasks when thay are activated.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/tasks.pdf}
+    \caption{Overview of head and tail tasks for case \textit{bend}.}
+    \label{fig:eelume:tpc:tasks:bend}
+\end{figure}
+
+
+
+
+
+
+
