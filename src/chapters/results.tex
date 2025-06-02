@@ -1,18 +1,268 @@
 \chapter{Results \& Discussion}
 
-% -----------------------------------------------------------------------------
-\section{Lowpass Filtering}
-\label{sec:results:lowpass_filtering}
+The following chapter presents the experimental results alongside a discussion 
+of the findings. It begins with an overview of the experimental runs, followed 
+by selected outcomes from each. First, the performance of the \gls{pd+} controller 
+is examined, with step response results shown for heading, roll, and both 
+north and east position control. Next, the results from experiments using the 
+task-priority controller are presented, focusing initially on the scenario in which the 
+robot is stretched. This is followed by results from experiments where the 
+robot is bent, utilizing a set-based task-priority controller. Finally, a comparison is 
+made between runs with and without low-pass filtering of the generalized velocities.
 
-To further higlight the importance of the lowpass filtering of the joint- and
-velocity- measurements that was discussed in
-\autoref{sec:experimental_setup:assumptions_and_limitations}
+
+\section{Overview of Results}
+
+Each experimental run is classified by the time it was started, and there are a total
+of \(10\) runs that will be presented in the following sections. The format
+of the run name is \texttt{YYYYMMDD-HHMMSS}, where the first part is the date
+and the second part is the time. An overview of the runs is presented in
+\autoref{tab:eelume:experimental-runs}, which includes the run name, the
+controller used, if the velocity measurements were low-pass filtered, and a
+brief description of each run.
+
+\iffalse
+\begin{table}
+    \centering
+    \begin{tabular}{|c|c|l|}
+        \hline
+        Run Name & Controller & Description \\ \hline \hline
+        20250513-135042 & \gls{pd+} & heading control with reference \(20\) degrees. \\ \hline
+        20250513-141406 & \gls{pd+} & roll control with reference \(20\) degrees. \\ \hline
+        20250513-133631 & \gls{pd+} & north position control with reference \(+1\) m. \\ \hline
+        20250513-134500 & \gls{pd+} & east position control with reference \(+1\) m. \\ \hline
+        \hline
+        20250513-154920 & \gls{tpc} & Showing case \textit{stretch} with no low-pass filtering. \\ \hline
+        20250519-135739 & \gls{tpc} & Showing case \textit{stretch} with filtering. \\ \hline
+        \hline
+        20250519-141527 & \gls{tpc} & Showing case \textit{stretch} with decoupled quaternion gains. \\ \hline
+        20250519-144113 & \gls{tpc} & Showing case \textit{stretch} with no compensation term. \\ \hline
+        \hline
+        20250519-161629 & \gls{tpc} & Showing case \textit{bend}, with compensation term. \\ \hline
+        20250519-161107 & \gls{tpc} & Showing case \textit{bend}, without compensation term. \\ \hline
+    \end{tabular}
+    \caption{Overview of experimental runs conducted during this thesis.}
+    \label{tab:eelume:experimental-runs}
+\end{table}
+\fi
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Run Name & Controller & Low-pass & Case \\ \hline \hline
+        \multirow{2}{*}{20250513-135042} & \gls{pd+} & No & Heading \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Reference in yaw angle set to \(20\) degrees after 20 seconds.} \\ \hline
+        \multirow{2}{*}{20250513-141406} & \gls{pd+} & No & Roll \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Reference in roll angle set to \(20\) degrees after 20 seconds.} \\ \hline
+        \multirow{2}{*}{20250513-133631} & \gls{pd+} & No & North Position \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Reference in north position set to \(+1\) m after 20 seconds.} \\ \hline
+        \multirow{2}{*}{20250513-134500} & \gls{pd+} & No & East Position \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Reference in east position set to \(+1\) m after 20 seconds.} \\ \hline
+        \hline
+        \multirow{2}{*}{20250519-141527} & Kinematic-level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with decoupled quaternion gains.} \\ \hline
+        \multirow{2}{*}{20250519-144113} & Kinematic-level \gls{tpc} & No & Stretch \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no compensation term.} \\ \hline
+        \hline
+        \multirow{2}{*}{20250519-161629} & Kinematic-Level \gls{tpc} & Yes & Bend \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, with compensation term.} \\ \hline
+        \multirow{2}{*}{20250519-161107} & Kinematic-Level \gls{tpc} & No & Bend \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, without compensation term.} \\ \hline
+        \hline
+        \multirow{2}{*}{20250513-154920} & Set-based \gls{tpc} & No & Stretch \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no low-pass filtering.} \\ \hline
+        \multirow{2}{*}{20250519-135739} & Set-based \gls{tpc} & Yes & Stretch \\ \cline{2-4}
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with low-pass filtering.} \\ \hline
+    \end{tabular}
+    \caption[An overview of the experimental runs]{An overview of the experimental
+    runs presented in this chapter along with a brief description of each.
+    The low-pass column indicates whether or not the generalized velocities and joint measurements were low-pass filtered.}
+    \label{tab:eelume:experimental-runs}
+\end{table}
 
 % -----------------------------------------------------------------------------
 \section{DP-Control}
 
+\subsection{Heading Control}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=1]{assets/ignored/plots/pd.pdf}
+    \label{fig:results:dp_heading:pos}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/20250513-135042.pdf}
+    \label{fig:results:dp_heading:vel}
+    \caption{Generalized velocity of Eelume robot during heading control with \gls{pd+} controller.}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250513-135042.pdf}
+    \label{fig:results:dp_heading:forces2}
+    \caption{Results from thruster allocation}
+\end{figure}
+
+\FloatBarrier
+
+
+% -----------------------------------------------------------------------------
+\subsection{Roll Control}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/pd.pdf}
+    \label{fig:results:dp_roll:pos}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+\end{figure}
+
+\FloatBarrier
+
+
+% -----------------------------------------------------------------------------
+\subsection{North Position Control}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/pd.pdf}
+    \label{fig:results:dp_north:pos}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+\end{figure}
+
+\FloatBarrier
+
+
+% -----------------------------------------------------------------------------
+\subsection{East Position Control}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/pd.pdf}
+    \label{fig:results:dp_east:pos}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+\end{figure}
+
+\FloatBarrier
+
 % -----------------------------------------------------------------------------
 \section{Velocity-Level Task-Priority Control}
 
+hei
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:pos}
+    \caption{Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}.}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:vel}
+    \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{stretch} case with \gls{tpc}.}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:forces}
+    \caption{}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:forces-torques}
+    \caption{}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:task:1}
+    \caption{}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:task:2}
+    \caption{}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:task:3}
+    \caption{}
+\end{figure}
+
+\FloatBarrier
+
 % -----------------------------------------------------------------------------
 \section{Set-Based Task-Priority Control}
+
+
+
+
+
+\subsection{Without Compensation Term}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161107.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161107.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161107.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+
+
+\FloatBarrier
+
+
+\subsection{With Compensation Term}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161629.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161629.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161629.pdf}
+    \label{fig:results:tpc:bend:1:pos}
+    \caption{}
+\end{figure}
+
+\FloatBarrier
+
+
+% -----------------------------------------------------------------------------
+\section{Low-pass Filtering}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
+    \label{fig:results:tpc:stretch:1:task:3}
+    \caption{}
+\end{figure}
+
+
+\label{sec:results:lowpass_filtering}
