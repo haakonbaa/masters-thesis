@@ -1,0 +1,10 @@
+\Glspl{rov} and \glspl{auv} are increasingly utilized for complex underwater tasks, including inspection, mapping, maintenance, and repair. However, these systems pose unique control challenges due to significant coupling between the base vehicle and its manipulator arm. Additionally, typical operations require managing multiple simultaneous objectives, such as controlling the position and orientation of an end-effector while maintaining optimal viewpoints from cameras and lighting systems mounted elsewhere on the \gls{rov}.
+
+A promising solution to address these challenges is \gls{tpc}, an approach that allows explicit prioritization of tasks according to their relative importance. This thesis explores the application of \gls{tpc} to \glspl{uvms}, focusing specifically on the practical implementation and evaluation of kinematic-level \gls{tpc} frameworks.
+
+A dedicated C++ control library, incorporating a built-in simulator, was developed for NTNU’s articulated intervention-\gls{auv}, the Eelume robot–a highly coupled, high-\gls{dof}, snake-like robot.
+Using this framework, experiments were conducted to validate the performance of both classical kinematic-level \gls{tpc} and set-based kinematic-level \gls{tpc}.
+%methodologies for articulated intervention-AUVs possessing a large number of degrees of freedom.
+
+Experimental results demonstrate that \gls{tpc} can effectively manage and coordinate multiple control tasks, providing flexible and adaptive solutions for \gls{uvms} operations. This thesis not only confirms the practical applicability of kinematic-level \gls{tpc} but also lays a robust foundation for future research into dynamic-level \gls{tpc} and the exploration of alternative advanced control strategies using the Eelume robot.
+
