@@ -21,31 +21,6 @@ and the second part is the time. An overview of the runs is presented in
 controller used, if the velocity measurements were low-pass filtered, and a
 brief description of each run.
 
-\iffalse
-\begin{table}
-    \centering
-    \begin{tabular}{|c|c|l|}
-        \hline
-        Run Name & Controller & Description \\ \hline \hline
-        20250513-135042 & \gls{pd+} & heading control with reference \(20\) degrees. \\ \hline
-        20250513-141406 & \gls{pd+} & roll control with reference \(20\) degrees. \\ \hline
-        20250513-133631 & \gls{pd+} & north position control with reference \(+1\) m. \\ \hline
-        20250513-134500 & \gls{pd+} & east position control with reference \(+1\) m. \\ \hline
-        \hline
-        20250513-154920 & \gls{tpc} & Showing case \textit{stretch} with no low-pass filtering. \\ \hline
-        20250519-135739 & \gls{tpc} & Showing case \textit{stretch} with filtering. \\ \hline
-        \hline
-        20250519-141527 & \gls{tpc} & Showing case \textit{stretch} with decoupled quaternion gains. \\ \hline
-        20250519-144113 & \gls{tpc} & Showing case \textit{stretch} with no compensation term. \\ \hline
-        \hline
-        20250519-161629 & \gls{tpc} & Showing case \textit{bend}, with compensation term. \\ \hline
-        20250519-161107 & \gls{tpc} & Showing case \textit{bend}, without compensation term. \\ \hline
-    \end{tabular}
-    \caption{Overview of experimental runs conducted during this thesis.}
-    \label{tab:eelume:experimental-runs}
-\end{table}
-\fi
-
 \begin{table}[!ht]
     \centering
     \begin{tabular}{|c|c|c|c|}
@@ -84,29 +59,91 @@ brief description of each run.
 % -----------------------------------------------------------------------------
 \section{DP-Control}
 
+The following sections show the results from testing the \gls{pd+} controller
+on the Eelume robot. For a detailed overview of the setup, see \autoref{sec:experimental_setup:experimental_procedures}.
+
 \subsection{Heading Control}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=1]{assets/ignored/plots/pd.pdf}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
     \label{fig:results:dp_heading:pos}
-    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/20250513-135042.pdf}
+    \caption{Generalized velocity of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
     \label{fig:results:dp_heading:vel}
-    \caption{Generalized velocity of Eelume robot during heading control with \gls{pd+} controller.}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250513-135042.pdf}
+    \caption{Thruster forces and joint motor torques of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
     \label{fig:results:dp_heading:forces2}
-    \caption{Results from thruster allocation}
 \end{figure}
 
-\FloatBarrier
+\paragraph{Results.}
+\autoref{fig:results:dp_heading:pos} shows the position and orientation of the 
+Eelume robot during a heading control task. The robot is commanded to turn to 
+a heading of \(20^\circ\) at \(t = 20\) seconds. The yaw angle gradually 
+converges to the reference, with an overshoot of approximately \(3^\circ\), 
+followed by damped oscillations. The system settles within a few degrees of 
+the reference after approximately \(25\) seconds. The roll and pitch angles 
+remain near \(0^\circ\), indicating stable attitude in those directions.
 
+The \gls{ned} position of the robot, which is controlled to remain near the 
+origin, is somewhat affected by the heading maneuver. Both the north and down 
+positions exhibit a steady-state offset of approximately \(0.3\,\mathrm{m}\) 
+from the reference. This suggests a degree of coupling between the heading and 
+translational dynamics. The joint angle measurements also show considerable 
+high-frequency noise.
+
+The generalized velocities, shown in \autoref{fig:results:dp_heading:vel}, 
+further highlight this noise. While the angular velocities are visibly noisy, 
+the joint velocities are particularly affected, with high-frequency 
+oscillations and spikes reaching up to \(100^\circ/\mathrm{s}\).
+
+\autoref{fig:results:dp_heading:forces2} presents the resulting thruster 
+forces and joint motor torques. Although the thruster forces contain some high-
+frequency noise, its amplitude is moderate compared to that of the generalized 
+velocities. The joint torques, however, exhibit significant noise, frequently 
+reaching the actuator limit of \(\pm16\,\mathrm{Nm}\).
+
+\paragraph{Discussion.}
+
+The results in \autoref{fig:results:dp_heading:pos} confirm that the \gls{pd+} 
+controller is capable of driving the heading of the Eelume robot to a desired 
+value. However, the response is relatively slow, which can be attributed to 
+the substantial hydrodynamic forces resisting rotation about the body \(z\)-
+axis. The observed overshoot and oscillatory behavior suggest that further 
+tuning of the controller gains could improve performance. The robot's large 
+inertia around the \(z\)-axis likely contributes to the sluggish response.
+
+An important observation is the degradation in position-holding performance 
+during the heading change. This likely results from coupling between the 
+degrees of freedom, as the thrusters must simultaneously handle both position 
+and heading control.
+
+The joint angle noise, noted in \autoref{fig:results:dp_heading:pos}, aligns 
+with the joint velocity spikes observed in \autoref{fig:results:dp_heading:vel
+}. These artifacts are consistent with the "jittering" behavior described in
+\autoref{sec:experimental_setup:assumptions_and_limitations}. The presence of 
+similar high-frequency noise in the thruster forces and joint torques
+(\autoref{fig:results:dp_heading:forces2}) can be explained by the unfiltered 
+propagation of noisy joint and velocity measurements through the controller 
+and thruster allocation algorithms.
+
+Of particular concern is the behavior of the joint motor torques, which 
+resemble a "bang-bang" control strategy rather than a smooth \gls{dp} response
+. This is partly due to the high proportional gain in the controller—set to
+\(10\,\mathrm{Nm}/^\circ\)—meaning that a \(1^\circ\) error induces a 
+\(10\,\mathrm{Nm}\) corrective torque. While this gain yields low joint angle 
+errors, it also results in aggressive, high-frequency control actions that may 
+not be ideal for the mechanical components and actuators. Future work should 
+consider the use of low-pass filtering or gain scheduling to mitigate these effects.
+
+\FloatBarrier
 
 % -----------------------------------------------------------------------------
 \subsection{Roll Control}
@@ -114,82 +151,202 @@ brief description of each run.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/pd.pdf}
+    \caption{Position of Eelume robot during roll control with \gls{pd+} controller.}
     \label{fig:results:dp_roll:pos}
-    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
 \end{figure}
+
+\paragraph{Results.}
+
+\autoref{fig:results:dp_roll:pos} shows the orientation and position of the 
+Eelume robot during a roll control test. The robot is commanded to achieve a 
+roll angle of approximately \(20^\circ\), which it tracks with relatively high 
+accuracy. The response resembles that of a second-order system, with a minor 
+overshoot of about \(2^\circ\) and settling occurring within approximately
+\(3\) seconds.
+
+Throughout the maneuver, pitch and yaw remain close to the reference value of
+\(0^\circ\), deviating by no more than \(2^\circ\), indicating good decoupling 
+of the rotational axes. The north and east position components show small 
+oscillations around the reference point, with deviations of no more than
+\(0.2\,\mathrm{m}\). However, the down (vertical) position does not converge 
+to the origin but instead stabilizes at a depth between \(0.4\) and
+\(0.5\,\mathrm{m}\) below the intended reference.
+
+As in the previous experiment, the joint angle measurements exhibit noticeable 
+noise and jitter, which may affect control quality in high-frequency domains.
+
+\paragraph{Discussion.}
+
+The roll angle tracking performance is notably precise and significantly 
+faster than the yaw response observed in \autoref{fig:results:dp_heading:pos}. 
+This improved performance is primarily due to the robot’s lower moment of 
+inertia about the body-fixed \(x\)-axis. Additionally, the Eelume’s slender, 
+snake-like design minimizes hydrodynamic drag about this axis, except for 
+minor contributions from external components such as thrusters and instrumentation.
+
+The slight steady-state error in roll angle may be attributed to the robot’s 
+buoyancy characteristics. As the Eelume has a stable roll equilibrium due to 
+its design, restoring moments from buoyancy counteract the control effort, 
+resulting in a residual error when the roll angle is held away from neutral.
+
+The observed depth error likely stems from inaccuracies in the compensation 
+term within the controller. Furthermore, the test was conducted at a depth of 
+approximately \(1.3\,\mathrm{m}\), where variations in salinity and 
+temperature can influence buoyancy. Performing the experiment at a greater 
+depth could have reduced the impact of surface-related density fluctuations.
+
+The noise and jitter in joint measurements are consistent with those observed 
+in the heading control experiment. While they do not appear to significantly 
+degrade roll tracking performance, they remain a potential concern for control 
+fidelity and actuator health, particularly in dynamic scenarios.
+
+Overall, the experiment demonstrates effective and responsive roll control, 
+validating the controller’s ability to handle fast and accurate orientation 
+adjustments about the \(x\)-axis.
 
 \FloatBarrier
 
 
 % -----------------------------------------------------------------------------
 \subsection{North Position Control}
+
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/pd.pdf}
+    \caption{Position of Eelume robot during north position control with \gls{pd+} controller.}
     \label{fig:results:dp_north:pos}
-    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
 \end{figure}
 
-\FloatBarrier
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250513-133631.pdf}
+    \caption{Thruster forces and joint motor torques during north position control with \gls{pd+} controller.}
+    \label{fig:results:dp_north:forces}
+\end{figure}
 
+\paragraph{Results.}
+
+\autoref{fig:results:dp_north:pos} illustrates the position and orientation of the Eelume robot in response to a step change of \(1\,\mathrm{m}\) in the north reference. The northward motion exhibits a second-order response, with an overshoot of approximately \(0.4\,\mathrm{m}\), and settles near the desired value within about \(40\) seconds. The response is notably slow, which may limit the system's ability to follow time-sensitive trajectories.
+
+Throughout the experiment, roll, pitch, and yaw remain within a stable range of \(\pm 2^\circ\) after the initial transient phase, indicating good attitude stability and decoupling from the translational motion.
+
+Anomalies were observed in the joint angle measurements, particularly in joint \(\theta_3\). Two distinct jittering episodes occur between \(t = 18\text{–}26\,\mathrm{s}\) and \(t = 41\text{–}47\,\mathrm{s}\), during which the third joint appears to introduce random jumps of approximately \(4^\circ\). These irregularities are reflected in the control signals.
+
+\autoref{fig:results:dp_north:forces} shows the corresponding actuator commands. As in previous experiments, the thruster forces and joint torques exhibit high-frequency noise. The noise is particularly pronounced during the intervals of joint jitter, further supporting the observation of measurement-induced disturbances.
+
+\paragraph{Discussion.}
+
+The slow rise time and overshoot in the northward response suggest a lack of damping and conservative controller tuning in the translational plane. A higher proportional gain could reduce rise time, while increased derivative action may help suppress overshoot.
+
+The jitter observed in the joint measurements—especially in joint \(\theta_3\)—is not unique to this experiment and appears to be a recurring issue. Although the exact cause remains unclear, it is discussed in more detail in \autoref{sec:results:lowpass}, where low-pass filtering is proposed as a mitigation strategy. It is evident that these joint disturbances contribute to the high-frequency noise seen in both the joint motor commands and thruster allocation.
+
+Despite the noise, the joint angles perform well overall, provided the brief jittering segments are excluded. As in earlier experiments, a steady-state error in the down position persists, likely due to buoyancy-related inaccuracies and the limited effectiveness of the vertical compensation term in the controller. This is further affected by variations in water salinity near the surface.
+
+In summary, while the system demonstrates successful convergence to the north position reference, performance is hindered by slow dynamics and sensor-related disturbances. These findings underscore the importance of controller tuning and measurement filtering to ensure reliable and responsive behavior.
+
+\FloatBarrier
 
 % -----------------------------------------------------------------------------
 \subsection{East Position Control}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/pd.pdf}
-    \label{fig:results:dp_east:pos}
     \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+    \label{fig:results:dp_east:pos}
 \end{figure}
+
+\paragraph{Results.}
+
+\autoref{fig:results:dp_east:pos} shows the response of the Eelume robot to a 
+\(1\,\mathrm{m}\) step in the east position reference. The eastward motion 
+exhibits characteristics of an over-damped second-order system. The robot 
+reaches approximately \(0.9\,\mathrm{m}\) after about \(20\) seconds, with a 
+residual steady-state error of approximately \(0.1\,\mathrm{m}\), indicating 
+that the controller does not fully eliminate the position error in this 
+direction.
+
+Small steady-state offsets are also observed in the north and down directions, 
+with final errors of approximately \(0.2\,\mathrm{m}\) and \(0.3\,\mathrm{m}\),
+respectively. These secondary deviations may result from coupling effects 
+or imbalances in controller compensation.
+
+The roll and yaw angles show brief disturbances during the initial phase of 
+the motion but stabilize within the first \(10\) seconds. This transient 
+effect indicates that the system momentarily perturbs the robot’s orientation 
+when initiating lateral movement, before regaining stable attitude control.
+
+The joint angles remain stable throughout the run, apart from the usual high-
+frequency jitter observed in other experiments. No major anomalies or 
+uncharacteristic behavior were identified.
+
+\paragraph{Discussion.}
+
+The sluggish response and steady-state error in the east direction are 
+expected given the Eelume robot's physical configuration. Translating 
+laterally requires the entire length of the slender, snake-like body to 
+displace water sideways, resulting in significant hydrodynamic drag. This 
+introduces large damping forces that slow the robot's response in the east 
+direction compared to forward (north) motion.
+
+The observed behavior aligns well with theoretical expectations. The over-
+damped response profile and incomplete convergence are indicative of both 
+underpowered control effort and substantial resistance from the surrounding 
+fluid. While the robot is able to execute the motion, the performance may be 
+limited by actuation constraints or the need for refined controller tuning to 
+handle such high-drag scenarios more effectively.
+
+Overall, the results demonstrate that while eastward translation is 
+challenging for the Eelume platform, the control system maintains stability 
+and achieves acceptable performance, albeit with slower dynamics and modest 
+steady-state error.
 
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
+\newpage
 \section{Velocity-Level Task-Priority Control}
-
-hei
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
+    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]{Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}. The position is offset from \((11, 36, 10)\)}
     \label{fig:results:tpc:stretch:1:pos}
-    \caption{Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}.}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:vel}
     \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{stretch} case with \gls{tpc}.}
+    \label{fig:results:tpc:stretch:1:vel}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:forces}
     \caption{}
+    \label{fig:results:tpc:stretch:1:forces}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:forces-torques}
     \caption{}
+    \label{fig:results:tpc:stretch:1:forces-torques}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:task:1}
     \caption{}
+    \label{fig:results:tpc:stretch:1:task:1}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:task:2}
     \caption{}
+    \label{fig:results:tpc:stretch:1:task:2}
 \end{figure}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:task:3}
     \caption{}
+    \label{fig:results:tpc:stretch:1:task:3}
 \end{figure}
 
 \FloatBarrier
@@ -206,22 +363,22 @@ hei
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161107.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161107.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161107.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 
@@ -234,22 +391,22 @@ hei
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161629.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161629.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161629.pdf}
-    \label{fig:results:tpc:bend:1:pos}
     \caption{}
+    \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \FloatBarrier
@@ -257,11 +414,12 @@ hei
 
 % -----------------------------------------------------------------------------
 \section{Low-pass Filtering}
+\label{sec:results:lowpass}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
-    \label{fig:results:tpc:stretch:1:task:3}
     \caption{}
+    \label{fig:results:tpc:stretch:1:task:3}
 \end{figure}
 
 

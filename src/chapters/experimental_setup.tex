@@ -448,6 +448,7 @@ The launch and recovery procedures requires \(2\) to \(3\) people, and takes abo
 
 % -----------------------------------------------------------------------------
 \section{Experimental Procedures}
+\label{sec:experimental_setup:experimental_procedures}
 
 To highlight the work that has been done a series of experiments were performed
 These experiments can be devided into four groups based on when they aim to
@@ -464,7 +465,7 @@ and a specific controller and case is run to measure the response. Here, the wor
 \textit{case} refers to a specific set of tasks, or, in the case for the first
 group, a specific setpoint for the \gls{pd+} controller. The four groups are described in more detail below.
 
-\subsection*{Lower-Level \gls{pd+} Controller}
+\subsection*{1: Lower-Level \gls{pd+} Controller}
 The first group of experiments aims to show the response of the lower-level \gls{pd+} controller.
 Ideally, the lower-level controller should be able to follow a setpoint
 in the position, attitude, and joint angles. How fast or slow the controller can follow
@@ -473,7 +474,20 @@ the better the lower-level controller follows the setpoint, the higher frequency
 the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
 as described in \autoref{sec:tpc:low_level_control}.
 
-\subsection*{Velocity-Level Task-Priority Controller}
+The \(\bm{K}_p\) and \(\bm{K}_d\) matrices of the \gls{pd+} controller are set to
+diagonal matrices with the following values:
+\begin{subequations}
+\begin{align}
+    \bm{K}_p &= \operatorname{diag}\left( 50, 160, 120, 2 \frac{180}{\pi}, 20 \frac{180}{\pi}, 22 \frac{180}{\pi}, 10, 10, 10, 10 \right) \\
+    \bm{K}_d &= \operatorname{diag}\left( 20, 0, 40, \frac{2}{3} \frac{180}{\pi}, 0, 0, 4, 4, 4, 4 \right)
+\end{align}
+\end{subequations}
+where the units for the first three elements of \(\bm{K}_p\)are in N/m, and the last four are in Nm/deg.
+The units for the attitude coefficients are not specified, as they are multiplied by the
+vector part of the quaternion, which is dimensionless. The units for the first three elements
+of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
+
+\subsection*{2: Velocity-Level Task-Priority Controller}
 The second group of experiments aims to show the performance of the velocity-level
 task-priority controller. To do this, a very typical setup is used. There are a total
 of three tasks, one being the position of the head, one being the position of the tail,
@@ -527,10 +541,16 @@ where the desired generalized state \(\bm{\xi}_d\)and desired generalized veloci
 are used to set the references for the lower-level \gls{pd+} controller. The dependency
 of time is implicit in the notation.
 
+The task gains are set to diagonal matrices with the following values:
+\begin{align}
+    \bm{\Lambda}_1 &= 0.1 \I &
+    \bm{\Lambda}_2 &= 0.1 \I &
+    \bm{\Lambda}_3 &= 0.2 \I.
+\end{align}
 
 \FloatBarrier
 
-\subsection*{Set-Based Velocity-Level Task-Priority Controller}
+\subsection*{3: Set-Based Velocity-Level Task-Priority Controller}
 
 The third group of experiments aims to show the performance of the set-based
 velocity-level task-priority controller. This controller is used to set
@@ -556,6 +576,13 @@ tasks taking priority over the position and attitude tasks when thay are activat
     \caption{Overview of head and tail tasks for case \textit{bend}.}
     \label{fig:eelume:tpc:tasks:bend}
 \end{figure}
+
+\subsection*{4: Low-Pass Filtering}
+
+The fourth group of experiments aim to show the need for low-pass filtering of the velocity measurements as well as the joint angles. To showcase this need, the same
+setup as for the second group is used, but with and without low-pass filtering
+applied. 
+
 
 
 

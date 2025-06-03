@@ -8,8 +8,8 @@ BIBER_ARGS = --output-directory $(BUILD_DIR) -quiet
 GLOS_ARGS = -d $(BUILD_DIR) -q
 
 # Diff settings
-DIFF_OLD = "main"
-DIFF_NEW = "HEAD"
+DIFF_OLD ?= "main"
+DIFF_NEW ?= "HEAD"
 
 # Targets
 .PHONY: all clean small diff
