@@ -1,21 +1,6 @@
 \chapter{Background \& {Preliminaries}}
 \label{ch:background}
 
-\iffalse
-This chapter provides an overview of the mathematical background and
-preliminaries needed to understand the rest of the thesis. The chapter is
-structured as follows: \autoref{sec:bp:so3_se3} and \autoref{sec:bp:se3} introduce the
-special orthogonal group in three dimensions, $\SO$, and the special Euclidean
-group in three dimensions, $\SE$, respectively. These groups are essential for
-modeling the kinematics and dynamics of \gls{uvms}s. \autoref{sec:pseudoinverse} introduces the
-Moore-Penrose pseudo-inverse and the null-space projection, which are extensively used
-in the \gls{tpc} framework. \autoref{sec:lagrange} presents Lagrange's equations of motion, which are used to derive the equations of motion for the \gls{uvms}s. \autoref{sec:runge-kutta} introduces Runge-Kutta methods, which are used to numerically solve the equations of motion. Finally, \autoref{sec:background:quaternions} introduces the quaternion representation of rotations, which is used to represent the orientation of the \gls{uvms}s in this thesis. The quaternion representation is also used
-in the definition of tasks and the lower-levl \gls{dp} controller presented in
-\autoref{sec:tpc:low_level_control}
-The contents of this section, as well as all previous sections
-are heavily used in the implementation of the controllers and simulator presented in this thesis.
-\fi
-
 This chapter provides a comprehensive overview of the mathematical foundations and preliminaries necessary for understanding the remainder of this thesis. The chapter is organized as follows: \autoref{sec:bp:so3_se3} and \autoref{sec:bp:se3} introduce the Special Orthogonal group in three dimensions, $\SO$, and the Special Euclidean group in three dimensions, $\SE$, respectively. These groups are fundamental for modeling the kinematics and dynamics of \gls{uvms}s.
 \autoref{sec:pseudoinverse} presents the Moore-Penrose pseudo-inverse and null-space projection techniques, which are extensively employed within the \gls{tpc} framework. \autoref{sec:lagrange} discusses Lagrange's equations of motion, which form the basis for deriving the dynamic equations of \gls{uvms}s. \autoref{sec:runge-kutta} introduces the Runge-Kutta family of methods, which are used for the numerical integration of these equations of motion.
 Finally, \autoref{sec:background:quaternions} introduces the quaternion representation of rotations, which is utilized to describe the orientation of \gls{uvms}s throughout this thesis. The quaternion representation also plays a central role in task definition and in the design of the low-level \gls{dp} controller discussed in \autoref{sec:tpc:low_level_control}.

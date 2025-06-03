@@ -462,11 +462,11 @@ For each group, a series of runs are conducted. The run refers to a single
 experiment, meaning that the robot is set to a specific position and orientation,
 and a specific controller and case is run to measure the response. Here, the word
 \textit{case} refers to a specific set of tasks, or, in the case for the first
-group, a specific setpoint. The four groups are described in more detail below.
+group, a specific setpoint for the \gls{pd+} controller. The four groups are described in more detail below.
 
 \subsection*{Lower-Level \gls{pd+} Controller}
-The first group of experiments aims to show that the lower-level \gls{pd+} controller
-is working as intended. This means that the controller is able to follow a setpoint
+The first group of experiments aims to show the response of the lower-level \gls{pd+} controller.
+Ideally, the lower-level controller should be able to follow a setpoint
 in the position, attitude, and joint angles. How fast or slow the controller can follow
 the setpoint will have an impact on how high frequency contents the tasks can have:
 the better the lower-level controller follows the setpoint, the higher frequency contents
@@ -477,16 +477,16 @@ as described in \autoref{sec:tpc:low_level_control}.
 The second group of experiments aims to show the performance of the velocity-level
 task-priority controller. To do this, a very typical setup is used. There are a total
 of three tasks, one being the position of the head, one being the position of the tail,
-and one begin the vector part of the quaternion defining the attitude of the base link.
+and one being the vector part of the quaternion defining the attitude of the base link.
 The tasks are, in order of priority:
 %The highest priority task is the position of the tail, which is set to a position
 %that slowly moves backwards along the south direction. The second task is the position of the head,
 %which is set to a fixed position. The third task is the attitude of the base link,
 %set have the same orientation as the inertial frame.
 \begin{enumerate}
-    \item The position of the tail. Moving backwards along the south direction.
-    \item The position of the head. Set to a fixed position.
-    \item The attitude of the base link. Set to have the same orientation as the inertial frame.
+    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving backwards along the south direction.
+    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Set to a fixed position.
+    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The orientation of the base link. Set to be aligned with the inertial frame.
 \end{enumerate}
 The tasks are designed to
 show the strict priority of the controller, meaning that, ideally, all tasks
@@ -498,11 +498,6 @@ the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview 
 The tasks are designed such that both tasks are fullfilled at the beginning of the run,
 where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
 seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
-
-{
-    \color{red}
-    What controller is used?
-}
 
 \begin{figure}[!ht]
     \centering
@@ -518,6 +513,21 @@ seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
     \label{fig:eelume:tpc:tasks:stretch}
 \end{figure}
 
+The controller used for this group is the velocity-level task-pirority controller
+presented in \autoref{sec:velocity_level_control}. The null-space projection method
+is the augmented null-space projection method, and no damping of the jacobians
+are used. The controller can be summarized in the following equation:
+\begin{subequations}
+\begin{align}
+    \bm{\zeta}_d &= \sum_{i=1}^{3} \bm{N}_{i} \bm{J}_i^{+} \left( \dot{\bm{\sigma}}_{i,d} - \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right)  &
+    \bm{\xi}_d &= \int_0^t \bm{J}_q(\bm{q}_b^n)\bm{\zeta}_d(\tau) \, d\tau + \bm{\xi}_0,
+\end{align}
+\end{subequations}
+where the desired generalized state \(\bm{\xi}_d\)and desired generalized velocity
+are used to set the references for the lower-level \gls{pd+} controller. The dependency
+of time is implicit in the notation.
+
+
 \FloatBarrier
 
 \subsection*{Set-Based Velocity-Level Task-Priority Controller}
@@ -527,9 +537,9 @@ velocity-level task-priority controller. This controller is used to set
 joint limits of \(\pm 45\) degrees on the \(y\)-axis joints. The task setup is,
 excluding the set-based tasks:
 \begin{enumerate}
-    \item The position of the tail. Moving downwards and forwards.
-    \item The position of the head. Moving downwards and backwards.
-    \item The attitude of the base link. Set to have the same orientation as the inertial frame.
+    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving downwards and forwards.
+    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Moving downwards and backwards.
+    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The attitude of the base link. Set to have the same orientation as the inertial frame.
 \end{enumerate}
 \autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
 the position of the head and the tail close each other as the time increases, meaning
