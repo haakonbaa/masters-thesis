@@ -447,6 +447,7 @@ The launch and recovery procedures requires \(2\) to \(3\) people, and takes abo
 \end{figure}
 
 % -----------------------------------------------------------------------------
+\iffalse
 \section{Experimental Procedures}
 \label{sec:experimental_setup:experimental_procedures}
 
@@ -493,10 +494,6 @@ task-priority controller. To do this, a very typical setup is used. There are a 
 of three tasks, one being the position of the head, one being the position of the tail,
 and one being the vector part of the quaternion defining the attitude of the base link.
 The tasks are, in order of priority:
-%The highest priority task is the position of the tail, which is set to a position
-%that slowly moves backwards along the south direction. The second task is the position of the head,
-%which is set to a fixed position. The third task is the attitude of the base link,
-%set have the same orientation as the inertial frame.
 \begin{enumerate}
     \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving backwards along the south direction.
     \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Set to a fixed position.
@@ -583,6 +580,7 @@ The fourth group of experiments aim to show the need for low-pass filtering of t
 setup as for the second group is used, but with and without low-pass filtering
 applied. 
 
+\fi
 
 
 

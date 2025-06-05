@@ -257,15 +257,19 @@ A straightforward approach to tracking the desired generalized velocities is to 
 
 where \(\bm{\tau} \in \R^{10}\) denotes the desired generalized forces on the body. The desired state \(\bm{\xi}_d\) is obtained by integrating the desired generalized velocities \(\bm{\zeta}_d\). The remaining symbols are defined in \autoref{sec:diff_kin}.
 
-It's important to note that this controller does not account for low-frequency disturbances such as waves, ocean currents, or hydrodynamic forces. These will introduce low-frequency tracking errors. However, this limitation is mitigated by the higher-level, velocity-based task-priority controller, which includes feedback that adapts the desired velocity based on state error.
+A subtle issue with the controller presented in \autoref{eq:tau_pd} lies in the coupling between the rotational degrees of freedom encoded in the vector part of the error quaternion, $\bm{\varepsilon}_e$. In the angle-axis parametrization, this vector component is scaled by the sine of the rotation angle, rather than the angle itself. As a result, the error contribution along one rotational axis can be unintentionally influenced by errors around the other axes. This effect becomes particularly problematic when the proportional gains applied to each rotational axis differ, which is often the case when the system exhibits varying dynamics—for example, being slower around one axis and faster around others. To mitigate this issue, the angle-axis representation of the orientation error can be explicitly recovered from the quaternion and used in place of the vector part. The following expression can be used:
+\begin{align}
+\theta \bm{k} = \frac{\arccos(\eta_e)}{||\bm{\varepsilon}_e||} \bm{\varepsilon}_e,
+\end{align}
+where \({\eta}_e\) and \(\bm{{\varepsilon}}_e\) are the scalar and vector parts of the error quaternion, and $\theta$ and $\bm{k}$ represent the rotation angle and axis, respectively. Some care needs to be taken when dividing by the norm of \(\bm{\varepsilon}_e\).
+
+It is important to note that this controller does not account for low-frequency disturbances such as waves, ocean currents, or hydrodynamic forces. These will introduce low-frequency tracking errors. However, this limitation is mitigated by the higher-level, velocity-based task-priority controller, which includes feedback that adapts the desired velocity based on state error.
 
 Minor improvements to the controller can still be made. While modeling the full dynamics of an \gls{aiauv} is challenging, gravity and buoyancy forces can be accurately captured if the vehicle’s mass and volume distributions are known. This leads to an extended controller, referred to as \gls{pd}+, which augments the original controller from \autoref{eq:tau_pd} with a compensation term:
-
 \begin{align}
     \label{eq:tpc:pd_plus}
     \bm{\tau}_{PD+} = \bm{\tau}_{PD} + \bm{g}(\bm{\xi}(t)),
 \end{align}
-
 where \(\bm{g}(\bm{\xi}(t))\) is defined in \autoref{eq:modeling:g}. Provided the gravity and buoyancy forces are modeled correctly, this addition improves the steady-state tracking error, particularly along the direction of gravity.
 
 % -----------------------------------------------------------------------------

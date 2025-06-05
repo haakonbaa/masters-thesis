@@ -4,19 +4,22 @@ The following chapter presents the experimental results alongside a discussion
 of the findings. It begins with an overview of the experimental runs, followed 
 by selected outcomes from each. First, the performance of the \gls{pd+} controller 
 is examined, with step response results shown for heading, roll, and both 
-north and east position control. Next, the results from experiments using the 
+lateral and longitudinal position control. Next, the results from experiments using the 
 task-priority controller are presented, focusing initially on the scenario in which the 
 robot is stretched. This is followed by results from experiments where the 
-robot is bent, utilizing a set-based task-priority controller. Finally, a comparison is 
-made between runs with and without low-pass filtering of the generalized velocities.
+robot is bent, utilizing set-based tasks. Finally, a comparison is 
+made between runs with and without low-pass filtering of the generalized velocities
+and joint angles.
 
 
 \section{Overview of Results}
 
 Each experimental run is classified by the time it was started, and there are a total
 of \(10\) runs that will be presented in the following sections. The format
-of the run name is \texttt{YYYYMMDD-HHMMSS}, where the first part is the date
-and the second part is the time. An overview of the runs is presented in
+of the run name is \texttt{MMDD-HHMMSS}, where the first part is the date
+and the second part is the time. The raw data collected from experiments can be
+downloaded from \cite{githubdata}, along with scripts for generating plots.
+An overview of the runs is presented in
 \autoref{tab:eelume:experimental-runs}, which includes the run name, the
 controller used, if the velocity measurements were low-pass filtered, and a
 brief description of each run.
@@ -26,28 +29,28 @@ brief description of each run.
     \begin{tabular}{|c|c|c|c|}
         \hline
         Run Name & Controller & Low-pass & Case \\ \hline \hline
-        \multirow{2}{*}{20250513-135042} & \gls{pd+} & No & Heading \\ \cline{2-4}
+        \multirow{2}{*}{0513 - 135042} & \gls{pd+} & No & Heading \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Reference in yaw angle set to \(20\) degrees after 20 seconds.} \\ \hline
-        \multirow{2}{*}{20250513-141406} & \gls{pd+} & No & Roll \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 141406} & \gls{pd+} & No & Roll \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Reference in roll angle set to \(20\) degrees after 20 seconds.} \\ \hline
-        \multirow{2}{*}{20250513-133631} & \gls{pd+} & No & North Position \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 133631} & \gls{pd+} & No & Lateral Position \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Reference in north position set to \(+1\) m after 20 seconds.} \\ \hline
-        \multirow{2}{*}{20250513-134500} & \gls{pd+} & No & East Position \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 134500} & \gls{pd+} & No & Longitudinal Position \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Reference in east position set to \(+1\) m after 20 seconds.} \\ \hline
         \hline
-        \multirow{2}{*}{20250519-141527} & Kinematic-level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 141527} & Kinematic-level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with decoupled quaternion gains.} \\ \hline
-        \multirow{2}{*}{20250519-144113} & Kinematic-level \gls{tpc} & No & Stretch \\ \cline{2-4}
-        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no compensation term.} \\ \hline
+        %\multirow{2}{*}{0519 - 144113} & Kinematic-level \gls{tpc} & No & Stretch \\ \cline{2-4}
+        %& \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no compensation term.} \\ \hline
         \hline
-        \multirow{2}{*}{20250519-161629} & Kinematic-Level \gls{tpc} & Yes & Bend \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 161629} & Kinematic-Level \gls{tpc} & Yes & Bend \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, with compensation term.} \\ \hline
-        \multirow{2}{*}{20250519-161107} & Kinematic-Level \gls{tpc} & No & Bend \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 161107} & Kinematic-Level \gls{tpc} & No & Bend \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, without compensation term.} \\ \hline
         \hline
-        \multirow{2}{*}{20250513-154920} & Set-based \gls{tpc} & No & Stretch \\ \cline{2-4}
+        \multirow{2}{*}{0513 - 154920} & Kinematic-Level \gls{tpc} & No & Stretch \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no low-pass filtering.} \\ \hline
-        \multirow{2}{*}{20250519-135739} & Set-based \gls{tpc} & Yes & Stretch \\ \cline{2-4}
+        \multirow{2}{*}{0519 - 135739} & Kinematic-Level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with low-pass filtering.} \\ \hline
     \end{tabular}
     \caption[An overview of the experimental runs]{An overview of the experimental
@@ -59,27 +62,46 @@ brief description of each run.
 % -----------------------------------------------------------------------------
 \section{DP-Control}
 
-The following sections show the results from testing the \gls{pd+} controller
-on the Eelume robot. For a detailed overview of the setup, see \autoref{sec:experimental_setup:experimental_procedures}.
+\paragraph{Experimental setup.}
+The first group of experiments aims to show the response of the lower-level \gls{pd+} controller.
+Ideally, the lower-level controller should be able to follow a setpoint
+in the position, attitude, and joint angles. How fast or slow the controller can follow
+the setpoint will have an impact on how high frequency contents the tasks can have:
+the better the lower-level controller follows the setpoint, the higher frequency contents
+the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
+as described in \autoref{sec:tpc:low_level_control}.
+
+The \(\bm{K}_p\) and \(\bm{K}_d\) matrices of the \gls{pd+} controller are set to
+diagonal matrices with the following values:
+\begin{subequations}
+\begin{align}
+    \bm{K}_p &= \operatorname{diag}\left( 50, 160, 120, 2 \frac{180}{\pi}, 20 \frac{180}{\pi}, 22 \frac{180}{\pi}, 10, 10, 10, 10 \right) \\
+    \bm{K}_d &= \operatorname{diag}\left( 20, 0, 40, \frac{2}{3} \frac{180}{\pi}, 0, 0, 4, 4, 4, 4 \right)
+\end{align}
+\end{subequations}
+where the units for the first three elements of \(\bm{K}_p\)are in N/m, and the last four are in Nm/deg.
+The units for the attitude coefficients are not specified, as they are multiplied by the
+vector part of the error quaternion, which is dimensionless. The units for the first three elements
+of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
 
 \subsection{Heading Control}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=1]{assets/ignored/plots/pd.pdf}
-    \caption{Position of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
+    \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/pd.pdf}
+    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
     \label{fig:results:dp_heading:pos}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/20250513-135042.pdf}
-    \caption{Generalized velocity of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
+    \includegraphics[width=1.0\textwidth,page=2]{assets/ignored/plots/20250513-135042.pdf}
+    \caption{Generalized velocity of Eelume robot during heading control with \gls{pd+} controller.}
     \label{fig:results:dp_heading:vel}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250513-135042.pdf}
-    \caption{Thruster forces and joint motor torques of Eelume robot during heading control with \gls{pd+} controller. Run \textit{20250513-135042}}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250513-135042.pdf}
+    \caption{Thruster forces and joint motor torques of Eelume robot during heading control with \gls{pd+} controller.}
     \label{fig:results:dp_heading:forces2}
 \end{figure}
 
@@ -150,7 +172,7 @@ consider the use of low-pass filtering or gain scheduling to mitigate these effe
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=2]{assets/ignored/plots/pd.pdf}
+    \includegraphics[width=1.0\textwidth,page=2]{assets/ignored/plots/pd.pdf}
     \caption{Position of Eelume robot during roll control with \gls{pd+} controller.}
     \label{fig:results:dp_roll:pos}
 \end{figure}
@@ -208,25 +230,25 @@ adjustments about the \(x\)-axis.
 
 
 % -----------------------------------------------------------------------------
-\subsection{North Position Control}
+\subsection{Lateral Control}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/pd.pdf}
-    \caption{Position of Eelume robot during north position control with \gls{pd+} controller.}
+    \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/pd.pdf}
+    \caption{Position of Eelume robot during lateral control with \gls{pd+} controller.}
     \label{fig:results:dp_north:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250513-133631.pdf}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250513-133631.pdf}
     \caption{Thruster forces and joint motor torques during north position control with \gls{pd+} controller.}
     \label{fig:results:dp_north:forces}
 \end{figure}
 
 \paragraph{Results.}
 
-\autoref{fig:results:dp_north:pos} illustrates the position and orientation of the Eelume robot in response to a step change of \(1\,\mathrm{m}\) in the north reference. The northward motion exhibits a second-order response, with an overshoot of approximately \(0.4\,\mathrm{m}\), and settles near the desired value within about \(40\) seconds. The response is notably slow, which may limit the system's ability to follow time-sensitive trajectories.
+\autoref{fig:results:dp_north:pos} illustrates the position and orientation of the Eelume robot in response to a step change of \(1\,\mathrm{m}\) in the lateral direction. The northward motion exhibits a second-order response, with an overshoot of approximately \(0.4\,\mathrm{m}\), and settles near the desired value within about \(40\) seconds. The response is notably slow, which may limit the system's ability to follow time-sensitive trajectories.
 
 Throughout the experiment, roll, pitch, and yaw remain within a stable range of \(\pm 2^\circ\) after the initial transient phase, indicating good attitude stability and decoupling from the translational motion.
 
@@ -247,10 +269,10 @@ In summary, while the system demonstrates successful convergence to the north po
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
-\subsection{East Position Control}
+\subsection{Longitudinal Control}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/pd.pdf}
+    \includegraphics[width=1.0\textwidth,page=4]{assets/ignored/plots/pd.pdf}
     \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
     \label{fig:results:dp_east:pos}
 \end{figure}
@@ -304,79 +326,243 @@ steady-state error.
 
 % -----------------------------------------------------------------------------
 \newpage
-\section{Velocity-Level Task-Priority Control}
+\section{Velocity-Level \gls{tpc}, case \textit{stretch}}
+
+\paragraph{Experimental setup.}
+The second group of experiments aims to show the performance of the velocity-level
+task-priority controller. To do this, a very typical setup is used. There are a total
+of three tasks, one being the position of the head, one being the position of the tail,
+and one being the vector part of the quaternion defining the attitude of the base link.
+The tasks are, in order of priority:
+\begin{enumerate}
+    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving backwards along the south direction.
+    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Set to a fixed position.
+    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The orientation of the base link. Set to be aligned with the inertial frame.
+\end{enumerate}
+The tasks are designed to
+show the strict priority of the controller, meaning that, ideally, all tasks
+should be able to be executed at the same time in the beginning of the run, but
+as the robot moves backwards and executing both tasks becomes kinematically infeasable,
+the tail task will take priority over the head task. For future reference, this
+case is referred to as \textit{stretch}, as the robot is stretched out over
+the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
+The tasks are designed such that both tasks are fullfilled at the beginning of the run,
+where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
+seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
-    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]{Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}. The position is offset from \((11, 36, 10)\)}
+    \includegraphics[width=\textwidth]{assets/side-view-45-joints.png}
+    \caption{Image of Eelume robot in initial position for case \textit{stretch}}
+    \label{fig:eelume:tpc:tasks:stretch:initial_pos}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth,page=1]{assets/ignored/plots/tasks.pdf}
+    \caption{Task trajectories for case \textit{stretch}.}
+    \label{fig:eelume:tpc:tasks:stretch}
+\end{figure}
+
+The controller used for this group is the velocity-level task-pirority controller
+presented in \autoref{sec:velocity_level_control}. The null-space projection method
+is the augmented null-space projection method, and no damping of the jacobians
+are used. The controller can be summarized in the following equation:
+\begin{subequations}
+\begin{align}
+    \bm{\zeta}_d &= \sum_{i=1}^{3} \bm{N}_{i} \bm{J}_i^{+} \left( \dot{\bm{\sigma}}_{i,d} - \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right)  &
+    \bm{\xi}_d &= \int_0^t \bm{J}_q(\bm{q}_b^n)\bm{\zeta}_d(\tau) \, d\tau + \bm{\xi}_0,
+\end{align}
+\end{subequations}
+where the desired generalized state \(\bm{\xi}_d\)and desired generalized velocity
+are used to set the references for the lower-level \gls{pd+} controller. The dependency
+of time is implicit in the notation.
+
+The task gains are set to diagonal matrices with the following values:
+\begin{align}
+    \bm{\Lambda}_1 &= 0.1 \I &
+    \bm{\Lambda}_2 &= 0.1 \I &
+    \bm{\Lambda}_3 &= 0.2 \I.
+\end{align}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
+    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]
+    {Low-pass filtered position of Eelume robot during \textit{stretch}. The position is offset from \((11, 36, 10)\)}
     \label{fig:results:tpc:stretch:1:pos}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{stretch} case with \gls{tpc}.}
+    \includegraphics[width=1.0\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{stretch}}
     \label{fig:results:tpc:stretch:1:vel}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Desired body fixed forces, body-fixed momens and joint moments during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:forces}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Thruster and joint motor forces of during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:forces-torques}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Tail task value and error during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:task:1}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Head task value and error during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:task:2}
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Body orientation task value and error during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:task:3}
 \end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth,page=3]{assets/ignored/plots/tasks.pdf}
+    \caption{Body orientation task value and error during case \textit{stretch}}
+    \label{fig:results:tpc:stretch:task-traj}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=11]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Body orientation task value and error during case \textit{stretch}}
+    \label{fig:results:tpc:stretch:dp-tracking}
+\end{figure}
+
+
+
+\iffalse
+\paragraph{Results.}
+\begin{itemize}
+    \item \autoref{fig:results:tpc:stretch:1:pos} shows the position and orientation, as well as the joint angles, of the body link during the run. Note that the joint angles are lowpass filtered to try and remove some of the jittering as described in previous chapters 
+    \item Most of the values look smooth, except for some oscillations of about 0.7 Hz with amplitude of about 1.5 degrees in roll
+    \item There also seem to be some oscillation in the joint angles at about the same frequency and appriximately same amplitude. This is most noticeable on the second and fourth joint, bending about the \(z\)-axis.
+    \item \autoref{fig:results:tpc:stretch:1:vel} shows the linear-, angular- and joint-velocities. The osciallation is more prominant here, and one can see some oscillation on the linear velocities as well.
+    \item The frequency contents of all the velocity measurements seem to be at 0.6 - 0.8 Hz
+    \item The lower-level \gls{pd+} controller commands the body fixed wrench and joint torques shown in \autoref{fig:results:tpc:stretch:1:forces} where some of the same oscillatory behaviour as for the generalized position plot is shown.
+    \item \autoref{fig:results:tpc:stretch:1:forces-torques} shows the commanded thruster forces and joint motor moments. It is observed that they
+        are all oscillatory with approximately the same frequency as the other plots.
+    \item \autoref{fig:results:tpc:stretch:1:task:1} Shows the task value and error for the tail task, the highest priority tasks. It is observed
+        that at time 0 the position is about \(80\) cm off the desired tail position, but it slowly converges towards 0 these 20 seconds. Throughout the run the task error keeps a low value of about \(20\) cm off, but settles to approximately \(10\) cm after 45 seconds.
+    \item \autoref{fig:results:tpc:stretch:1:task:2} shows the task 2 error (head task). For thus run there is some initial error, which is partially corrected during the first 20 seconds. In the period between 20 and 40 seconds the error seems to be better, being less than 10 cm off for a couple of seconds. After 40 seconds the error raises in an appriximately linear fashion.
+    \item \autoref{fig:results:tpc:stretch:1:task:3} shows the orientation task. The error for this task is low all throughout the run, meaning the body
+        was able to be aligned with the inertial frame withougt large deviations all throught the run.
+    \item \autoref{fig:results:tpc:stretch:task-traj} shows the head and tail task trajectories in the north-down plane.    One can see that the tail task follows the desired task trajectory wel. The head error starts around the ference, but eventually goes south. The position of the body moves down and south.
+    \item \autoref{fig:results:tpc:stretch:dp-tracking} shows how ell the lower-level \gls{pd+} controller tracks the reference set by the task-priority controller. We see that it is very good for the position and joint agles, but the orientation tracking is a bit slow. 
+\end{itemize}
+
+\paragraph{Discussion.}
+\begin{itemize}
+    \item oscillations on joints can be from low-pass filtering of the joint angles and generalized velocities. Low-pass filtering of the joint measurements are fed into the controller, which can typically cause some oscillatory behaviour, especially. It is hard to say if this is the case.
+    \item Low-pass filtering is a tradeoff: removing noise will introduce time delays. This tradeoff is discussed more in-depth in \autoref{sec:results:lowpass}. 
+    \item It should also be noted that \atoref{fig:results:tpc:stretch:1:forces-torques}, are not the actual measured thruster forces and joint moment measurements, but rather the setpoints for lower-level controllers on the Eelume robot. There are time-delays in this part of the system that is partly unknown and can contribute to time dealays causing oscillations.
+    \item A possible explanation can also be the interaction with the controller gains in the higher-level task-priority controller with the lower-level \gls{pd+} controller. If the lower-level controller is aggressive, and the proportional gain in the task-priority controller is large we might expect some oscilation in the reference. We can however dismiss this explanation seeing the smoothness of the reference in \autoref{fig:results:tpc:stretch:dp-tracking}.
+    \item The first 20 seconds the tpc controller has no feed-farward term from the desired task velocity, meaning the response is drived by the task error being integrated up as \(\bm{\xi}_d\). For the tail and head tasks: it is still able to converge to about \(20\) cm from the desired tail and head position the first \(20\) seconds. 
+    \item Task 1 error and task 2 error. after the first 20 seconds, we see that the two position taks are low. When the robot stretches out, task 2 error increases. We also expect a linear increase in the task 2 error because the head task moves linearly south.
+    \item why is orientation tracking slow? The third task is orientation, it has low priority. We expect the higher order tasks to want to change the orientation, especially the pitch to better track the desired positions.
+    \item All in all as expected, have demonstated the piroirty of the tasks, a good tracking of both tasks is observed when it is possible to track both task, when is becomes impossible due to kinematic constrints, the task with the highest priority actually takes priority.
+\end{itemize}
+
+\fi
+
+\paragraph{Results.}
+
+\autoref{fig:results:tpc:stretch:1:pos} shows the position, orientation, and joint angles of the Eelume robot during the task-priority control experiment. To mitigate the measurement noise described in previous sections, the joint angle signals are low-pass filtered. Most values appear smooth, although a mild oscillation with a frequency of approximately \(0.7\,\mathrm{Hz}\) and amplitude around \(1.5^\circ\) is noticeable in the roll angle. Similar oscillations are also observed in the second and fourth joint angles, which primarily rotate about the \(z\)-axis.
+
+These oscillations are more pronounced in the velocity signals shown in \autoref{fig:results:tpc:stretch:1:vel}, which includes linear, angular, and joint velocities. The dominant frequency content across all velocity signals lies between \(0.6\) and \(0.8\,\mathrm{Hz}\).
+
+\autoref{fig:results:tpc:stretch:1:forces} displays the body-fixed wrench and joint torques commanded by the lower-level \gls{pd+} controller. Oscillatory behavior is again evident, reflecting the dynamics seen in the position and velocity data. This is further confirmed in \autoref{fig:results:tpc:stretch:1:forces-torques}, which shows the commanded thruster forces and joint motor torques, both of which exhibit similar frequency characteristics.
+
+Task-specific performance is visualized in \autoref{fig:results:tpc:stretch:1:task:1} and \ref{fig:results:tpc:stretch:1:task:3}. The highest priority task (tail position) begins with an initial error of approximately \(80\,\mathrm{cm}\), which gradually reduces during the first \(20\) seconds. The error stabilizes around \(20\,\mathrm{cm}\) for most of the run and settles close to \(10\,\mathrm{cm}\) after \(45\) seconds.
+
+The second task (head position) shows partial correction of the initial error within the first \(20\) seconds, as seen in \autoref{fig:results:tpc:stretch:1:task:2}. Between \(t = 20\) and \(40\,\mathrm{s}\), the error remains below \(10\,\mathrm{cm}\), but then increases approximately linearly—consistent with the desired trajectory for the head task, which continues to move south.
+
+\autoref{fig:results:tpc:stretch:1:task:3} shows the orientation task (lowest priority). The error remains small throughout the run, indicating successful alignment of the robot body with the inertial frame, though with slower tracking compared to position tasks.
+
+Task-space trajectories for the head and tail tasks in the north-down plane are shown in \autoref{fig:results:tpc:stretch:task-traj}. The tail closely follows its reference trajectory, while the head initially follows but diverges later, moving south as expected. This movement corresponds to the overall body trajectory.
+
+\autoref{fig:results:tpc:stretch:dp-tracking} demonstrates how well the lower-level \gls{pd+} controller tracks the reference commands from the task-priority controller. Position and joint angle tracking are accurate, while orientation tracking appears slightly delayed.
+
+\paragraph{Discussion.}
+
+The observed oscillations in roll and joint angles may originate from the use of low-pass filtered signals for feedback. Filtering helps suppress noise but introduces phase delay, which can lead to oscillatory behavior, particularly when feedback loops interact with higher-frequency signal components. This trade-off is further discussed in \autoref{sec:results:lowpass}.
+
+It is important to note that the plots in \autoref{fig:results:tpc:stretch:1:forces-torques} reflect **commanded** values to the low-level controllers—not the actual measured forces or torques. Time delays inherent in the actuation system—some of which are unmodeled—can contribute to oscillatory or delayed responses in the physical system.
+
+Another possible cause of oscillations is interaction between the task-priority controller and the lower-level \gls{pd+} controller. However, the smoothness of the tracked references in \autoref{fig:results:tpc:stretch:dp-tracking} suggests that this interaction is not problematic in this case.
+
+During the first \(20\) seconds, the task-priority controller does not use a feedforward term from the desired task velocity, meaning the system relies solely on accumulated task error to generate motion. Despite this, the controller successfully reduces the tail and head task errors to within \(20\,\mathrm{cm}\), demonstrating effective control.
+
+After the initial transient, both task errors remain low. However, as the robot stretches out and the head reference continues to move south, the head task error increases. This is expected, as task-priority control respects task hierarchy: when it becomes kinematically infeasible to satisfy all objectives simultaneously, the lower-priority task (head position) is sacrificed in favor of the higher-priority task (tail position).
+
+The slower response in orientation tracking is also expected, given that orientation is the third-priority task. As the robot aligns its body to meet the position tasks, it may need to adjust its pitch, thereby introducing a delay in satisfying the orientation objective.
+
+In summary, the experiment demonstrates that task-priority control operates as intended. When multiple tasks are simultaneously feasible, all are tracked accurately. When constraints make full satisfaction impossible, higher-priority tasks dominate—consistent with theoretical expectations of task-priority frameworks.
+
 
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
-\section{Set-Based Task-Priority Control}
+\section{Velocity-Level \gls{tpc}, case \textit{bend}}
 
+\paragraph{Experimental setup}
+The third group of experiments aims to show the performance of the set-based
+velocity-level task-priority controller. This controller is used to set
+joint limits of \(\pm 45\) degrees on the \(y\)-axis joints. The task setup is,
+excluding the set-based tasks:
+\begin{enumerate}
+    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving downwards and forwards.
+    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Moving downwards and backwards.
+    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The attitude of the base link. Set to have the same orientation as the inertial frame.
+\end{enumerate}
+\autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
+the position of the head and the tail close each other as the time increases, meaning
+that the joints will have to bend to keep the tasks fullfilled. This means
+that the joint limits will become active at some point during the run. Because
+of the nature of the experiment, this case is referred to as \textit{bend}.
+The controller
+used for this group is the same as for the previous group, but with the set-based
+tasks taking priority over the position and attitude tasks when thay are activated.
 
-
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/tasks.pdf}
+    \caption{Overview of head and tail tasks for case \textit{bend}.}
+    \label{fig:eelume:tpc:tasks:bend}
+\end{figure}
 
 
 \subsection{Without Compensation Term}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161107.pdf}
+    \includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-161107.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161107.pdf}
+    \includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-161107.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161107.pdf}
+    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-161107.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
@@ -390,21 +576,21 @@ steady-state error.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=7]{assets/ignored/plots/20250519-161629.pdf}
+    \includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-161629.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=8]{assets/ignored/plots/20250519-161629.pdf}
+    \includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-161629.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-161629.pdf}
+    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-161629.pdf}
     \caption{}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
@@ -417,7 +603,7 @@ steady-state error.
 \label{sec:results:lowpass}
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
+    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
     \caption{}
     \label{fig:results:tpc:stretch:1:task:3}
 \end{figure}
