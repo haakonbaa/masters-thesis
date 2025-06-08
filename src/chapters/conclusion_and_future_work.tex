@@ -8,10 +8,17 @@
 \section{Future Work}
 \label{sec:conclusion:future_work}
 
+While this thesis demonstrates the feasibility of kinematic-level task-priority control on a lightweight, highly redundant underwater robot, several areas remain open for further exploration and development. The work presented here lays the foundation for multiple extensions and improvements, both in terms of modeling accuracy and control strategy sophistication. Potential directions for future work include:
+
 \begin{itemize}
-    \item Do some model-identification to improve the simulation
-    \item Having a better model, Dynamic-level TPC can be attempted
-    \item Better tuning of the control gains
-    \item Better low-level controller, such as sliding mode control
-    \item Better rejection of joint jitter.
+    \item \textbf{Model identification}: Although an approximate dynamic model was developed as part of this thesis, further improvements are needed to enhance its fidelity. In particular, accurate estimation of added mass and hydrodynamic damping remains challenging. Dedicated experimental procedures could be designed to more precisely identify these parameters, significantly improving model-based control strategies.
+
+    \item \textbf{Dynamic-level \gls{tpc}}: A natural extension of the work presented here is the implementation of task-priority control at the dynamic level. This would require a significantly more accurate dynamic model, as control inputs would be computed based on full system dynamics rather than velocity kinematics alone. With a sufficiently precise model, dynamic-level TPC may offer improved performance in terms of responsiveness and disturbance rejection.
+
+    \item \textbf{Controller tuning}: There is considerable scope for improving performance through systematic tuning of both the low-level \gls{pd+} controller and the high-level task-priority control parameters. In particular, the proportional gains for individual tasks could be better adapted to system behavior. Additionally, since the robot's local dynamics vary with configuration, implementing a gain-scheduled or adaptive control strategy could further enhance tracking performance.
+
+    \item \textbf{Rejection of joint measurement jitter}: Joint angle jitter was partially mitigated in this thesis using low-pass filtering. However, more advanced techniques—such as outlier detection, sensor fusion, or model-based filtering—could allow for more effective rejection of faulty measurements without introducing significant time delays.
+
+    \item \textbf{Advanced control strategies}: The software and experimental framework developed in this thesis enables further research into advanced control techniques. Methods such as adaptive control, learning-based strategies, or alternative task-priority formulations could be implemented and tested using the same platform. This opens up new avenues for exploration and motivates continued development of the system.
 \end{itemize}
+
