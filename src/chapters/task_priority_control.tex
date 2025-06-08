@@ -220,16 +220,6 @@ be generalized to multiple tasks by using the same methods as presented in \auto
 \subsection{Low-level control}
 \label{sec:tpc:low_level_control}
 
-{
-\color{red}
-\begin{itemize}
-    \item Add citations
-    \item Decoupling of the quaternion vector in control
-    \item Include chapter about set-based TPC
-    \item Include chapter about how task-jacobians can be created.
-\end{itemize}
-}
-
 The methods discussed above assume the existence of a controller capable of tracking the desired joint velocities \(\bm{\zeta}_d\). This implies that a lower-level controller must be designed and implemented, and its performance will directly affect the ability to follow the specified tasks.
 
 A straightforward approach to tracking the desired generalized velocities is to use a simple \gls{pd} controller. However, because the robot’s state includes a unit quaternion and the generalized velocities are defined in the body frame—while the robot's state itself is defined in the \gls{ned} frame—some care must be taken during controller design. The controller can be written as:
@@ -273,16 +263,56 @@ Minor improvements to the controller can still be made. While modeling the full 
 where \(\bm{g}(\bm{\xi}(t))\) is defined in \autoref{eq:modeling:g}. Provided the gravity and buoyancy forces are modeled correctly, this addition improves the steady-state tracking error, particularly along the direction of gravity.
 
 % -----------------------------------------------------------------------------
+\newpage
 \section{Set-Based Task-Priority Control}
+\label{sec:set_based_tpc}
 
-{
-    \color{red}
-    \begin{itemize}
-        \item creating jacobians
-        \item set-based TPC
-        \item how the choice of base affects the algorithm
-    \end{itemize}
-}
+The previous sections have focused exclusively on \emph{equality tasks}, where the objective is to enforce the following condition:
+\begin{align}
+    \bm{\sigma}(t) = \bm{\sigma}_d(t)
+\end{align}
+However, many practical scenarios require task variables to lie within a specific set rather than attain a single desired value. A common example involves enforcing kinematic constraints, such as joint limits, where certain angles must remain within predefined bounds.
+
+These scenarios are described as \emph{set-based tasks}, and can be formulated by the inequality:
+\begin{align}
+    \bm{\sigma}(t) \in \mathcal{D} \quad \forall\, t,
+\end{align}
+where \(\mathcal{D}\) is the set of acceptable task values. For example, a joint limit constraint can be expressed as:
+\begin{align}
+    \bm{\sigma}_j(t) \in [-45^{\circ}, 45^{\circ}].
+\end{align}
+
+A detailed formulation of set-based tasks, including stability analysis and experimental validation, is presented in \cite{moe}. The following summarizes the approach, using the notation and formalism established in earlier chapters.
+
+\vspace{1em}
+\noindent Consider the velocity-level task-priority framework introduced in \autoref{sec:velocity_level_control}:
+\begin{align}
+    \bm{\zeta}_d = \sum_{i=1}^k \bm{N}_i^{+}\bm{J}_i^{+} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
+    \label{eq:tpc:normal-controller}
+\end{align}
+where \(\bm{\zeta}_d\) is the desired generalized velocity, \(\bm{J}_i\) is the task Jacobian, \(\bm{N}_i\) is the corresponding null-space projector, and \(\bm{\Lambda}_i\) is a gain matrix.
+
+Now consider a single high-priority set-based task \(\sigma_s\), which should satisfy:
+\begin{align}
+    \sigma_s(t) \in \mathcal{C} \subset \R, \qquad \mathcal{C} = [\sigma_{\text{min}}, \sigma_{\text{max}}],
+    \label{eq:tpc:set-based-task}
+\end{align}
+for some bounds \(\sigma_{\text{min}}, \sigma_{\text{max}} \in \R\). When the condition in \autoref{eq:tpc:set-based-task} is satisfied, the standard controller in \autoref{eq:tpc:normal-controller} can be used without modification.
+
+The key idea is to \emph{activate} or \emph{deactivate} the set-based task dynamically based on the current system state. When activated, the set-based task is temporarily treated as an equality task and inserted into the hierarchy with the highest priority. The resulting control law becomes:
+\begin{align}
+    \bm{\zeta}_d = \bm{J}_s^{+}\bm{\Lambda}_s \tilde{\bm{\sigma}}_s + \bm{N}_s \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
+\end{align}
+where \(\bm{J}_s\) is the Jacobian of the set-based task, \(\bm{N}_s\) is the associated null-space projector, and \(\tilde{\bm{\sigma}}_s\) is the task error. Note that the desired setpoint for \(\sigma_s\) depends on whether the task variable exceeds the upper or lower bound.
+
+A set-based task \(\sigma\) is activated when:
+\begin{align}
+    \sigma \leq \sigma_{\text{min}} \land \dot{\sigma} \leq 0 \quad \lor \quad \sigma \geq \sigma_{\text{max}} \land \dot{\sigma} \geq 0.
+\end{align}
+This logic ensures that the task is only activated when the system is at risk of violating the constraint and is trending further in the undesired direction.
+
+The framework can be extended to handle multiple set-based tasks by assigning priorities and independently activating or deactivating them as needed. Under reasonable assumptions, this approach is proven to be stable and convergent, as shown in \cite{moe}.
+
 
 
 % -----------------------------------------------------------------------------
