@@ -6,44 +6,18 @@ relevant to the thesis is given, and the assumptions made are
 stated. The chapter concludes with a summary of the contributions of this thesis,
 as well as an outline of the subsequent chapters.
 
-{
-    \color{red}
-    Maybe rewrite the above text slightly
-}
-
-
 % ------------------------------------------------------------------ Motivation
 \section{Motivation}
 \label{sec:introduction:motivation}
 
-{
-\color{red}
-Lightweight \gls{uvms}s, and specifically \gls{aiauv}s, are highly redundant systems.
-While this redundancy offers flexibility in task execution—allowing the system
-to avoid obstacles, optimize 
-energy consumption, and maintain stability, it also introduces significant 
-control challenges. Traditional control methods often fall short when managing 
-the coupling effects between the vehicle's base and its manipulator arms, 
-especially in lightweight systems where coupling is more pronounced. 
-Task-priority control emerges as an effective solution by allowing 
-multiple objectives to be prioritized and executed simultaneously. However, how 
-well \gls{tpc} performs in the presence of modeling inaccuracies and disturbances 
-remains an open question. This thesis aims to bridge this knowledge gap by 
-analyzing and comparing kinematic- and dynamic-level \gls{tpc} approaches in
-simulated scenarios.
 
-The development of advanced control strategies requires a reliable and 
-realistic simulation environment to test and validate performance before 
-deploying controllers on physical systems. For light-\gls{uvms}s, accurately 
-capturing hydrodynamic forces, coupling effects, and actuator dynamics is 
-crucial for minimizing the simulation-to-reality gap. Additionally, the high 
-computational demands of dynamic-level \gls{tpc} algorithms necessitate efficient 
-simulation tools capable of real-time execution. This facilitates the
-need for a custom-built simulation framework designed for light-\gls{uvms}s, 
-enabling robust comparisons between different control strategies while 
-providing a foundation for experimental validation on platforms such as \gls{ntnu}’s 
-Eelume 500 \gls{aiauv}.
-}
+Lightweight \glspl{uvms}, and specifically \glspl{aiauv}, are highly kinematically redundant systems, meaning they possess more controllable \glspl{dof} than are strictly required for a given task. While this redundancy offers flexibility in task execution—allowing the system to avoid obstacles, optimize energy consumption, and maintain stability—it also introduces significant control challenges. Traditional control methods often fall short when managing the coupling effects between the vehicle's base and its manipulator arms, especially in lightweight systems where coupling is more pronounced.
+
+Task-priority control (TPC) emerges as an effective solution by enabling the simultaneous execution of multiple control objectives, ordered by priority. While TPC has been extensively studied in the literature, much of the existing research focuses on heavy, work-class \glspl{uvms} or robotic arms in isolation. The specific challenges associated with light-UVMSs remain relatively underexplored. These systems pose additional difficulties due to the complexity of accurately modeling hydrodynamic forces and the greater sensitivity of the system to disturbances, making them harder to control to a given level of precision.
+This thesis contributes to the limited body of research on TPC for lightweight, highly redundant systems by conducting experimental validation of velocity-level TPC on the Eelume 500—a high-\gls{dof}, strongly coupled, lightweight \gls{aiauv}. Through this work, the practical applicability of TPC in challenging real-world underwater environments is examined.
+
+The development of advanced control strategies also requires a reliable and realistic simulation environment to test and validate performance before deploying controllers on physical systems. For light-\gls{uvms}s, accurately capturing hydrodynamic effects, coupling behavior, and actuator dynamics is crucial to minimize the simulation-to-reality gap. Furthermore, the high computational demands of dynamic-level TPC algorithms necessitate efficient and responsive simulation tools.
+To support this, a simulation and control environment tailored for the Eelume 500 robot was developed as part of this thesis. This framework enables seamless transition between simulation and real-world experiments and supports real-time execution of kinematic-level TPC strategies.
 
 In 2015, the United Nations adopted the 2030 Agenda for Sustainable Development
 \cite{UN2030Agenda}, which outlines 17 Sustainable Development Goals (SDGs) to
@@ -145,13 +119,6 @@ in handling these challenges.
 Despite recent progress, there remains a lack of research evaluating \gls{tpc}
 methods for \gls{uvms}s in real-world experiments.
 
-{
-\color{red}
-\begin{itemize}
-    \item This section could be expanded. Focus on experimental results.
-\end{itemize}
-}
-
 % --------------------------------------------------------------- Contributions
 \section{Contributions}
 
@@ -175,5 +142,30 @@ and accessibility of the Eelume \gls{aiauv}, facilitating further research and
 development in this field.
 
 % -------------------------------------------------------------- Thesis Outline
+\iffalse
 \section{Thesis Outline}
+
+\begin{itemize}
+    \item \autoref{ch:background} presents the required mathematical concepts that will be used throughout the thesis
+    \item \autoref{chap:modeling} presents how a general \gls{aiauv} can be modeled along with conventions usied throughout the thisis.
+    \item \autoref{ch:software} presnts the software developed as part of this thisis. This includes control visualization and simulation software.
+    \item \autoref{ch:experimental_setup} presents the Eelume model M robot used for experiments, along with assumptions and limitations of the system. 
+    \item \autoref{ch:results} presents the results of kinematic-level \gls{tpc} experiments conducted
+    \item \autoref{ch:conclusion} summarizes the work and findings, and gives suggestions for further work.
+\end{itemize}
+\fi
+
+\newpage
+\section{Thesis Outline}
+
+The structure of this thesis is as follows:
+
+\begin{itemize}
+    \item \autoref{ch:background} introduces the mathematical foundations and concepts necessary for understanding the remainder of the thesis.
+    \item \autoref{chap:modeling} describes how a general \gls{aiauv} can be modeled, including the coordinate frames, assumptions, and conventions used throughout this work. 
+    \item \autoref{ch:software} presents the software developed as part of the thesis, including modules for control, visualization, and simulation.
+    \item \autoref{ch:experimental_setup} introduces the experimental platform, the Eelume Model M robot, along with a discussion of system limitations launch procedure.
+    \item \autoref{ch:results} presents experimental results from applying kinematic-level \gls{tpc} to the Eelume robot.
+    \item Finally, \autoref{ch:conclusion} summarizes the key findings and contributions of the thesis and outlines potential directions for future work.
+\end{itemize}
 

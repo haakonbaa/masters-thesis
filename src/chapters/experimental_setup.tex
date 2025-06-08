@@ -1,4 +1,5 @@
 \chapter{Experimental Setup}
+\label{ch:experimental_setup}
 
 This chapter presents the experimental setup used to evaluate the 
 \gls{tpc} framework implemented in this thesis. It begins with an 
@@ -154,56 +155,6 @@ coupling, allowing the arm and vehicle to be controlled separately. In this
 respect, the Eelume robot is unique: it combines high \gls{dof} count with 
 strong coupling, making it a compelling testbed for \gls{tpc}.
 
-% -----------------------------------------------------------------------------
-\section{Tools and Software}
-
-The Eelume robot is controlled using a low-level \gls{api} that Eelume AS made
-available in the beginning of 2025.
-This \gls{api} privides access to an internal \gls{can} bus, which is used to
-communicate with the robot's thrusters, joints, and sensors. The \gls{api} provides
-a set of functions for packaging and unpacking messages to and from the bus, giving
-access to functions for generating, for example, thruster force references and
-joint torque references.
-The \gls{api} is implemented in C/C++ and communicates with the robot over
-an ethernet connection. Because the \gls{api} is low-level, a lot of code had
-to be written to implement the \gls{tpc} framework, everything from
-lower-level controllers, task definitions, and kinematics. The collection of
-code used to control the Eelume robot is created as a C++ library
-and is refered to as \gls{eck}.
-
-The control kit is designed to be modular, allowing for easy integration of
-new tasks and controllers. The library provides a set of virtual base classes,
-one for a controller and one for a connection to the Eelume robot, along with
-a set of concrete implementations for these classes. Setting and reading data
-from the robot is done through the \gls{api} using a connection class, while 
-a simulator is also provided for testing the controllers without the need for
-a physical robot. Lower-level \gls{dp} controllers, as well as higher-level
-\gls{tpc}lers are also implemented.
-
-The simulator is designed to mimic the behavior of the Eelume robot as closely
-as possible, without much time spent on modeling the hydrodynamics and coupling
-between the links. The kinematics of the robot is thought to be accurately
-implemented. Because of the virtual base classes, the real robot can be used
-interchangeably without recompiling the code. This allows for easy testing of
-the controllers after verifying that they work in the simulator.
-
-In addition to the control kit, the need for visualization of the robot and
-the tasks was identified. A simple visualizer was created to display the robot
-in real time as experiments are conducted. The visualizer is implemented in
-C++ using the OpenGL graphics library. The control kit communicates with the
-visualizer over \gls{udp} sockets, sending the robot's state and task definitions.
-
-All figures of the Eelume robot within this thesis have been created using this visualizer.
-
-An example of the visualizer as it is used during experiments is shown in
-\autoref{fig:eelume:visualizer}. One can see gridlines in the background, and
-an axis system in the center showing the \gls{ned} frame origin.
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\textwidth]{assets/eely-visualizer.png}
-    \caption{A screenshot of the Eelume visualizer.}
-    \label{fig:eelume:visualizer}
-\end{figure}
 
 % -----------------------------------------------------------------------------
 \section{Assumptions and Limitations}
@@ -399,13 +350,6 @@ to have a wattage limit of \(125\) W each, ensuring that the Eelume robot does
 not experience a brownout during experiments. The wattage limit is set using the
 \gls{api} and is not a hard limit, but was chosen for safety reasons.
 
-{
-    \color{red}
-    \begin{itemize}
-        \item see comments from Markus about this chapter. Maybe add a section about the
-            simulator and a section in appendix about the visualizer.
-    \end{itemize}
-}
 
 % -----------------------------------------------------------------------------
 \section{Launch Procedure}
@@ -445,143 +389,6 @@ The launch and recovery procedures requires \(2\) to \(3\) people, and takes abo
     \caption{Images from the launch procedure.}
     \label{fig:eelume:cradle-and-float}
 \end{figure}
-
-% -----------------------------------------------------------------------------
-\iffalse
-\section{Experimental Procedures}
-\label{sec:experimental_setup:experimental_procedures}
-
-To highlight the work that has been done a series of experiments were performed
-These experiments can be devided into four groups based on when they aim to
-show. There four groups are
-\begin{enumerate}
-    \item The response of the lower-level \gls{pd+} controller.
-    \item A working velocity-level task-priority controller.
-    \item A working set-based velocity-level task-priority controller.
-    \item The need for low-pass filtering of the velocity measurements.
-\end{enumerate}
-For each group, a series of runs are conducted. The run refers to a single
-experiment, meaning that the robot is set to a specific position and orientation,
-and a specific controller and case is run to measure the response. Here, the word
-\textit{case} refers to a specific set of tasks, or, in the case for the first
-group, a specific setpoint for the \gls{pd+} controller. The four groups are described in more detail below.
-
-\subsection*{1: Lower-Level \gls{pd+} Controller}
-The first group of experiments aims to show the response of the lower-level \gls{pd+} controller.
-Ideally, the lower-level controller should be able to follow a setpoint
-in the position, attitude, and joint angles. How fast or slow the controller can follow
-the setpoint will have an impact on how high frequency contents the tasks can have:
-the better the lower-level controller follows the setpoint, the higher frequency contents
-the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
-as described in \autoref{sec:tpc:low_level_control}.
-
-The \(\bm{K}_p\) and \(\bm{K}_d\) matrices of the \gls{pd+} controller are set to
-diagonal matrices with the following values:
-\begin{subequations}
-\begin{align}
-    \bm{K}_p &= \operatorname{diag}\left( 50, 160, 120, 2 \frac{180}{\pi}, 20 \frac{180}{\pi}, 22 \frac{180}{\pi}, 10, 10, 10, 10 \right) \\
-    \bm{K}_d &= \operatorname{diag}\left( 20, 0, 40, \frac{2}{3} \frac{180}{\pi}, 0, 0, 4, 4, 4, 4 \right)
-\end{align}
-\end{subequations}
-where the units for the first three elements of \(\bm{K}_p\)are in N/m, and the last four are in Nm/deg.
-The units for the attitude coefficients are not specified, as they are multiplied by the
-vector part of the quaternion, which is dimensionless. The units for the first three elements
-of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
-
-\subsection*{2: Velocity-Level Task-Priority Controller}
-The second group of experiments aims to show the performance of the velocity-level
-task-priority controller. To do this, a very typical setup is used. There are a total
-of three tasks, one being the position of the head, one being the position of the tail,
-and one being the vector part of the quaternion defining the attitude of the base link.
-The tasks are, in order of priority:
-\begin{enumerate}
-    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving backwards along the south direction.
-    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Set to a fixed position.
-    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The orientation of the base link. Set to be aligned with the inertial frame.
-\end{enumerate}
-The tasks are designed to
-show the strict priority of the controller, meaning that, ideally, all tasks
-should be able to be executed at the same time in the beginning of the run, but
-as the robot moves backwards and executing both tasks becomes kinematically infeasable,
-the tail task will take priority over the head task. For future reference, this
-case is referred to as \textit{stretch}, as the robot is stretched out over
-the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
-The tasks are designed such that both tasks are fullfilled at the beginning of the run,
-where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
-seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\textwidth]{assets/side-view-45-joints.png}
-    \caption{Overview of head and tail tasks for case \textit{stretch}}
-    \label{fig:eelume:tpc:tasks:stretch:initial_pos}
-\end{figure}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\textwidth,page=1]{assets/ignored/plots/tasks.pdf}
-    \caption{Initial position of the Eelume robot in case \textit{stretch}.}
-    \label{fig:eelume:tpc:tasks:stretch}
-\end{figure}
-
-The controller used for this group is the velocity-level task-pirority controller
-presented in \autoref{sec:velocity_level_control}. The null-space projection method
-is the augmented null-space projection method, and no damping of the jacobians
-are used. The controller can be summarized in the following equation:
-\begin{subequations}
-\begin{align}
-    \bm{\zeta}_d &= \sum_{i=1}^{3} \bm{N}_{i} \bm{J}_i^{+} \left( \dot{\bm{\sigma}}_{i,d} - \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right)  &
-    \bm{\xi}_d &= \int_0^t \bm{J}_q(\bm{q}_b^n)\bm{\zeta}_d(\tau) \, d\tau + \bm{\xi}_0,
-\end{align}
-\end{subequations}
-where the desired generalized state \(\bm{\xi}_d\)and desired generalized velocity
-are used to set the references for the lower-level \gls{pd+} controller. The dependency
-of time is implicit in the notation.
-
-The task gains are set to diagonal matrices with the following values:
-\begin{align}
-    \bm{\Lambda}_1 &= 0.1 \I &
-    \bm{\Lambda}_2 &= 0.1 \I &
-    \bm{\Lambda}_3 &= 0.2 \I.
-\end{align}
-
-\FloatBarrier
-
-\subsection*{3: Set-Based Velocity-Level Task-Priority Controller}
-
-The third group of experiments aims to show the performance of the set-based
-velocity-level task-priority controller. This controller is used to set
-joint limits of \(\pm 45\) degrees on the \(y\)-axis joints. The task setup is,
-excluding the set-based tasks:
-\begin{enumerate}
-    \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving downwards and forwards.
-    \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Moving downwards and backwards.
-    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The attitude of the base link. Set to have the same orientation as the inertial frame.
-\end{enumerate}
-\autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
-the position of the head and the tail close each other as the time increases, meaning
-that the joints will have to bend to keep the tasks fullfilled. This means
-that the joint limits will become active at some point during the run. Because
-of the nature of the experiment, this case is referred to as \textit{bend}.
-The controller
-used for this group is the same as for the previous group, but with the set-based
-tasks taking priority over the position and attitude tasks when thay are activated.
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\textwidth,page=2]{assets/ignored/plots/tasks.pdf}
-    \caption{Overview of head and tail tasks for case \textit{bend}.}
-    \label{fig:eelume:tpc:tasks:bend}
-\end{figure}
-
-\subsection*{4: Low-Pass Filtering}
-
-The fourth group of experiments aim to show the need for low-pass filtering of the velocity measurements as well as the joint angles. To showcase this need, the same
-setup as for the second group is used, but with and without low-pass filtering
-applied. 
-
-\fi
-
 
 
 
