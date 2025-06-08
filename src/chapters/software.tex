@@ -1,5 +1,8 @@
-\chapter{Control, Simulation \& Visualization}
+\chapter{Control, Simulation, and Visualization Software}
+
 \label{ch:software}
+
+\section{EelyControlKit}
 
 The Eelume robot is controlled using a low-level \gls{api} that Eelume AS made
 available in the beginning of 2025.
@@ -24,12 +27,28 @@ a simulator is also provided for testing the controllers without the need for
 a physical robot. Lower-level \gls{dp} controllers, as well as higher-level
 \gls{tpc}lers are also implemented.
 
+\begin{itemize}
+    \item EelyConnection
+    \item Controller
+        \begin{itemize}
+            \item 
+        \end{itemize}
+\end{itemize}
+
+\section{Simulator}
+
 The simulator is designed to mimic the behavior of the Eelume robot as closely
 as possible, without much time spent on modeling the hydrodynamics and coupling
 between the links. The kinematics of the robot is thought to be accurately
 implemented. Because of the virtual base classes, the real robot can be used
 interchangeably without recompiling the code. This allows for easy testing of
 the controllers after verifying that they work in the simulator.
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\section{Visualizer}
 
 In addition to the control kit, the need for visualization of the robot and
 the tasks was identified. A simple visualizer was created to display the robot
@@ -49,8 +68,6 @@ an axis system in the center showing the \gls{ned} frame origin.
     \label{fig:eelume:visualizer}
 \end{figure}
 
-
-\section{EelyControlKit}
-\section{Simulator}
-\section{Visualizer}
-
+\begin{itemize}
+    \item Connection to EelyControlKit
+\end{itemize}

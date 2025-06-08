@@ -328,6 +328,7 @@ steady-state error.
 % -----------------------------------------------------------------------------
 \newpage
 \section{Velocity-Level \gls{tpc}, case \textit{stretch}}
+\label{sec:res:stretch}
 
 \paragraph{Experimental setup.}
 The second group of experiments aims to show the performance of the velocity-level
@@ -432,7 +433,7 @@ The task gains are set to diagonal matrices with the following values:
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,page=3]{assets/ignored/plots/tasks.pdf}
-    \caption{Body orientation task value and error during case \textit{stretch}}
+    \caption{Trajectory showing head- and tail-task values during case \textit{stretch}}
     \label{fig:results:tpc:stretch:task-traj}
 \end{figure}
 \begin{figure}[!ht]
@@ -516,6 +517,7 @@ In summary, the experiment demonstrates that task-priority control operates as i
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
+\newpage
 \section{Velocity-Level \gls{tpc}, case \textit{bend}}
 
 \paragraph{Experimental setup}
@@ -544,70 +546,123 @@ tasks taking priority over the position and attitude tasks when thay are activat
     \label{fig:eelume:tpc:tasks:bend}
 \end{figure}
 
-
-\subsection{Without Compensation Term}
-
+\paragraph{Results.}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-161107.pdf}
-    \caption{}
+    \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
+    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]
+    {Low-pass filtered position of Eelume robot during \textit{stretch}. The position is offset from \((11, 36, 10)\)}
     \label{fig:results:tpc:bend:1:pos}
 \end{figure}
-
+%\begin{figure}[!ht]
+%    \centering
+%    \includegraphics[width=1.0\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
+%    \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{bend}}
+%    \label{fig:results:tpc:bend:1:vel}
+%\end{figure}
+%\begin{figure}[!ht]
+%    \centering
+%    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
+%    \caption{Desired body fixed forces, body-fixed momens and joint moments during case \textit{bend}}
+%    \label{fig:results:tpc:bend:1:forces}
+%\end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-161107.pdf}
-    \caption{}
-    \label{fig:results:tpc:bend:1:pos}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Thruster and joint motor forces of during case \textit{bend}}
+    \label{fig:results:tpc:bend:1:forces-torques}
 \end{figure}
-
+%\begin{figure}[!ht]
+    %\centering
+    %\includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
+    %\caption{Tail task value and error during case \textit{bend}}
+    %\label{fig:results:tpc:bend:1:task:1}
+%\end{figure}
+%\begin{figure}[!ht]
+    %\centering
+    %\includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
+    %\caption{Head task value and error during case \textit{bend}}
+    %\label{fig:results:tpc:bend:1:task:2}
+%\end{figure}
+%\begin{figure}[!ht]
+    %\centering
+    %\includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
+    %\caption{Body orientation task value and error during case \textit{bend}}
+    %\label{fig:results:tpc:bend:1:task:3}
+%\end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-161107.pdf}
-    \caption{}
-    \label{fig:results:tpc:bend:1:pos}
+    \includegraphics[width=\textwidth,page=4]{assets/ignored/plots/tasks.pdf}
+    \caption{Trajectory showing head- and tail-task values during case \textit{bend}}
+    \label{fig:results:tpc:bend:task-traj}
 \end{figure}
-
-
-
-\FloatBarrier
-
-
-\subsection{With Compensation Term}
-
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-161629.pdf}
-    \caption{}
-    \label{fig:results:tpc:bend:1:pos}
-\end{figure}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-161629.pdf}
-    \caption{}
-    \label{fig:results:tpc:bend:1:pos}
-\end{figure}
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-161629.pdf}
-    \caption{}
-    \label{fig:results:tpc:bend:1:pos}
+    \includegraphics[width=1.0\textwidth,page=11]{assets/ignored/plots/20250519-141527.pdf}
+    \caption{Body orientation task value and error during case \textit{bend}}
+    \label{fig:results:tpc:bend:dp-tracking}
 \end{figure}
 
 \FloatBarrier
 
 
 % -----------------------------------------------------------------------------
-\section{Low-pass Filtering}
-\label{sec:results:lowpass}
+\newpage
+\section{Low-Pass Filtering}
+\label{sec:results:lowpass_filtering}
+
+\paragraph{Experimental setup.}
+This group of experiments aim to show the effects of low-pass filtering the
+joint angles and velocity measurments. To do this, the same scenario as in \autoref{sec:res:stretch}, case \textit{stretch},
+are run. One run low-pass filter the joint angles and the other passes the measurements
+directly to the controller without filtering them. The two cases are reffered to as:
+\begin{itemize}
+    \item \textit{filter}. A velocity-level \gls{tpc} run with low-pass filtering of joint angles and generalized velocities.
+        Control loop frequency: \(50\) Hz.
+    \item \textit{no-filter}. A velocity-level \gls{tpc} run with no low-pass filtering of the states.
+        Control loop frequency: \(100\) Hz.
+\end{itemize}
+
+\paragraph{Results}
+
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{}
-    \label{fig:results:tpc:stretch:1:task:3}
+    \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250519-135739.pdf}
+    \caption{Low-pass filtered position of the Eelume robot during case \textit{filter}}
+    \label{fig:results:tpc:filter:pos}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250513-154920.pdf}
+    \caption{Position of the Eelume robot during case \textit{no-filter}}
+    \label{fig:results:tpc:no-filter:pos}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-135739.pdf}
+    \caption{Allocated thruster forces and joint moment during case \textit{filter}}
+    \label{fig:results:tpc:filter:forces}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250513-154920.pdf}
+    \caption{Allocated thruster forces and joint moment during case \textit{no-filter}}
+    \label{fig:results:tpc:no-filter:forces}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/tasks-filter.pdf}
+    \caption{Comparison of task errors between cases \textit{filter} and \textit{no-filter}}
+    \label{fig:results:tpc:filter:task-errors}
 \end{figure}
 
+\begin{itemize}
+    \item 
+\end{itemize}
 
-\label{sec:results:lowpass_filtering}
+\paragraph{Discussion}
+\label{sec:results:lowpass}
+
+
+
+
