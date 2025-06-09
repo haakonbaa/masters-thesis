@@ -219,7 +219,7 @@ its design, restoring moments from buoyancy counteract the control effort,
 resulting in a residual error when the roll angle is held away from neutral.
 It is important to note that this controller will be used together with a
 task-priority controller, and that position errors are integrated causing such steady-state
-errors to dissappear.
+errors to disappear.
 
 The observed depth error likely stems from inaccuracies in the compensation 
 term within the controller. The salinity levels in the fjord vary and the
@@ -274,7 +274,7 @@ The slow rise time and overshoot in the longitudinal response suggest a lack of 
 
 The jitter observed in the joint measurements—especially in joint \(\theta_3\)—is not unique to this experiment and appears to be a recurring issue. Although the exact cause remains unclear, it is discussed in more detail in \autoref{sec:results:lowpass}, where low-pass filtering is implemented as a mitigation strategy. It is evident that these joint disturbances contribute to the high-frequency noise seen in both the joint motor commands and thruster allocation.
 
-Despite the noise, the joint angles perform well overall, provided the brief jittering segments are excluded. As in earlier experiments, a steady-state error in the depth persists, likely due to buoyancy-related inaccuracies and error in the estimation of bouyancy forces. This is further affected by variations in water salinity near the surface.
+Despite the noise, the joint angles perform well overall, provided the brief jittering segments are excluded. As in earlier experiments, a steady-state error in the depth persists, likely due to buoyancy-related inaccuracies and error in the estimation of buoyancy forces. This is further affected by variations in water salinity near the surface.
 
 In summary, while the system demonstrates successful convergence to the longitudinal position reference, performance is hindered by slow dynamics and sensor noise. These findings underscore the importance of controller tuning and measurement filtering to ensure reliable and responsive behavior.
 
@@ -354,11 +354,11 @@ The tasks are, in order of priority:
 The tasks are designed to
 show the strict priority of the controller, meaning that, ideally, all tasks
 should be able to be executed at the same time in the beginning of the run, but
-as the robot moves backwards and executing both tasks becomes kinematically infeasable,
+as the robot moves backwards and executing both tasks becomes kinematically infeasible,
 the higher-priority tail task will take precedence head task. For future reference, this
 case is referred to as \textit{stretch}, as the robot is stretched out over
 the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
-The tasks are designed such that both tasks are fullfilled at the beginning of the run,
+The tasks are designed such that both tasks are fulfilled at the beginning of the run,
 where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
 seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}. The desired task values
 are kept at the same value for the first \(20\) seconds to allow the robot to settle
@@ -514,7 +514,7 @@ Excluding the set-based tasks, the task setup is:
 \end{enumerate}
 \autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
 the positions of the head and the tail come close to each other as the time increases, meaning
-that the joints will have to bend to keep the tasks fullfilled. This means
+that the joints will have to bend to keep the tasks fulfilled. This means
 that the set-based joint-limit tasks will become active at some point during the run. Because
 of the nature of the experiment, this case is referred to as \textit{bend}.
 The controller
@@ -619,7 +619,7 @@ In summary, this experiment highlights a fundamental limitation of \gls{tpc} whe
 
 \paragraph{Experimental setup.}
 This group of experiments aims to show the effects of low-pass filtering the
-joint angles and velocity measurments. To do this, the same scenario as in \autoref{sec:res:stretch}, case \textit{stretch},
+joint angles and velocity measurements. To do this, the same scenario as in \autoref{sec:res:stretch}, case \textit{stretch},
 is run. 
 In one run, a low-pass filter is applied to the joint angles, while in the other, the measurements are passed directly to the controller without filtering.
 The two cases are referred to as:

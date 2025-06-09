@@ -138,7 +138,7 @@ A comprehensive description of the kinematics and dynamics of
 \gls{aiauv}s can be found in \cite{schmidt2018}.
 This section presents the essential elements of kinematic and dynamic modeling of \gls{aiauv}s, with a more comprehensive
 treatment available in \cite{from2014} and \cite{schmidt2018}.
-Aditionally, the section draws on an unpublished
+additionally, the section draws on an unpublished
 first draft of \cite{schmidt2018}. The following chapter will use notation adopted from
 \cite{from2014}.
 
@@ -161,7 +161,7 @@ Some inertial \gls{ned} frame is denoted by $\{0\}$, and a frame is associate to
 setting the frame number the same as the link number.
 \autoref{fig:frames} shows an example of such a setup. Here, the system has
 three links connected by two joints. To highlight the importance of the $\{0\}$-
-and $\{1\}$-frames, they will also be refered to as the $\{n\}$, for \gls{ned}, and
+and $\{1\}$-frames, they will also be referred to as the $\{n\}$, for \gls{ned}, and
 $\{b\}$, for body, respectively. The numbering and lettering will be used interchangeably
 depending on the context.
 
@@ -340,7 +340,7 @@ the previous links twist:
 \end{subequations}
 where the dependencies of the matrices are dropped for sake of brevity.
 The step after \autoref{eq:eta:induction} is valid through an argument of induction, and
-implicity defines the $\bm{J}_i(\bm{\theta})$ matrices.
+implicitly defines the $\bm{J}_i(\bm{\theta})$ matrices.
 By inspection of \autoref{eq:H_recursive}, it can be concluded that
 \begin{subequations}
 \label{eq:recursive_link_jacobians}
@@ -351,7 +351,7 @@ By inspection of \autoref{eq:H_recursive}, it can be concluded that
 \end{align}
 \end{subequations}
 The matrices $\bm{J}_i(\bm{\theta})$ are important for control purposes and for expressing the 
-dynamics of the system. They are reffered to as the link Jacobians. It will also 
+dynamics of the system. They are referred to as the link Jacobians. It will also 
 be useful to differentiate them when doing task-priority control. Differentiating
 \autoref{eq:recursive_link_jacobians} with respect to time gives the following
 expression for the time derivative of the link Jacobians:
@@ -362,7 +362,7 @@ expression for the time derivative of the link Jacobians:
 \end{align}
 It is important to note that in the general case, $\bm{\theta}_i$ is a vector of
 joint parameters, not a scalar. The parameters will uniquely describe the transformation from one link
-to another. It is assumed that every transformation matrix $\bm{A}_i(\bm{\theta}_i)$ consits of $l_i \in \N$ transformations
+to another. It is assumed that every transformation matrix $\bm{A}_i(\bm{\theta}_i)$ consist of $l_i \in \N$ transformations
 of zero or one variable.
 \begin{align}
     \bm{A}_i(\bm{\theta}_i) = \bm{B}_{i,1} \bm{B}_{i,2} \cdots \bm{B}_{i,l_i}.
@@ -580,7 +580,7 @@ states that the damping matrix can be approximated as
 
 for completely submerged bodies. This will neglect coupling and dissipative effects.
 It has been shown that by using strip theory, the damping force and
-moment on a cylinder can be approximated by the follwing integrals \cite{mcmillan1995}:
+moment on a cylinder can be approximated by the following integrals \cite{mcmillan1995}:
 \begin{subequations}
     \label{eq:cylinder_damping}
     \begin{align}

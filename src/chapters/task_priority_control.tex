@@ -56,7 +56,7 @@ can be defined as
 \end{align}
 where \(\bm{J}_{\Theta/q}\) describes the relation between \(\bm{\xi}\) and \(\bm{\zeta}\)
 as shown in \autoref{eq:mod:jac}. It is important no note that this jacobian is dependent
-on the parametrization choosen for the orientation; quaternion or Euler angles.
+on the parametrization chosen for the orientation; quaternion or Euler angles.
 Collecting the parenthesis of \autoref{eq:def_task_jacobian} in a matrix
 \(\bm{J}(\bm{\xi}(t))\), we get the following relation;
 \begin{align}
@@ -303,7 +303,7 @@ The key idea is to \emph{activate} or \emph{deactivate} the set-based task dynam
 \begin{align}
     \bm{\zeta}_d = \bm{J}_s^{+}\bm{\Lambda}_s \tilde{\bm{\sigma}}_s + \sum_{i=1}^k \bm{N}_{si}^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
 \end{align}
-where \(\bm{J}_s\) is the Jacobian of the set-based task, \(\tilde{\bm{\sigma}}_s\) is the task error, and \(\bm{N}_{si}\) is the associated null-space projector for the set-based task and task \(i\). The expression for \(\bm{N}_{si}\) is dependent on the choosen null-space projection method. Note that the desired setpoint for \(\sigma_s\) depends on whether the task variable exceeds the upper or lower bound. A set-based task \(\sigma\) is activated when:
+where \(\bm{J}_s\) is the Jacobian of the set-based task, \(\tilde{\bm{\sigma}}_s\) is the task error, and \(\bm{N}_{si}\) is the associated null-space projector for the set-based task and task \(i\). The expression for \(\bm{N}_{si}\) is dependent on the chosen null-space projection method. Note that the desired setpoint for \(\sigma_s\) depends on whether the task variable exceeds the upper or lower bound. A set-based task \(\sigma\) is activated when:
 \begin{align}
     \sigma \leq \sigma_{\text{min}} \land \dot{\sigma} \leq 0 \quad \lor \quad \sigma \geq \sigma_{\text{max}} \land \dot{\sigma} \geq 0.
 \end{align}

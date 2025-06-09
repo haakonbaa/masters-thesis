@@ -38,7 +38,7 @@ The Eelume robot can be equipped with a wide range of sensors. In its current co
 cameras. It uses an onboard \textit{Sunstone} \gls{ins} from Kongsberg for navigation, supported by the \gls{dvl}
 and an acoustic positioning system.
 It is equipped with an integrated antenna module, combining GNSS positioning and Iridium satellite communication at the surface.
-Ballast modules with a variable set of weights are used to adjust the robot's bouyancy,
+Ballast modules with a variable set of weights are used to adjust the robot's buoyancy,
 enabling the robot to remain slightly 
 positively buoyant in both fresh and salt water, depending on its configuration.
 The onboard battery supports up to eight hours of operation, depending on 
@@ -183,7 +183,7 @@ limit on the bus puts constrains on how fast the control loop can run. From
 experiments, it was found that the bus can handle \(50\) Hz, but at higher
 frequencies, degradations in performance were observed. The control loop is
 therefore set to run at \(50\) Hz, being equivalent to a \(20\) ms loop time.
-The continous-time controllers as presented in \autoref{ch:tpc} are called with
+The continuous-time controllers as presented in \autoref{ch:tpc} are called with
 the latest measurements and references at this frequency, implicitly assuming
 zero-order hold.
 It is thought that the chosen loop time places minimal limitations on the performance
@@ -262,7 +262,7 @@ velocity of the \gls{aiauv} seems to be the smoothest, while there is some noise
 on the angular velocity measurements. The noise is the most prominent in
 the angular velocity of the joints. From the figure one can se spikes reaching
 velocities higher than \(50\) degrees per second, which is not realistic. Although the
-reason for this noise is not known precicely, it is hypothesized to be related to the jitter on the 
+reason for this noise is not known precisely, it is hypothesized to be related to the jitter on the 
 joint measurements discussed in the previous sections, as the jitter seem to correlate in time
 with the angular velocity spikes.
 
