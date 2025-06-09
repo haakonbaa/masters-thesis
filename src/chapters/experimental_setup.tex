@@ -10,7 +10,7 @@ and simulate its behavior are described. The chapter also outlines key
 assumptions and limitations in the experimental environment, including sensor 
 noise and system constraints. 
 Finally, the experimental procedures are detailed, describing how specific 
-robot behaviors are tested and the corresponding system responds.
+robot behaviors are tested and how the corresponding system responds.
 Together, these sections provide the necessary context 
 for understanding the practical validation of the implemented control approach.
 
@@ -33,8 +33,8 @@ Eelume robot is shown in \autoref{fig:eelume:stopdown}.
     \label{fig:eelume:stopdown}
 \end{figure}
 
-The Eelume robot can be equipped with a wide range of sensors, including a \gls{dvl},
-\gls{imu}, \gls{uhi}, sonar, fluorometer, \gls{ct}, and 
+The Eelume robot can be equipped with a wide range of sensors. In its current configuration, this includes a \gls{dvl},
+\gls{imu}, \gls{uhi}, sonar, fluorometer, conductivity-temperature sensor, and 
 cameras. It uses an onboard \textit{Sunstone} \gls{ins} from Kongsberg for navigation, supported by the \gls{dvl}
 and an acoustic positioning system.
 It is equipped with an integrated antenna module, combining GNSS positioning and Iridium satellite communication at the surface.
@@ -48,8 +48,8 @@ The configuration used in the experiments described in this thesis is similar
 to that shown in \autoref{fig:eelume:stopdown}, with some changes to module 
 arrangement. The front of the robot is equipped with a \gls{uhi} instead of 
 the forward-looking sonar shown in the figure. The overall shape, including 
-thruster and joint placement, remains close to what is depicted. In this 
-configuration, the Eelume robot weighs approximately $190$ kg and measures 
+thruster and joint placements, remains close to what is depicted. In this 
+configuration, the Eelume robot has a mass of approximately $190$ kg and measures 
 about $6.05$ m in length. From left to right in the image, we define the three 
 links as \textit{tail}, \textit{body}, and \textit{head}, respectively. The 
 following five coordinate frames are attached to the robot:
@@ -85,16 +85,20 @@ while the remaining three frames are primarily used for task definitions.
     \caption{The Eelume robot with its two joints shown in different configurations.}
 \label{fig:eelume:joints}
 \end{figure}
-The three links are connected by two joints, each with two degrees of freedom—
-allowing rotation about both the $y$- and $z$-axes. We number the individual joints from
-\(1\) to \(4\), indicating their locations along the robot; joint \(1\) is
-the closest to the head while joint \(4\) is the closest to the tail.
-\autoref{fig:eelume:joints} illustrates the joints in two different rotational configurations. The robot 
-features two sets of $4$ thrusters: one set on the tail and another on the 
+%The three links are connected by two joints, each with two degrees of freedom—
+%allowing rotation about both the $y$- and $z$-axes. The individual joints are numbered from
+%\(1\) to \(4\), indicating their locations along the robot; joint \(1\) is
+%the closest to the head while joint \(4\) is the closest to the tail.
+The three rigid links connected by two joint modules. Each joint module contains two actuated joints—one for pitch (rotation about the \(y\)-axis) and one for yaw (rotation about the \(z\)-axis)—providing two degrees of freedom per module. These joints are independently controlled, enabling the robot to bend freely in both planes without constraint to isolated movements. 
+
+The joints are numbered from \(1\) to \(4\) along the body of the robot: joints \(1\) and \(2\) belong to the first joint module, located closer to the robot's head, while joints \(3\) and \(4\) are part of the second joint module, located toward the tail. This numbering scheme reflects the physical layout and facilitates the assignment of individual joint angles during modeling and control. 
+\autoref{fig:eelume:joints} illustrates the joints in two different rotational configurations.
+Although the figure may illustrate pure pitch or yaw motions in isolation, the joints are capable of executing general 3D bending through combinations of both axes.
+
+The robot features two sets of $4$ thrusters: one set on the tail and another on the 
 body link near the head joint. Each thruster can be independently controlled 
 and provides bidirectional thrust. The thrusters are numbered from \(1\) to \(8\),
-this is not an internal numbering, but rather a numbering used in this thesis
-to distinguish the thrusters. The numbering is shown in \autoref{tab:eelume:numbering:thrusters}.
+as showin in \autoref{tab:eelume:numbering:thrusters}.
 \begin{table}
     \centering
     \begin{tabular}{|c|l|l|}
@@ -132,10 +136,10 @@ are summarized in \autoref{tab:eelume:keynumbers}.
         Length head link & 101 & cm     \\ \hline
         Length body link & 233 & cm     \\ \hline
         Length tail link & 160 & cm     \\ \hline
-        Weight join      & 14 & kg     \\ \hline
-        Weight head link & 40 & kg     \\ \hline
-        Weight body link & 75 & kg     \\ \hline
-        Weight tail link & 44 & kg     \\ \hline
+        Mass joint      & 14 & kg     \\ \hline
+        Mass head link & 40 & kg     \\ \hline
+        Mass body link & 75 & kg     \\ \hline
+        Mass tail link & 44 & kg     \\ \hline
         Maximum thruster wattage & \(125\) & W     \\ \hline
         Maximum joint torque & \(16\) & Nm     \\ \hline
         \hline
@@ -144,13 +148,15 @@ are summarized in \autoref{tab:eelume:keynumbers}.
     \label{tab:eelume:keynumbers}
 \end{table}
 
-The Eelume robot is an excellent platform for testing \gls{tpc}lers.
-This is largely due to its high number of \gls{dof}s, allowing for the 
+The Eelume robot is an excellent platform for testing task-priority controllers.
+This is largely due to its high number of \glspl{dof}, effectively allowing for the 
 execution of multiple tasks before kinematic constrains limit the robot. Additionally, 
 the robot is highly coupled—motion in one link induces forces and moments in 
 others. Dynamic-level \gls{tpc} is an elegant approach for managing this coupling
-, as the controller architecture inherently accommodates such interactions. In 
-contrast, a typical large \gls{rov} with a manipulator arm exhibits minimal 
+, as the controller architecture inherently accommodates such interactions. A natural
+first-step to implementing dynamic-level \gls{tpc}, is the implementation and testing
+of kinematic-level \gls{tpc}, as done in this thesis.
+In contrast to a typical light-weight \gls{aiauv}, large \gls{rov} with a manipulator arm exhibits minimal 
 coupling, allowing the arm and vehicle to be controlled separately. In this 
 respect, the Eelume robot is unique: it combines high \gls{dof} count with 
 strong coupling, making it a compelling testbed for \gls{tpc}.
@@ -234,7 +240,7 @@ system, which provides periodic position corrections to the onboard \gls{ins}.
 The system achieves its highest accuracy when the transponder is positioned 
 directly beneath the \(\mu\)-PAP.
 
-In practice, however, the \(\mu\)-PAP is mounted on a crane at the harbor, while the 
+In practice, however, the \(\mu\)-PAP is mounted on a crane at the harbor while the 
 Eelume robot is typically deployed about 10 meters away to allow space for 
 experimentation. This offset results in a suboptimal angle between the \(\mu\)-PAP 
 and the cNode transponder. To reduce the impact of this angle, the robot is 
@@ -242,34 +248,28 @@ positioned as deep as possible in the water—while still maintaining enough
 clearance for experiments—thereby minimizing the angle and improving 
 positioning accuracy.
 
-During experiments, forwarding from the acoustic positioning system is 
-temporarily disabled for two main reasons. First, the system remains 
-sufficiently accurate over the duration of the experiments. Second, when 
-enabled, the system introduces periodic jumps in position data, which is 
-disadvantagous when collecting data.
+Acoustic aiding was deliberately disabled during all experiments for several 
+reasons. First, position updates from the acoustic modem often introduced 
+discontinuities, which degraded the quality of the controller feedback. Second
+, the experiments were conducted over short time horizons, making relative 
+navigation using the \gls{dvl}-aided \gls{ins} sufficiently accurate.
 
 % -----------------------------------------------------------------------------
 \subsection*{Velocity Measurement Noise}
 The velocity measurements from the \gls{ins} were found to be noisy. Some measurements
 from a typical run are shown in \autoref{fig:eelume:velocity-noise}. The linear
 velocity of the \gls{aiauv} seems to be the smoothest, while there is some noise
-on the angular velocity measurements. The noise is the most poromentent on
+on the angular velocity measurements. The noise is the most prominent in
 the angular velocity of the joints. From the figure one can se spikes reaching
-velocities more than \(50\) degrees per second in absolute value, which is not realistic. Although the
-reason for this noise is not known, it is likely related to the jitter on the 
+velocities higher than \(50\) degrees per second, which is not realistic. Although the
+reason for this noise is not known precicely, it is hypothesized to be related to the jitter on the 
 joint measurements discussed in the previous sections, as the jitter seem to correlate in time
 with the angular velocity spikes.
 
-To mitigate the noise, a low-pass filter is applied to the velocity measurements.
-The filter is first-order, and is implemented in the control kit following the
-same approach as for the joint angles. Because of the observed difference in
-noise level between the linear, angular, and joint velocities, each of these
-three components are filtered with different filter coefficients. The coefficients
-are presented in \autoref{tab:eelume:vel-filters}.
+To attenuate the noise, a first-order low-pass filter is applied to the velocity measurements.
+It is implemented following the same method used for the joint angles.
+Due to the observed differences in noise levels between the linear, angular, and joint velocities, each of these components is filtered using distinct filter coefficients. These coefficients were determined empirically based on observed signal characteristics and are presented in \autoref{tab:eelume:vel-filters}.
 
-%0.334511
-%0.273779
-%0.0245166
 \begin{table}[h]
     \centering
     \begin{tabular}{|c|c|}
@@ -355,33 +355,33 @@ not experience a brownout during experiments. The wattage limit is set using the
 \section{Launch Procedure}
 
 The experiments are conducted at \gls{tbs}, from a concrete pier. The Eelume 
-robot has a custom build cradle that is used to launch it from the pier into the water. The
-robot is placed in the cradle, and a crane is used to lift the cradle into the sea.
-When the cradle is in the water, the robot is controlled in \gls{rov} mode, using
+robot has a custom-built \gls{lars} that is used to launch it from the pier into the water. The
+robot is placed in the \gls{lars}, and a crane is used to lift the \gls{lars} into the sea.
+When the \gls{lars} is in the water, the robot is controlled in \gls{rov} mode, using
 the fiber-optic tether to communicate with the robot. The robot is then moved to the test suite,
-and placed in \gls{dp} mode. The cradle is landed on the pier, and the crane is used to lift the
+and placed in \gls{dp} mode. The \gls{lars} is landed on the pier, and the crane is used to lift the
 \(\mu\)-PAP into the water. When it is time to run experiments, the robot is placed in
 ----- mode and the control kit is started. From the control software of the Eelume
 robot it is possible to abort the control kit, and abort the experiment at any time.
 When a run is finished, the robot is moved back to the initial position and experiments can be repeated.
 The recovery procedure is similar to the launch procedure, but in reverse. The robot
-is moved back to the cradle, and the crane is used to lift the cradle out of the water.
+is moved back to the \gls{lars}, and the crane is used to lift the \gls{lars} out of the water.
 The launch and recovery procedures requires \(2\) to \(3\) people, and takes about \(30\) minutes each to complete.
 \autoref{fig:eelume:cradle-and-float} shows some pictures of the launch procedure.
 
 \begin{figure}
     \centering
-    \begin{subfigure}{0.384\textwidth}
+    \begin{subfigure}{0.4034\textwidth}
         \centering
         \includegraphics[width=\textwidth]{assets/launch/32.jpeg}
-        \caption{The Eelume robot in the cradle, ready to be launched.}
+        \caption{The Eelume robot placed in the \gls{lars}, ready to be launched.}
     \end{subfigure}
-    \begin{subfigure}{0.26\textwidth}
+    \begin{subfigure}{0.273\textwidth}
         \centering
         \includegraphics[width=\textwidth]{assets/launch/2.jpeg}
-        \caption{Manoeuvring the cradle using a crane.}
+        \caption{Manoeuvring the \gls{lars} using a crane.}
     \end{subfigure}
-    \begin{subfigure}{0.26\textwidth}
+    \begin{subfigure}{0.273\textwidth}
         \centering
         \includegraphics[width=\textwidth]{assets/launch/1.jpeg}
         \caption{Eelume robot in the water with \(\mu\)-PAP.}

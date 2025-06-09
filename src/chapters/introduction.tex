@@ -13,7 +13,7 @@ as well as an outline of the subsequent chapters.
 
 Lightweight \glspl{uvms}, and specifically \glspl{aiauv}, are highly kinematically redundant systems, meaning they possess more controllable \glspl{dof} than are strictly required for a given task. While this redundancy offers flexibility in task execution—allowing the system to avoid obstacles, optimize energy consumption, and maintain stability—it also introduces significant control challenges. Traditional control methods often fall short when managing the coupling effects between the vehicle's base and its manipulator arms, especially in lightweight systems where coupling is more pronounced.
 
-Task-priority control (TPC) emerges as an effective solution by enabling the simultaneous execution of multiple control objectives, ordered by priority. While TPC has been extensively studied in the literature, much of the existing research focuses on heavy, work-class \glspl{uvms} or robotic arms in isolation. The specific challenges associated with light-UVMSs remain relatively underexplored. These systems pose additional difficulties due to the complexity of accurately modeling hydrodynamic forces and the greater sensitivity of the system to disturbances, making them harder to control to a given level of precision.
+\Gls{tpc} emerges as an effective solution by enabling the simultaneous execution of multiple control objectives, ordered by priority. While TPC has been extensively studied in the literature, much of the existing research focuses on heavy, work-class \glspl{uvms} or robotic arms in isolation. The specific challenges associated with light-UVMSs remain relatively underexplored. These systems pose additional difficulties due to the complexity of accurately modeling hydrodynamic forces and the greater sensitivity of the system to disturbances, making them harder to control to a given level of precision.
 This thesis contributes to the limited body of research on TPC for lightweight, highly redundant systems by conducting experimental validation of velocity-level TPC on the Eelume 500—a high-\gls{dof}, strongly coupled, lightweight \gls{aiauv}. Through this work, the practical applicability of TPC in challenging real-world underwater environments is examined.
 
 The development of advanced control strategies also requires a reliable and realistic simulation environment to test and validate performance before deploying controllers on physical systems. For light-\gls{uvms}s, accurately capturing hydrodynamic effects, coupling behavior, and actuator dynamics is crucial to minimize the simulation-to-reality gap. Furthermore, the high computational demands of dynamic-level TPC algorithms necessitate efficient and responsive simulation tools.
@@ -53,10 +53,10 @@ and environmentally conscious future.
 \section{Literature Review}
 \label{sec:introduction:literature}
 
-\gls{tpc} of reduntant menipulators is a wellestabilshed concept.
-Some of the earliest works on task-priority control were introduced in 
+\gls{tpc} of reduntant menipulators is a well-estabilshed concept.
+Some of the earliest works on \gls{tpc} were introduced in 
 \cite{hanafusa1981}. This study proposed a method for controlling redundant 
-manipulators through a task-priority control scheme, enabling the simultaneous 
+manipulators through a \gls{tpc} control scheme, enabling the simultaneous 
 execution of two tasks. Specifically, the framework was applied to a 7-DOF 
 manipulator tasked with tracking a desired end-effector position while 
 maintaining a constant arm posture. This approach was later expanded in 
@@ -124,17 +124,17 @@ methods for \gls{uvms}s in real-world experiments.
 
 The main contributions as presented in this thesis are as follows:
 \begin{enumerate}
-    \item \emph{Implementing and experimentally validating a kinemtic-level task-priority control framework for the Eelume \gls{aiauv}.}
+    \item \emph{Implementing and experimentally validating a kinemtic-level \gls{tpc} framework for the Eelume \gls{aiauv}.}
     \item \emph{Devlopment of a dynamical model and simulator for the Eelume \gls{aiauv}.}
     \item \emph{Development of a control framework interfacing with the newly developed \gls{api} for the Eelume robot.}
     \item \emph{Development of a tool showing a live visualization of the Eelume \gls{aiauv} along with desired task trajectories.}
 \end{enumerate}
 
 The first contribution is significant as it adds to the limited body of work 
-on task-priority control of \gls{uvms}s, demonstrating the feasibility of 
+on \gls{tpc} of \glspl{uvms}, demonstrating the feasibility of 
 implementing such a framework on a real-world system. The remaining 
 contributions are crucial as they lay the foundation for the first contribution
-, as well as future work on task-priority control of \gls{uvms}s. The 
+, as well as future work on \gls{tpc} of \glspl{uvms}. The 
 development of a dynamic model and simulator allows for testing and validation 
 of control strategies in a simulated environment before deployment on physical 
 systems. The control framework and visualization tool enhance the usability 

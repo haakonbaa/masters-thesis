@@ -66,9 +66,9 @@ brief description of each run.
 \paragraph{Experimental setup.}
 The first group of experiments aims to show the response of the lower-level \gls{pd+} controller.
 Ideally, the lower-level controller should be able to follow a setpoint
-in the position, attitude, and joint angles. How fast or slow the controller can follow
-the setpoint will have an impact on how high frequency contents the tasks can have:
-the better the lower-level controller follows the setpoint, the higher frequency contents
+in the position, attitude, and joint angles.
+The \gls{pd+} controller will necessarily limit the allowable frequency of the task references:
+the closer the lower-level controller follows the setpoint, the higher frequency contents
 the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
 as described in \autoref{sec:tpc:low_level_control}.
 
@@ -80,9 +80,9 @@ diagonal matrices with the following values:
     \bm{K}_d &= \operatorname{diag}\left( 20, 0, 40, \frac{2}{3} \frac{180}{\pi}, 0, 0, 4, 4, 4, 4 \right)
 \end{align}
 \end{subequations}
-where the units for the first three elements of \(\bm{K}_p\)are in N/m, and the last four are in Nm/deg.
-The units for the attitude coefficients are not specified, as they are multiplied by the
-vector part of the error quaternion, which is dimensionless. The units for the first three elements
+where the units for the first three elements of \(\bm{K}_p\) are in N/m, and the last four are in Nm/deg.
+The attitude coefficients are dimensionless, as they are multiplied by the
+vector part of the error quaternion. The units for the first three elements
 of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
 
 \subsection{Heading Control}
@@ -332,9 +332,8 @@ steady-state error.
 
 \paragraph{Experimental setup.}
 The second group of experiments aims to show the performance of the velocity-level
-task-priority controller. To do this, a very typical setup is used. There are a total
-of three tasks, one being the position of the head, one being the position of the tail,
-and one being the vector part of the quaternion defining the attitude of the base link.
+task-priority controller. To do this, a very typical setup is used.
+Three tasks are defined: control of the tail position, control of the head position, and attitude control of the base link.
 The tasks are, in order of priority:
 \begin{enumerate}
     \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving backwards along the south direction.
@@ -345,7 +344,7 @@ The tasks are designed to
 show the strict priority of the controller, meaning that, ideally, all tasks
 should be able to be executed at the same time in the beginning of the run, but
 as the robot moves backwards and executing both tasks becomes kinematically infeasable,
-the tail task will take priority over the head task. For future reference, this
+the higher-priority tail task will take precedence head task. For future reference, this
 case is referred to as \textit{stretch}, as the robot is stretched out over
 the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
 The tasks are designed such that both tasks are fullfilled at the beginning of the run,
@@ -366,19 +365,22 @@ seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
     \label{fig:eelume:tpc:tasks:stretch}
 \end{figure}
 
-The controller used for this group is the velocity-level task-pirority controller
-presented in \autoref{sec:velocity_level_control}. The null-space projection method
-is the augmented null-space projection method, and no damping of the jacobians
-are used. The controller can be summarized in the following equation:
+The controller used for this group is the velocity-level task-priority controller
+presented in \autoref{sec:velocity_level_control}.
+The null-space projectors are constructed using the augmented null-space projection method,
+as this method is less conservative.
+No damping of the jacobians
+are used as issues with ill-conditioned matrices was not found to be a problem for the cases presented.
+The controller can be summarized by the following equation:
 \begin{subequations}
 \begin{align}
     \bm{\zeta}_d &= \sum_{i=1}^{3} \bm{N}_{i} \bm{J}_i^{+} \left( \dot{\bm{\sigma}}_{i,d} - \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right)  &
     \bm{\xi}_d &= \int_0^t \bm{J}_q(\bm{q}_b^n)\bm{\zeta}_d(\tau) \, d\tau + \bm{\xi}_0,
 \end{align}
 \end{subequations}
-where the desired generalized state \(\bm{\xi}_d\)and desired generalized velocity
-are used to set the references for the lower-level \gls{pd+} controller. The dependency
-of time is implicit in the notation.
+where the desired generalized state \(\bm{\xi}_d\) and desired generalized velocity \(\bm{\zeta}_d\)
+are used directly as reference signals for the lower-level \gls{pd+} controller.
+The dependency of time is implicit in the notation.
 
 The task gains are set to diagonal matrices with the following values:
 \begin{align}
@@ -443,45 +445,9 @@ The task gains are set to diagonal matrices with the following values:
     \label{fig:results:tpc:stretch:dp-tracking}
 \end{figure}
 
-
-
-\iffalse
-\paragraph{Results.}
-\begin{itemize}
-    \item \autoref{fig:results:tpc:stretch:1:pos} shows the position and orientation, as well as the joint angles, of the body link during the run. Note that the joint angles are lowpass filtered to try and remove some of the jittering as described in previous chapters 
-    \item Most of the values look smooth, except for some oscillations of about 0.7 Hz with amplitude of about 1.5 degrees in roll
-    \item There also seem to be some oscillation in the joint angles at about the same frequency and appriximately same amplitude. This is most noticeable on the second and fourth joint, bending about the \(z\)-axis.
-    \item \autoref{fig:results:tpc:stretch:1:vel} shows the linear-, angular- and joint-velocities. The osciallation is more prominant here, and one can see some oscillation on the linear velocities as well.
-    \item The frequency contents of all the velocity measurements seem to be at 0.6 - 0.8 Hz
-    \item The lower-level \gls{pd+} controller commands the body fixed wrench and joint torques shown in \autoref{fig:results:tpc:stretch:1:forces} where some of the same oscillatory behaviour as for the generalized position plot is shown.
-    \item \autoref{fig:results:tpc:stretch:1:forces-torques} shows the commanded thruster forces and joint motor moments. It is observed that they
-        are all oscillatory with approximately the same frequency as the other plots.
-    \item \autoref{fig:results:tpc:stretch:1:task:1} Shows the task value and error for the tail task, the highest priority tasks. It is observed
-        that at time 0 the position is about \(80\) cm off the desired tail position, but it slowly converges towards 0 these 20 seconds. Throughout the run the task error keeps a low value of about \(20\) cm off, but settles to approximately \(10\) cm after 45 seconds.
-    \item \autoref{fig:results:tpc:stretch:1:task:2} shows the task 2 error (head task). For thus run there is some initial error, which is partially corrected during the first 20 seconds. In the period between 20 and 40 seconds the error seems to be better, being less than 10 cm off for a couple of seconds. After 40 seconds the error raises in an appriximately linear fashion.
-    \item \autoref{fig:results:tpc:stretch:1:task:3} shows the orientation task. The error for this task is low all throughout the run, meaning the body
-        was able to be aligned with the inertial frame withougt large deviations all throught the run.
-    \item \autoref{fig:results:tpc:stretch:task-traj} shows the head and tail task trajectories in the north-down plane.    One can see that the tail task follows the desired task trajectory wel. The head error starts around the ference, but eventually goes south. The position of the body moves down and south.
-    \item \autoref{fig:results:tpc:stretch:dp-tracking} shows how ell the lower-level \gls{pd+} controller tracks the reference set by the task-priority controller. We see that it is very good for the position and joint agles, but the orientation tracking is a bit slow. 
-\end{itemize}
-
-\paragraph{Discussion.}
-\begin{itemize}
-    \item oscillations on joints can be from low-pass filtering of the joint angles and generalized velocities. Low-pass filtering of the joint measurements are fed into the controller, which can typically cause some oscillatory behaviour, especially. It is hard to say if this is the case.
-    \item Low-pass filtering is a tradeoff: removing noise will introduce time delays. This tradeoff is discussed more in-depth in \autoref{sec:results:lowpass}. 
-    \item It should also be noted that \atoref{fig:results:tpc:stretch:1:forces-torques}, are not the actual measured thruster forces and joint moment measurements, but rather the setpoints for lower-level controllers on the Eelume robot. There are time-delays in this part of the system that is partly unknown and can contribute to time dealays causing oscillations.
-    \item A possible explanation can also be the interaction with the controller gains in the higher-level task-priority controller with the lower-level \gls{pd+} controller. If the lower-level controller is aggressive, and the proportional gain in the task-priority controller is large we might expect some oscilation in the reference. We can however dismiss this explanation seeing the smoothness of the reference in \autoref{fig:results:tpc:stretch:dp-tracking}.
-    \item The first 20 seconds the tpc controller has no feed-farward term from the desired task velocity, meaning the response is drived by the task error being integrated up as \(\bm{\xi}_d\). For the tail and head tasks: it is still able to converge to about \(20\) cm from the desired tail and head position the first \(20\) seconds. 
-    \item Task 1 error and task 2 error. after the first 20 seconds, we see that the two position taks are low. When the robot stretches out, task 2 error increases. We also expect a linear increase in the task 2 error because the head task moves linearly south.
-    \item why is orientation tracking slow? The third task is orientation, it has low priority. We expect the higher order tasks to want to change the orientation, especially the pitch to better track the desired positions.
-    \item All in all as expected, have demonstated the piroirty of the tasks, a good tracking of both tasks is observed when it is possible to track both task, when is becomes impossible due to kinematic constrints, the task with the highest priority actually takes priority.
-\end{itemize}
-
-\fi
-
 \paragraph{Results.}
 
-\autoref{fig:results:tpc:stretch:1:pos} shows the position, orientation, and joint angles of the Eelume robot during the task-priority control experiment. To mitigate the measurement noise described in previous sections, the joint angle signals are low-pass filtered. Most values appear smooth, although a mild oscillation with a frequency of approximately \(0.7\,\mathrm{Hz}\) and amplitude around \(1.5^\circ\) is noticeable in the roll angle. Similar oscillations are also observed in the second and fourth joint angles, which primarily rotate about the \(z\)-axis.
+\autoref{fig:results:tpc:stretch:1:pos} shows the position, orientation, and joint angles of the Eelume robot during the \gls{tpc} experiment. To mitigate the measurement noise described in previous sections, the joint angle signals are low-pass filtered. Most values appear smooth, although a mild oscillation with a frequency of approximately \(0.7\,\mathrm{Hz}\) and amplitude around \(1.5^\circ\) is noticeable in the roll angle. Similar oscillations are also observed in the second and fourth joint angles, which primarily rotate about the \(z\)-axis.
 
 These oscillations are more pronounced in the velocity signals shown in \autoref{fig:results:tpc:stretch:1:vel}, which includes linear, angular, and joint velocities. The dominant frequency content across all velocity signals lies between \(0.6\) and \(0.8\,\mathrm{Hz}\).
 
@@ -507,7 +473,7 @@ Another possible cause of oscillations is interaction between the task-priority 
 
 During the first \(20\) seconds, the task-priority controller does not use a feedforward term from the desired task velocity, meaning the system relies solely on accumulated task error to generate motion. Despite this, the controller successfully reduces the tail and head task errors to within \(20\,\mathrm{cm}\), demonstrating effective control.
 
-After the initial transient, both task errors remain low. However, as the robot stretches out and the head reference continues to move south, the head task error increases. This is expected, as task-priority control respects task hierarchy: when it becomes kinematically infeasible to satisfy all objectives simultaneously, the lower-priority task (head position) is sacrificed in favor of the higher-priority task (tail position).
+After the initial transient, both task errors remain low. However, as the robot stretches out and the head reference continues to move south, the head task error increases. This is expected, as \gls{tpc} respects task hierarchy: when it becomes kinematically infeasible to satisfy all objectives simultaneously, the lower-priority task (head position) is sacrificed in favor of the higher-priority task (tail position).
 
 The slower response in orientation tracking is also expected, given that orientation is the third-priority task. As the robot aligns its body to meet the position tasks, it may need to adjust its pitch, thereby introducing a delay in satisfying the orientation objective.
 
@@ -533,11 +499,11 @@ excluding the set-based tasks:
 \autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
 the position of the head and the tail close each other as the time increases, meaning
 that the joints will have to bend to keep the tasks fullfilled. This means
-that the joint limits will become active at some point during the run. Because
+that the set-based joint-limit tasks will become active at some point during the run. Because
 of the nature of the experiment, this case is referred to as \textit{bend}.
 The controller
 used for this group is the same as for the previous group, but with the set-based
-tasks taking priority over the position and attitude tasks when thay are activated.
+tasks taking priority over the position and attitude tasks when they are activated.
 
 \begin{figure}[!ht]
     \centering
@@ -624,7 +590,7 @@ One can imagine that, in the absence of joint limits, the controller would comma
 
 This interpretation is further supported by the data in \autoref{fig:results:tpc:bend:dp-tracking}, which shows that the reference depth itself decreases—indicating that the behavior originates from the controller’s task prioritization rather than a failure of the low-level depth regulation.
 
-In summary, this experiment highlights a fundamental limitation of task-priority control when using set-based tasks. While the method correctly enforces constraints, it can result in undesired behavior if task interactions are not carefully considered. Designing compatible and non-conflicting tasks is therefore essential for reliable system behavior.
+In summary, this experiment highlights a fundamental limitation of \gls{tpc} when using set-based tasks. While the method correctly enforces constraints, it can result in undesired behavior if task interactions are not carefully considered. Designing compatible and non-conflicting tasks is therefore essential for reliable system behavior.
 
 \FloatBarrier
 
@@ -636,7 +602,7 @@ In summary, this experiment highlights a fundamental limitation of task-priority
 \label{sec:results:lowpass}
 
 \paragraph{Experimental setup.}
-This group of experiments aim to show the effects of low-pass filtering the
+This group of experiments aims to show the effects of low-pass filtering the
 joint angles and velocity measurments. To do this, the same scenario as in \autoref{sec:res:stretch}, case \textit{stretch},
 are run. One run low-pass filter the joint angles and the other passes the measurements
 directly to the controller without filtering them. The two cases are reffered to as:
