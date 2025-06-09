@@ -10,7 +10,7 @@ task-priority controller are presented, focusing initially on the scenario in wh
 robot is stretched. This is followed by results from experiments where the 
 robot is bent, utilizing set-based tasks. Finally, a comparison is 
 made between runs with and without low-pass filtering of the generalized velocities
-and joint angles.
+and joint angles. 
 
 
 \section{Overview of Results}
@@ -40,17 +40,15 @@ brief description of each run.
         & \multicolumn{3}{p{0.75\linewidth}|}{Reference in east position set to \(+1\) m after 20 seconds.} \\ \hline
         \hline
         \multirow{2}{*}{0519 - 141527} & Kinematic-level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
-        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with decoupled quaternion gains.} \\ \hline
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch}.} \\ \hline
         %\multirow{2}{*}{0519 - 144113} & Kinematic-level \gls{tpc} & No & Stretch \\ \cline{2-4}
         %& \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no compensation term.} \\ \hline
         \hline
         \multirow{2}{*}{0519 - 161629} & Kinematic-Level \gls{tpc} & Yes & Bend \\ \cline{2-4}
-        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, with compensation term.} \\ \hline
-        \multirow{2}{*}{0519 - 161107} & Kinematic-Level \gls{tpc} & No & Bend \\ \cline{2-4}
-        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, without compensation term.} \\ \hline
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{bend}, with set-based tasks.} \\ \hline
         \hline
         \multirow{2}{*}{0513 - 154920} & Kinematic-Level \gls{tpc} & No & Stretch \\ \cline{2-4}
-        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with no low-pass filtering.} \\ \hline
+        & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} without low-pass filtering.} \\ \hline
         \multirow{2}{*}{0519 - 135739} & Kinematic-Level \gls{tpc} & Yes & Stretch \\ \cline{2-4}
         & \multicolumn{3}{p{0.75\linewidth}|}{Showing case \textit{stretch} with low-pass filtering.} \\ \hline
     \end{tabular}
@@ -59,6 +57,8 @@ brief description of each run.
     The low-pass column indicates whether or not the generalized velocities and joint measurements were low-pass filtered.}
     \label{tab:eelume:experimental-runs}
 \end{table}
+
+The orientation results for the Eelume robot are represented as Euler angles; however, this presentation is derived from a conversion of unit quaternions to Euler angles, primarily to provide a more intuitive interpretation of the orientation.
 
 % -----------------------------------------------------------------------------
 \section{DP-Control}
@@ -72,8 +72,8 @@ the closer the lower-level controller follows the setpoint, the higher frequency
 the tasks can have. The lower-level controller is implemented as a \gls{pd+} controller
 as described in \autoref{sec:tpc:low_level_control}.
 
-The \(\bm{K}_p\) and \(\bm{K}_d\) matrices of the \gls{pd+} controller are set to
-diagonal matrices with the following values:
+The \(\bm{K}_p\) and \(\bm{K}_d\) matrices of the \gls{pd+} controller are diagonal
+and have the following values:
 \begin{subequations}
 \begin{align}
     \bm{K}_p &= \operatorname{diag}\left( 50, 160, 120, 2 \frac{180}{\pi}, 20 \frac{180}{\pi}, 22 \frac{180}{\pi}, 10, 10, 10, 10 \right) \\
@@ -84,6 +84,11 @@ where the units for the first three elements of \(\bm{K}_p\) are in N/m, and the
 The attitude coefficients are dimensionless, as they are multiplied by the
 vector part of the error quaternion. The units for the first three elements
 of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
+The buoyancy is compensated by applying a downward thrust of $40$ N, as this value effectively balances the buoyant forces observed at a depth of about $10$ meters. Achieving more precise state-based compensation proved challenging due to uncertainties in accurately determining the robot’s volume and mass distributions.
+
+An essential factor in selecting \gls{dp}-control over \gls{pid}-control involves the interaction between the lower-level controller and the task-priority controller, which sets the reference for the lower-level controller. Since integral action is inherently included in the task-priority controller, incorporating an additional integral term within the \gls{dp} controller would result in dual integration, potentially causing instability as discussed in \cite{fossen}. Consequently, some steady-state errors are anticipated under low-frequency disturbances such as variations in water salinity and ocean currents.
+
+Additionally, the Eelume robot exhibits significant symmetry along the $xz$-plane. Therefore, the performance of the lower-level controller is expected to be the same across these \glspl{dof}. Experimental results related to depth-direction control are not included, as the response closely mirrors that observed in lateral motion. A similar reasoning applies to the robot’s pitch and yaw dynamics.
 
 \subsection{Heading Control}
 
@@ -116,12 +121,12 @@ the reference after approximately \(25\) seconds. The roll and pitch angles
 remain near \(0^\circ\), indicating stable attitude in those directions.
 
 The \gls{ned} position of the robot, which is controlled to remain near the 
-origin, is somewhat affected by the heading maneuver. Both the north and down 
-positions exhibit a steady-state offset of approximately \(0.3\,\mathrm{m}\) 
+origin, is somewhat affected by the heading maneuver. At the end of the run both the north and down 
+positions exhibit an error of approximately \(0.3\,\mathrm{m}\) 
 from the reference. This suggests a degree of coupling between the heading and 
-translational dynamics. The joint angle measurements also show considerable 
-high-frequency noise.
+translational dynamics. 
 
+The joint angle measurements show considerable high-frequency noise.
 The generalized velocities, shown in \autoref{fig:results:dp_heading:vel}, 
 further highlight this noise. While the angular velocities are visibly noisy, 
 the joint velocities are particularly affected, with high-frequency 
@@ -137,20 +142,22 @@ reaching the actuator limit of \(\pm16\,\mathrm{Nm}\).
 
 The results in \autoref{fig:results:dp_heading:pos} confirm that the \gls{pd+} 
 controller is capable of driving the heading of the Eelume robot to a desired 
-value. However, the response is relatively slow, which can be attributed to 
-the substantial hydrodynamic forces resisting rotation about the body \(z\)-
-axis. The observed overshoot and oscillatory behavior suggest that further 
+value.
+However, the response is relatively slow, which is hypothesized to result from the robot’s large moment of inertia around the z-axis and significant hydrodynamic damping forces.
+The observed overshoot and oscillatory behavior suggest that further 
 tuning of the controller gains could improve performance. The robot's large 
 inertia around the \(z\)-axis likely contributes to the sluggish response.
 
 An important observation is the degradation in position-holding performance 
 during the heading change. This likely results from coupling between the 
 degrees of freedom, as the thrusters must simultaneously handle both position 
-and heading control.
+and heading control. This should however not be an issue when the robot position converges over time.
+The data collected is over to short a time span to show a potential convergence to zero
+steady-state error.
 
-The joint angle noise, noted in \autoref{fig:results:dp_heading:pos}, aligns 
-with the joint velocity spikes observed in \autoref{fig:results:dp_heading:vel
-}. These artifacts are consistent with the "jittering" behavior described in
+The joint angle noise, noted from \autoref{fig:results:dp_heading:pos}, aligns 
+with the joint velocity spikes observed in \autoref{fig:results:dp_heading:vel}.
+These artifacts are consistent with the "jittering" behavior described in
 \autoref{sec:experimental_setup:assumptions_and_limitations}. The presence of 
 similar high-frequency noise in the thruster forces and joint torques
 (\autoref{fig:results:dp_heading:forces2}) can be explained by the unfiltered 
@@ -163,8 +170,7 @@ resemble a "bang-bang" control strategy rather than a smooth \gls{dp} response
 \(10\,\mathrm{Nm}/^\circ\)—meaning that a \(1^\circ\) error induces a 
 \(10\,\mathrm{Nm}\) corrective torque. While this gain yields low joint angle 
 errors, it also results in aggressive, high-frequency control actions that may 
-not be ideal for the mechanical components and actuators. Future work should 
-consider the use of low-pass filtering or gain scheduling to mitigate these effects.
+not be ideal for the mechanical components and actuators.
 
 \FloatBarrier
 
@@ -211,9 +217,14 @@ The slight steady-state error in roll angle may be attributed to the robot’s
 buoyancy characteristics. As the Eelume has a stable roll equilibrium due to 
 its design, restoring moments from buoyancy counteract the control effort, 
 resulting in a residual error when the roll angle is held away from neutral.
+It is important to note that this controller will be used together with a
+task-priority controller, and that position errors are integrated causing such steady-state
+errors to dissappear.
 
 The observed depth error likely stems from inaccuracies in the compensation 
-term within the controller. Furthermore, the test was conducted at a depth of 
+term within the controller. The salinity levels in the fjord vary and the
+compensation is better at lower depths.
+Furthermore, the test was conducted at a depth of 
 approximately \(1.3\,\mathrm{m}\), where variations in salinity and 
 temperature can influence buoyancy. Performing the experiment at a greater 
 depth could have reduced the impact of surface-related density fluctuations.
@@ -231,27 +242,27 @@ adjustments about the \(x\)-axis.
 
 
 % -----------------------------------------------------------------------------
-\subsection{Lateral Control}
+\subsection{Longitudinal Control}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/pd.pdf}
-    \caption{Position of Eelume robot during lateral control with \gls{pd+} controller.}
+    \caption{Position of Eelume robot during longitudinal control with \gls{pd+} controller.}
     \label{fig:results:dp_north:pos}
 \end{figure}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250513-133631.pdf}
-    \caption{Thruster forces and joint motor torques during north position control with \gls{pd+} controller.}
+    \caption{Thruster forces and joint motor torques during longitudinal position control with \gls{pd+} controller.}
     \label{fig:results:dp_north:forces}
 \end{figure}
 
 \paragraph{Results.}
 
-\autoref{fig:results:dp_north:pos} illustrates the position and orientation of the Eelume robot in response to a step change of \(1\,\mathrm{m}\) in the lateral direction. The northward motion exhibits a second-order response, with an overshoot of approximately \(0.4\,\mathrm{m}\), and settles near the desired value within about \(40\) seconds. The response is notably slow, which may limit the system's ability to follow time-sensitive trajectories.
+\autoref{fig:results:dp_north:pos} illustrates the position and orientation of the Eelume robot in response to a step change of \(1\,\mathrm{m}\) in the longitudinal direction. The position response exhibits a second-order response, with an overshoot of approximately \(0.4\,\mathrm{m}\), and settles near the desired value within about \(40\) seconds. The response is notably slow, which may limit the system's ability to follow time-sensitive trajectories.
 
-Throughout the experiment, roll, pitch, and yaw remain within a stable range of \(\pm 2^\circ\) after the initial transient phase, indicating good attitude stability and decoupling from the translational motion.
+Throughout the experiment, roll, pitch, and yaw remain within a stable range of \(\pm 2^\circ\) after the initial transient phase, indicating good attitude stability and decoupling from the longitudinal motion.
 
 Anomalies were observed in the joint angle measurements, particularly in joint \(\theta_3\). Two distinct jittering episodes occur between \(t = 18\text{–}26\,\mathrm{s}\) and \(t = 41\text{–}47\,\mathrm{s}\), during which the third joint appears to introduce random jumps of approximately \(4^\circ\). These irregularities are reflected in the control signals.
 
@@ -259,29 +270,29 @@ Anomalies were observed in the joint angle measurements, particularly in joint \
 
 \paragraph{Discussion.}
 
-The slow rise time and overshoot in the northward response suggest a lack of damping and conservative controller tuning in the translational plane. A higher proportional gain could reduce rise time, while increased derivative action may help suppress overshoot.
+The slow rise time and overshoot in the longitudinal response suggest a lack of damping and conservative controller gains in the longitudinal axis. A higher proportional gain could reduce rise time, while increased derivative action may help suppress overshoot.
 
-The jitter observed in the joint measurements—especially in joint \(\theta_3\)—is not unique to this experiment and appears to be a recurring issue. Although the exact cause remains unclear, it is discussed in more detail in \autoref{sec:results:lowpass}, where low-pass filtering is proposed as a mitigation strategy. It is evident that these joint disturbances contribute to the high-frequency noise seen in both the joint motor commands and thruster allocation.
+The jitter observed in the joint measurements—especially in joint \(\theta_3\)—is not unique to this experiment and appears to be a recurring issue. Although the exact cause remains unclear, it is discussed in more detail in \autoref{sec:results:lowpass}, where low-pass filtering is implemented as a mitigation strategy. It is evident that these joint disturbances contribute to the high-frequency noise seen in both the joint motor commands and thruster allocation.
 
-Despite the noise, the joint angles perform well overall, provided the brief jittering segments are excluded. As in earlier experiments, a steady-state error in the down position persists, likely due to buoyancy-related inaccuracies and the limited effectiveness of the vertical compensation term in the controller. This is further affected by variations in water salinity near the surface.
+Despite the noise, the joint angles perform well overall, provided the brief jittering segments are excluded. As in earlier experiments, a steady-state error in the depth persists, likely due to buoyancy-related inaccuracies and error in the estimation of bouyancy forces. This is further affected by variations in water salinity near the surface.
 
-In summary, while the system demonstrates successful convergence to the north position reference, performance is hindered by slow dynamics and sensor-related disturbances. These findings underscore the importance of controller tuning and measurement filtering to ensure reliable and responsive behavior.
+In summary, while the system demonstrates successful convergence to the longitudinal position reference, performance is hindered by slow dynamics and sensor noise. These findings underscore the importance of controller tuning and measurement filtering to ensure reliable and responsive behavior.
 
 \FloatBarrier
 
 % -----------------------------------------------------------------------------
-\subsection{Longitudinal Control}
+\subsection{Lateral Control}
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1.0\textwidth,page=4]{assets/ignored/plots/pd.pdf}
-    \caption{Position of Eelume robot during heading control with \gls{pd+} controller.}
+    \caption{Position of Eelume robot during lateral control with \gls{pd+} controller.}
     \label{fig:results:dp_east:pos}
 \end{figure}
 
 \paragraph{Results.}
 
 \autoref{fig:results:dp_east:pos} shows the response of the Eelume robot to a 
-\(1\,\mathrm{m}\) step in the east position reference. The eastward motion 
+\(1\,\mathrm{m}\) step in the lateral position reference. The lateral motion 
 exhibits characteristics of an over-damped second-order system. The robot 
 reaches approximately \(0.9\,\mathrm{m}\) after about \(20\) seconds, with a 
 residual steady-state error of approximately \(0.1\,\mathrm{m}\), indicating 
@@ -290,8 +301,8 @@ direction.
 
 Small steady-state offsets are also observed in the north and down directions, 
 with final errors of approximately \(0.2\,\mathrm{m}\) and \(0.3\,\mathrm{m}\),
-respectively. These secondary deviations may result from coupling effects 
-or imbalances in controller compensation.
+respectively. These secondary deviations may result from coupling effects,
+imbalances in controller compensation or ocean currents.
 
 The roll and yaw angles show brief disturbances during the initial phase of 
 the motion but stabilize within the first \(10\) seconds. This transient 
@@ -304,12 +315,12 @@ uncharacteristic behavior were identified.
 
 \paragraph{Discussion.}
 
-The sluggish response and steady-state error in the east direction are 
+The sluggish response and steady-state error in the lateral direction are 
 expected given the Eelume robot's physical configuration. Translating 
 laterally requires the entire length of the slender, snake-like body to 
 displace water sideways, resulting in significant hydrodynamic drag. This 
-introduces large damping forces that slow the robot's response in the east 
-direction compared to forward (north) motion.
+introduces large damping forces that slow the robot's response in the lateral 
+direction compared to forward (longitudinal) motion.
 
 The observed behavior aligns well with theoretical expectations. The over-
 damped response profile and incomplete convergence are indicative of both 
@@ -318,7 +329,7 @@ fluid. While the robot is able to execute the motion, the performance may be
 limited by actuation constraints or the need for refined controller tuning to 
 handle such high-drag scenarios more effectively.
 
-Overall, the results demonstrate that while eastward translation is 
+Overall, the results demonstrate that while lateral translation is 
 challenging for the Eelume platform, the control system maintains stability 
 and achieves acceptable performance, albeit with slower dynamics and modest 
 steady-state error.
@@ -349,7 +360,9 @@ case is referred to as \textit{stretch}, as the robot is stretched out over
 the course of the run. \autoref{fig:eelume:tpc:tasks:stretch} shows an overview of the tasks.
 The tasks are designed such that both tasks are fullfilled at the beginning of the run,
 where the Eelume robot has \(45\) degrees bend in the \(y\)-axis joints, as
-seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}.
+seen in \autoref{fig:eelume:tpc:tasks:stretch:initial_pos}. The desired task values
+are kept at the same value for the first \(20\) seconds to allow the robot to settle
+in a steady-state position.
 
 \begin{figure}[!ht]
     \centering
@@ -369,7 +382,7 @@ The controller used for this group is the velocity-level task-priority controlle
 presented in \autoref{sec:velocity_level_control}.
 The null-space projectors are constructed using the augmented null-space projection method,
 as this method is less conservative.
-No damping of the jacobians
+No damping of the pseudo-inverse of jacobians
 are used as issues with ill-conditioned matrices was not found to be a problem for the cases presented.
 The controller can be summarized by the following equation:
 \begin{subequations}
@@ -388,6 +401,7 @@ The task gains are set to diagonal matrices with the following values:
     \bm{\Lambda}_2 &= 0.1 \I &
     \bm{\Lambda}_3 &= 0.2 \I.
 \end{align}
+These values were selected based on experimental data that is not presented in this thesis.
 
 \begin{figure}[!ht]
     \centering
@@ -405,7 +419,7 @@ The task gains are set to diagonal matrices with the following values:
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{Desired body fixed forces, body-fixed momens and joint moments during case \textit{stretch}}
+    \caption{Desired body-fixed forces, body-fixed moments and joint moments during case \textit{stretch}}
     \label{fig:results:tpc:stretch:1:forces}
 \end{figure}
 \begin{figure}[!ht]
@@ -447,15 +461,15 @@ The task gains are set to diagonal matrices with the following values:
 
 \paragraph{Results.}
 
-\autoref{fig:results:tpc:stretch:1:pos} shows the position, orientation, and joint angles of the Eelume robot during the \gls{tpc} experiment. To mitigate the measurement noise described in previous sections, the joint angle signals are low-pass filtered. Most values appear smooth, although a mild oscillation with a frequency of approximately \(0.7\,\mathrm{Hz}\) and amplitude around \(1.5^\circ\) is noticeable in the roll angle. Similar oscillations are also observed in the second and fourth joint angles, which primarily rotate about the \(z\)-axis.
+\autoref{fig:results:tpc:stretch:1:pos} shows the position, orientation, and joint angles of the Eelume robot during the \gls{tpc} experiment. To mitigate the measurement noise described in previous sections, the joint angle signals are low-pass filtered. Most values appear smooth, although a mild oscillation with a frequency of approximately \(0.7\,\mathrm{Hz}\) and amplitude around \(1.5^\circ\) is noticeable in the roll angle. Similar oscillations are also observed in the second and fourth joint angles, which rotate about the \(z\)-axis.
 
 These oscillations are more pronounced in the velocity signals shown in \autoref{fig:results:tpc:stretch:1:vel}, which includes linear, angular, and joint velocities. The dominant frequency content across all velocity signals lies between \(0.6\) and \(0.8\,\mathrm{Hz}\).
 
-\autoref{fig:results:tpc:stretch:1:forces} displays the body-fixed wrench and joint torques commanded by the lower-level \gls{pd+} controller. Oscillatory behavior is again evident, reflecting the dynamics seen in the position and velocity data. This is further confirmed in \autoref{fig:results:tpc:stretch:1:forces-torques}, which shows the commanded thruster forces and joint motor torques, both of which exhibit similar frequency characteristics.
+\autoref{fig:results:tpc:stretch:1:forces} displays the body-fixed wrench and joint torques commanded by the lower-level \gls{pd+} controller. Oscillatory behavior is again evident, reflecting the dynamics inferred from the position and velocity data. This is further confirmed in \autoref{fig:results:tpc:stretch:1:forces-torques}, which shows the commanded thruster forces and joint motor torques, both of which exhibit similar frequency characteristics.
 
-Task-specific performance is visualized in \autoref{fig:results:tpc:stretch:1:task:1} and \ref{fig:results:tpc:stretch:1:task:3}. The highest priority task (tail position) begins with an initial error of approximately \(80\,\mathrm{cm}\), which gradually reduces during the first \(20\) seconds. The error stabilizes around \(20\,\mathrm{cm}\) for most of the run and settles close to \(10\,\mathrm{cm}\) after \(45\) seconds.
+Task-specific performance is visualized in \autoref{fig:results:tpc:stretch:1:task:1}, \autoref{fig:results:tpc:stretch:1:task:2} and \ref{fig:results:tpc:stretch:1:task:3}. The highest priority task (tail position) begins with an initial error of approximately \(80\,\mathrm{cm}\), which gradually reduces during the first \(20\) seconds. The error stabilizes around \(20\,\mathrm{cm}\) for most of the run and settles close to \(10\,\mathrm{cm}\) after \(45\) seconds. The jitter that can be seen in the task error is a result from the jittering of the joint angles, as they are not low-pass filtered before calculating the task error.
 
-The second task (head position) shows partial correction of the initial error within the first \(20\) seconds, as seen in \autoref{fig:results:tpc:stretch:1:task:2}. Between \(t = 20\) and \(40\,\mathrm{s}\), the error remains below \(10\,\mathrm{cm}\), but then increases approximately linearly—consistent with the desired trajectory for the head task, which continues to move south.
+The second task (head position) shows partial correction of the initial error within the first \(20\) seconds, as seen in \autoref{fig:results:tpc:stretch:1:task:2}. Between \(t = 20\) and \(40\,\mathrm{s}\), the error remains below \(10\,\mathrm{cm}\), but then increases approximately linearly, consistent with the desired trajectory for the head task, which continues to move south.
 
 \autoref{fig:results:tpc:stretch:1:task:3} shows the orientation task (lowest priority). The error remains small throughout the run, indicating successful alignment of the robot body with the inertial frame, though with slower tracking compared to position tasks.
 
@@ -467,13 +481,15 @@ Task-space trajectories for the head and tail tasks in the north-down plane are 
 
 The observed oscillations in roll and joint angles may originate from the use of low-pass filtered signals for feedback. Filtering helps suppress noise but introduces phase delay, which can lead to oscillatory behavior, particularly when feedback loops interact with higher-frequency signal components. This trade-off is further discussed in \autoref{sec:results:lowpass}.
 
-It is important to note that the plots in \autoref{fig:results:tpc:stretch:1:forces-torques} reflect **commanded** values to the low-level controllers—not the actual measured forces or torques. Time delays inherent in the actuation system—some of which are unmodeled—can contribute to oscillatory or delayed responses in the physical system.
+It is important to note that the plots in \autoref{fig:results:tpc:stretch:1:forces-torques} reflect commanded values to the low-level controllers—not the actual measured forces or torques. Time delays inherent in the actuation system, which are unmodeled, can contribute to oscillatory or delayed responses in the physical system.
 
-Another possible cause of oscillations is interaction between the task-priority controller and the lower-level \gls{pd+} controller. However, the smoothness of the tracked references in \autoref{fig:results:tpc:stretch:dp-tracking} suggests that this interaction is not problematic in this case.
+Another possible cause of oscillations is interaction between the task-priority controller and the lower-level \gls{pd+} controller. Specifically, the integral terms from the task-priority controller combined
+with an aggressive lower-level controller is known to cause oscillations.
+However, the smoothness of the tracked references in \autoref{fig:results:tpc:stretch:dp-tracking} suggests that this interaction is not problematic in this case.
 
 During the first \(20\) seconds, the task-priority controller does not use a feedforward term from the desired task velocity, meaning the system relies solely on accumulated task error to generate motion. Despite this, the controller successfully reduces the tail and head task errors to within \(20\,\mathrm{cm}\), demonstrating effective control.
 
-After the initial transient, both task errors remain low. However, as the robot stretches out and the head reference continues to move south, the head task error increases. This is expected, as \gls{tpc} respects task hierarchy: when it becomes kinematically infeasible to satisfy all objectives simultaneously, the lower-priority task (head position) is sacrificed in favor of the higher-priority task (tail position).
+After the initial transient, both task errors remain low until the reference changes. However, as the robot stretches out and the head reference continues to move south, the head task error increases. This is expected, as \gls{tpc} respects task hierarchy: when it becomes kinematically infeasible to satisfy all objectives simultaneously, the lower-priority task (head position) is sacrificed in favor of the higher-priority task (tail position).
 
 The slower response in orientation tracking is also expected, given that orientation is the third-priority task. As the robot aligns its body to meet the position tasks, it may need to adjust its pitch, thereby introducing a delay in satisfying the orientation objective.
 
@@ -489,15 +505,15 @@ In summary, the experiment demonstrates that task-priority control operates as i
 \paragraph{Experimental setup}
 The third group of experiments aims to show the performance of the set-based
 velocity-level task-priority controller. This controller is used to set
-joint limits of \(\pm 45\) degrees on the \(y\)-axis joints. The task setup is,
-excluding the set-based tasks:
+joint limits of \(\pm 45\) degrees on the joints.
+Excluding the set-based tasks, the task setup is:
 \begin{enumerate}
     \item \(\bm{\sigma}_1(\bm{\xi}) \in \R^3\): The position of the tail. Moving downwards and forwards.
     \item \(\bm{\sigma}_2(\bm{\xi}) \in \R^3\): The position of the head. Moving downwards and backwards.
-    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The attitude of the base link. Set to have the same orientation as the inertial frame.
+    \item \(\bm{\sigma}_3(\bm{\xi}) \in \R^3\): The attitude of the base link. Set to be aligned with the inertial frame.
 \end{enumerate}
 \autoref{fig:eelume:tpc:tasks:bend} shows an overview of the tasks. Notice how
-the position of the head and the tail close each other as the time increases, meaning
+the positions of the head and the tail come close to each other as the time increases, meaning
 that the joints will have to bend to keep the tasks fullfilled. This means
 that the set-based joint-limit tasks will become active at some point during the run. Because
 of the nature of the experiment, this case is referred to as \textit{bend}.
@@ -604,12 +620,13 @@ In summary, this experiment highlights a fundamental limitation of \gls{tpc} whe
 \paragraph{Experimental setup.}
 This group of experiments aims to show the effects of low-pass filtering the
 joint angles and velocity measurments. To do this, the same scenario as in \autoref{sec:res:stretch}, case \textit{stretch},
-are run. One run low-pass filter the joint angles and the other passes the measurements
-directly to the controller without filtering them. The two cases are reffered to as:
+is run. 
+In one run, a low-pass filter is applied to the joint angles, while in the other, the measurements are passed directly to the controller without filtering.
+The two cases are referred to as:
 \begin{itemize}
-    \item \textit{filter}. A velocity-level \gls{tpc} run with low-pass filtering of joint angles and generalized velocities.
+    \item \textit{filtered}. A velocity-level \gls{tpc} run with low-pass filtering of joint angles and generalized velocities.
         Control loop frequency: \(50\) Hz.
-    \item \textit{un-filtered}. A velocity-level \gls{tpc} run with no low-pass filtering of the states.
+    \item \textit{unfiltered}. A velocity-level \gls{tpc} run with no low-pass filtering of the states.
         Control loop frequency: \(100\) Hz.
 \end{itemize}
 
@@ -618,35 +635,35 @@ directly to the controller without filtering them. The two cases are reffered to
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250519-135739.pdf}
-    \caption{Low-pass filtered position of the Eelume robot during case \textit{filter}}
+    \caption{Low-pass filtered position of the Eelume robot during case \textit{filtered}}
     \label{fig:results:tpc:filter:pos}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250513-154920.pdf}
-    \caption{Position of the Eelume robot during case \textit{un-filtered}}
+    \caption{Position of the Eelume robot during case \textit{unfiltered}}
     \label{fig:results:tpc:un-filtered:pos}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-135739.pdf}
-    \caption{Allocated thruster forces and joint moment during case \textit{filter}}
+    \caption{Allocated thruster forces and joint moment during case \textit{filtered}}
     \label{fig:results:tpc:filter:forces}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250513-154920.pdf}
-    \caption{Allocated thruster forces and joint moment during case \textit{un-filtered}}
+    \caption{Allocated thruster forces and joint moment during case \textit{unfiltered}}
     \label{fig:results:tpc:un-filtered:forces}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/tasks-filter.pdf}
-    \caption{Comparison of task errors between cases \textit{filter} and \textit{un-filtered}}
+    \caption{Comparison of task errors between cases \textit{filter} and \textit{unfiltered}}
     \label{fig:results:tpc:filter:task-errors}
 \end{figure}
 
-\autoref{fig:results:tpc:filter:pos} presents the position, orientation, and joint angles during the filtered run. The position trajectories appear smooth and continuous. The Euler angles, however, exhibit noticeable oscillations—particularly in the roll angle, where oscillations of approximately \(2^\circ\) amplitude occur at a frequency of around \(0.5\,\mathrm{Hz}\). Similar oscillations are present in the yaw angle, though with slightly lower amplitude. The pitch angle also contains some oscillatory behavior, but it is considerably less pronounced.
+\autoref{fig:results:tpc:filter:pos} presents the position, orientation, and joint angles during the filtered run. The position trajectories appear smooth and continuous. The Euler angles, however, exhibit noticeable oscillations, particularly in the roll angle, where oscillations of approximately \(2^\circ\) amplitude occur at a frequency of around \(0.5\,\mathrm{Hz}\). Similar oscillations are present in the yaw angle, though with slightly lower amplitude. The pitch angle also contains some oscillatory behavior, but it is considerably less pronounced.
 
 In contrast, \autoref{fig:results:tpc:un-filtered:pos} shows the same quantities for the unfiltered run. The position remains smooth, but the roll angle exhibits high-frequency noise, particularly during the first 30 seconds of the run. This noise has a frequency of around \(3\,\mathrm{Hz}\) and amplitude below \(1^\circ\). The pitch angle shows similar transient noise. Most notably, the joint angle signals—especially for joints 1 and 3—display strong jitter throughout the run. Nevertheless, aside from this jitter, the underlying joint trajectories remain smooth.
 
@@ -654,9 +671,7 @@ In contrast, \autoref{fig:results:tpc:un-filtered:pos} shows the same quantities
 
 In \autoref{fig:results:tpc:un-filtered:forces}, the unfiltered case reveals highly jittery actuator signals. The thruster references are dominated by high-frequency noise, especially during the first 30 seconds, to the extent that the underlying signal is nearly obscured. Some reduction in jitter is seen as the experiment progresses. The joint motor torques repeatedly saturate at the \(\pm 16\,\mathrm{Nm}\) limit, resulting in behavior reminiscent of a "bang-bang" controller rather than smooth torque regulation.
 
-\autoref{fig:results:tpc:filter:task-errors} compares the task errors for the filtered and unfiltered runs. In both cases, the tail and head task errors converge toward zero within the first 20 seconds, after which different behaviors emerge.
-
-The tail task is better tracked in the unfiltered case, where the error remains within \(0.1\,\mathrm{m}\) for the final 15 seconds. In contrast, the filtered case shows a larger deviation, reaching over \(0.4\,\mathrm{m}\) during the same interval. Conversely, the head task exhibits more favorable tracking in the filtered run. While both cases show approximately linear growth in error after the robot stretches out, the filtered case maintains an error that is consistently more than \(0.2\,\mathrm{m}\) lower than in the unfiltered scenario.
+\autoref{fig:results:tpc:filter:task-errors} compares the task errors for the filtered and unfiltered runs. In both cases, the tail and head task errors converge toward zero within the first 20 seconds, after which different behaviors emerge. The tail task is better tracked in the unfiltered case, where the error remains within \(0.1\,\mathrm{m}\) for the final 15 seconds. In contrast, the filtered case shows a larger deviation, reaching over \(0.4\,\mathrm{m}\) during the same interval. Similarly, the head task exhibits more favorable tracking in the unfiltered run. While both cases show approximately linear growth in error after the robot stretches out, the filtered case maintains an error that is consistently more than \(0.2\,\mathrm{m}\) lower than in the unfiltered scenario.
 The orientation task performs similarly in both runs, with low tracking error throughout the experiment.
 
 
@@ -665,11 +680,11 @@ The comparison between filtered and unfiltered sensor measurements reveals sever
 
 First, there is evidence that low-pass filtering may induce low-frequency oscillations in the system. Oscillations around \(0.5\,\mathrm{Hz}\) are clearly visible in the position and orientation data when filtering is enabled, and similar oscillatory behavior is observed in the allocated thruster forces and joint moments. These patterns are not present in the unfiltered run. However, it is important to note that the filtered and unfiltered experiments were conducted with different control loop frequencies. Since the loop frequency influences the controller's bandwidth, it may also contribute to the observed oscillations, making it difficult to attribute them solely to filtering.
 
-Despite the high-frequency jitter observed in the unfiltered case, the overall control performance appears acceptable. This can partly be explained by the behavior of the lower-level controllers, which act as implicit low-pass filters when tracking the setpoint references. Pre-filtering the measurements before they reach the low-level controllers may therefore suppress frequencies that the hardware could have followed. However, continuously commanding noisy, high-frequency signals can be damaging to physical actuators, particularly joint motors, which are sensitive to rapid switching and saturation.
+Despite the high-frequency jitter observed in the unfiltered case, the overall tracking performance appears better than in the filtered case. This can partly be explained by the behavior of the lower-level controllers, which act as implicit low-pass filters when tracking the setpoint references. Pre-filtering the measurements before they reach the low-level controllers may therefore suppress frequencies that the hardware could have followed. However, continuously commanding noisy, high-frequency signals can be damaging to physical actuators, particularly joint motors, which can be sensitive to rapid switching and saturation.
 
-When comparing the actuator signals in both cases, a clear trade-off becomes evident. Without filtering, the joint moments and body-fixed torques exhibit high-frequency noise, especially during the early stages of the run. With filtering, these inputs are much smoother overall, although they show low-frequency oscillations around \(0.5\,\mathrm{Hz}\). Evaluating controller performance through task error plots in \autoref{fig:results:tpc:filter:task-errors} does not clearly favor one approach over the other; both cases exhibit strengths and weaknesses depending on the specific task and phase of motion.
+When comparing the actuator signals in both cases, a clear trade-off becomes evident. Without filtering, the joint moments and body-fixed torques exhibit high-frequency noise, especially during the early stages of the run. With filtering, these inputs are much smoother overall, although they show low-frequency oscillations around \(0.5\,\mathrm{Hz}\). Evaluating controller performance through task error plots in \autoref{fig:results:tpc:filter:task-errors} does favors the un-filtered approach over the other. However, both cases exhibit strengths and weaknesses depending on the specific task and phase of motion.
 
-Considering the risk of hardware degradation due to persistent high-frequency input signals, it may be advisable to apply low-pass filtering, despite the induced oscillations. Further tuning of the filter parameters and additional experiments are needed to identify a better compromise between signal smoothness and control responsiveness.
+Considering the risk of hardware degradation due to persistent high-frequency input signals, it may be advisable to apply low-pass filtering, despite the induced oscillations and seemingly worse tracking performance. Further tuning of the filter parameters and additional experiments are needed to identify a better compromise between signal smoothness and control responsiveness.
 
 
 

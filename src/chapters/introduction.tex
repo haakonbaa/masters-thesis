@@ -11,12 +11,12 @@ as well as an outline of the subsequent chapters.
 \label{sec:introduction:motivation}
 
 
-Lightweight \glspl{uvms}, and specifically \glspl{aiauv}, are highly kinematically redundant systems, meaning they possess more controllable \glspl{dof} than are strictly required for a given task. While this redundancy offers flexibility in task execution—allowing the system to avoid obstacles, optimize energy consumption, and maintain stability—it also introduces significant control challenges. Traditional control methods often fall short when managing the coupling effects between the vehicle's base and its manipulator arms, especially in lightweight systems where coupling is more pronounced.
+Light-\glspl{uvms}, and specifically \glspl{aiauv}, are highly kinematically redundant systems, meaning they possess more controllable \glspl{dof} than are strictly required for a given task. While this redundancy offers flexibility in task execution—theoretically allowing the system to avoid obstacles, optimize energy consumption, and maintain stability—it also introduces significant control challenges. Traditional control methods often fall short when managing the coupling effects between the vehicle's base and its manipulator arms, especially in lightweight systems where coupling is more pronounced.
 
-\Gls{tpc} emerges as an effective solution by enabling the simultaneous execution of multiple control objectives, ordered by priority. While TPC has been extensively studied in the literature, much of the existing research focuses on heavy, work-class \glspl{uvms} or robotic arms in isolation. The specific challenges associated with light-UVMSs remain relatively underexplored. These systems pose additional difficulties due to the complexity of accurately modeling hydrodynamic forces and the greater sensitivity of the system to disturbances, making them harder to control to a given level of precision.
+\Gls{tpc} emerges as an effective solution by enabling the simultaneous execution of multiple control objectives, ordered by priority. While TPC has been extensively studied in the literature, much of the existing research focuses on heavy, work-class \glspl{uvms} or fixed-base robotic systems in isolation. The specific challenges associated with light-UVMSs remain relatively underexplored. These systems pose additional difficulties due to the complexity of accurately modeling hydrodynamic forces and the greater sensitivity of the system to disturbances, making them harder to control to a given level of precision.
 This thesis contributes to the limited body of research on TPC for lightweight, highly redundant systems by conducting experimental validation of velocity-level TPC on the Eelume 500—a high-\gls{dof}, strongly coupled, lightweight \gls{aiauv}. Through this work, the practical applicability of TPC in challenging real-world underwater environments is examined.
 
-The development of advanced control strategies also requires a reliable and realistic simulation environment to test and validate performance before deploying controllers on physical systems. For light-\gls{uvms}s, accurately capturing hydrodynamic effects, coupling behavior, and actuator dynamics is crucial to minimize the simulation-to-reality gap. Furthermore, the high computational demands of dynamic-level TPC algorithms necessitate efficient and responsive simulation tools.
+The development of advanced control strategies also requires a reliable and realistic simulation environment to test and validate performance before deploying controllers on physical systems. For light-\gls{uvms}s, accurately capturing hydrodynamic effects, coupling behavior, and actuator dynamics is crucial to minimize the simulation-to-reality gap. Furthermore, the high computational demands of kinematic-level TPC algorithms necessitate efficient and responsive simulation tools.
 To support this, a simulation and control environment tailored for the Eelume 500 robot was developed as part of this thesis. This framework enables seamless transition between simulation and real-world experiments and supports real-time execution of kinematic-level TPC strategies.
 
 In 2015, the United Nations adopted the 2030 Agenda for Sustainable Development
@@ -124,9 +124,9 @@ methods for \gls{uvms}s in real-world experiments.
 
 The main contributions as presented in this thesis are as follows:
 \begin{enumerate}
-    \item \emph{Implementing and experimentally validating a kinemtic-level \gls{tpc} framework for the Eelume \gls{aiauv}.}
+    \item \emph{Implementation and experimental validation of a kinemtic-level \gls{tpc} framework for the Eelume \gls{aiauv}.}
     \item \emph{Devlopment of a dynamical model and simulator for the Eelume \gls{aiauv}.}
-    \item \emph{Development of a control framework interfacing with the newly developed \gls{api} for the Eelume robot.}
+    \item \emph{Development of a control framework interfacing with the newly developed \gls{api} for the Eelume \gls{aiauv}.}
     \item \emph{Development of a tool showing a live visualization of the Eelume \gls{aiauv} along with desired task trajectories.}
 \end{enumerate}
 
@@ -153,8 +153,7 @@ The structure of this thesis is as follows:
     \item \autoref{chap:modeling} describes how a general \gls{aiauv} can be modeled, including the coordinate frames, assumptions, and conventions used throughout this work. 
     \item \autoref{ch:tpc} presents \gls{tpc}, focusing on kinematic-level \gls{tpc}.
     \item \autoref{ch:software} presents the software developed as part of the thesis, including modules for control, visualization, and simulation.
-    \item \autoref{ch:experimental_setup} introduces the experimental platform, the Eelume Model M robot, along with a discussion of system limitations launch procedure.
+    \item \autoref{ch:experimental_setup} introduces the experimental platform, the Eelume Model M robot, along with a discussion of system limitations the robot's launch procedure.
     \item \autoref{ch:results} presents experimental results from applying kinematic-level \gls{tpc} to the Eelume robot.
     \item Finally, \autoref{ch:conclusion} summarizes the key findings and contributions of the thesis and outlines potential directions for future work.
 \end{itemize}
-

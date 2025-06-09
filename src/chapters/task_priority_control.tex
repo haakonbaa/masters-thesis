@@ -164,7 +164,7 @@ The variants discussed in \cite{antonelli2009} are summarized in the following t
         \hline
     \end{tabular}
     \label{tab:tpc_variants}
-    \caption{Task priority control variants. Table from \cite{antonelli2009}}
+    \caption[Task-priority control variants]{Task-priority control variants. Table from \cite{antonelli2009}}
 \end{table}
 
 Using the successive method, task velocities are progressively projected into the null space of higher-priority tasks by recursively multiplying null space projection matrices. In contrast, the augmented method constructs a single null space projection matrix by stacking the task Jacobians of all higher-priority tasks and then computing the pseudoinverse of this stacked matrix. This distinction is illustrated in \autoref{eq:augmented_null_space}.
@@ -273,7 +273,7 @@ The previous sections have focused exclusively on \emph{equality tasks}, where t
 \end{align}
 However, many practical scenarios require task variables to lie within a specific set rather than attain a single desired value. A common example involves enforcing kinematic constraints, such as joint limits, where certain angles must remain within predefined bounds.
 
-These scenarios are described as \emph{set-based tasks}, and can be formulated by the inequality:
+These scenarios are described as \emph{set-based tasks}, and can be formulated by the constraint:
 \begin{align}
     \bm{\sigma}(t) \in \mathcal{D} \quad \forall\, t,
 \end{align}
@@ -301,11 +301,9 @@ for some bounds \(\sigma_{\text{min}}, \sigma_{\text{max}} \in \R\). When the co
 
 The key idea is to \emph{activate} or \emph{deactivate} the set-based task dynamically based on the current system state. When activated, the set-based task is temporarily treated as an equality task and inserted into the hierarchy with the highest priority. The resulting control law becomes:
 \begin{align}
-    \bm{\zeta}_d = \bm{J}_s^{+}\bm{\Lambda}_s \tilde{\bm{\sigma}}_s + \bm{N}_s \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
+    \bm{\zeta}_d = \bm{J}_s^{+}\bm{\Lambda}_s \tilde{\bm{\sigma}}_s + \sum_{i=1}^k \bm{N}_{si}^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
 \end{align}
-where \(\bm{J}_s\) is the Jacobian of the set-based task, \(\bm{N}_s\) is the associated null-space projector, and \(\tilde{\bm{\sigma}}_s\) is the task error. Note that the desired setpoint for \(\sigma_s\) depends on whether the task variable exceeds the upper or lower bound.
-
-A set-based task \(\sigma\) is activated when:
+where \(\bm{J}_s\) is the Jacobian of the set-based task, \(\tilde{\bm{\sigma}}_s\) is the task error, and \(\bm{N}_{si}\) is the associated null-space projector for the set-based task and task \(i\). The expression for \(\bm{N}_{si}\) is dependent on the choosen null-space projection method. Note that the desired setpoint for \(\sigma_s\) depends on whether the task variable exceeds the upper or lower bound. A set-based task \(\sigma\) is activated when:
 \begin{align}
     \sigma \leq \sigma_{\text{min}} \land \dot{\sigma} \leq 0 \quad \lor \quad \sigma \geq \sigma_{\text{max}} \land \dot{\sigma} \geq 0.
 \end{align}
@@ -319,41 +317,42 @@ The framework can be extended to handle multiple set-based tasks by assigning pr
 \section{Dynamic-level Redundancy Resolution}
 \label{sec:tpc:dynamic_level}
 
+
 Dynamic-level redundancy resolution solves the redundancy problem by considering
 the robot's dynamics. This removes the need for a controller that can generate
-the desired joint velocities $\dot{\bm{q}}_d(t)$, and instead uses the robot's
+the desired joint velocities $\dot{\bm{\xi}}_d(t)$, and instead uses the robot's
 dynamic model to generate a generalized torque $\bm{\tau}_d(t)$ that will
 be applied to the robot. There are several methods for dynamic-level redundancy
 resolution, but here we will focus on the method presented in \cite{khatib2004}.
 Consider the robot's dynamic model similar to models presented in previous sections:
 \begin{subequations}
 \begin{align}
-    \bm{M}(\bm{q}) \ddot{\bm{q}} + \bm{N}(\bm{q}, \dot{\bm{q}}) \dot{\bm{q}} + \bm{g}(\bm{q}) &= \bm{\tau} \\
-    \bm{q}, \dot{\bm{q}} ,\ddot{\bm{q}},\bm{\tau} &\in \mathbb{R}^n.
+    \bm{M}(\bm{\xi}) \ddot{\bm{\xi}} + \bm{N}(\bm{\xi}, \dot{\bm{\xi}}) \dot{\bm{\xi}} + \bm{g}(\bm{\xi}) &= \bm{\tau} \\
+    \bm{\xi}, \dot{\bm{\xi}} ,\ddot{\bm{\xi}},\bm{\tau} &\in \mathbb{R}^n.
 \end{align}
 \end{subequations}
-In the equation above, $N(\bm{q}, \dot{\bm{q}})$ represents the Coriolis and
+In the equation above, $N(\bm{\xi}, \dot{\bm{\xi}})$ represents the Coriolis and
 damping forces acting on the robot. We consider a case with $2$ tasks, $\bm{\sigma}_t$
 and $\bm{\sigma}_p$, and the corresponding Jacobians $\bm{J}_t$ and $\bm{J}_p$.
 The essential equations concerning the tasks are:
 \begin{subequations}
     \begin{align}
-        \dot{\bm{\sigma}}_t &= \bm{J}_t(\bm{q}) \dot{\bm{q}} & \dot{\bm{\sigma}}_p &= \bm{J}_p(\bm{q}) \dot{\bm{q}} \\
-        \ddot{\bm{\sigma}}_t &= \bm{J}_t(\bm{q}) \ddot{\bm{q}} + \dot{\bm{J}}_t(\bm{q}) \dot{\bm{q}} &
-        \ddot{\bm{\sigma}}_p &= \bm{J}_p(\bm{q}) \ddot{\bm{q}} + \dot{\bm{J}}_p(\bm{q}) \dot{\bm{q}}.
+        \dot{\bm{\sigma}}_t &= \bm{J}_t(\bm{\xi}) \dot{\bm{\xi}} & \dot{\bm{\sigma}}_p &= \bm{J}_p(\bm{\xi}) \dot{\bm{\xi}} \\
+        \ddot{\bm{\sigma}}_t &= \bm{J}_t(\bm{\xi}) \ddot{\bm{\xi}} + \dot{\bm{J}}_t(\bm{\xi}) \dot{\bm{\xi}} &
+        \ddot{\bm{\sigma}}_p &= \bm{J}_p(\bm{\xi}) \ddot{\bm{\xi}} + \dot{\bm{J}}_p(\bm{\xi}) \dot{\bm{\xi}}.
     \end{align}
 \end{subequations}
 We define a dynamically consistent generalized inverse \cite{khatib1987} as
 \begin{subequations}
     \begin{align}
         \bar{\cdot} &: \R^n \times \R^{m\times n} \rightarrow \R^{m\times n} & m &= 1, \cdots, n\\
-        \bar{\cdot} &: (\bm{q},\bm{X}) \mapsto \bm{M}^{-1}(\bm{q})\bm{X}^T\left(
-            \bm{X}\bm{M}^{-1}(\bm{q})\bm{X}^T.
+        \bar{\cdot} &: (\bm{\xi},\bm{X}) \mapsto \bm{M}^{-1}(\bm{\xi})\bm{X}^T\left(
+            \bm{X}\bm{M}^{-1}(\bm{\xi})\bm{X}^T.
         \right)^{-1}
     \end{align}
 \end{subequations}
 The dynamically consistent generalized inverse is used to project the system dynamics
-onto the task space. For the sake of brevity, the dependencies of $\bm{q}$ and $\bm{\sigma}$
+onto the task space. For the sake of brevity, the dependencies of $\bm{\xi}$ and $\bm{\sigma}$
 will be omitted in the following equations. We define the following properties and
 select the applied generalized force $\bm{\tau}$ as
 \begin{align}
@@ -369,12 +368,12 @@ the two task spaces, slightly abusing notation:
     \label{eq:projected_dynamics}
 \begin{align}
     \bar{\bm{J}}_t^T \left[
-        \bm{M} \ddot{\bm{q}} + \bm{N} \dot{\bm{q}} + \bm{g} = \bm{\tau}
+        \bm{M} \ddot{\bm{\xi}} + \bm{N} \dot{\bm{\xi}} + \bm{g} = \bm{\tau}
         \right]
     &\Rightarrow
     \bm{\Lambda}_t \ddot{\bm{\sigma}}_t + \bm{\mu}_t + \bm{p}_t = \bm{f}_t \\
     \bar{\bm{J}}_{p|t}^T \left[
-        \bm{M} \ddot{\bm{q}} + \bm{N} \dot{\bm{q}} + \bm{g} = \bm{\tau}
+        \bm{M} \ddot{\bm{\xi}} + \bm{N} \dot{\bm{\xi}} + \bm{g} = \bm{\tau}
         \right]
     &\Rightarrow
     \bm{\Lambda}_{p|t} \ddot{\bm{\sigma}}_p + \bm{\mu}_{p|t} + \bm{p}_{p|t} = \bm{f}_{p|t},
@@ -384,10 +383,10 @@ where
 \begin{subequations}
 \begin{align}
     \bm{\Lambda}_t &:= \left(\bm{J}_t \bm{M}^{-1} \bm{J}_t^T\right)^{-1} &
-    \bm{\mu}_t &:= \bar{\bm{J}}_t^T \bm{N} \dot{\bm{q}} &
+    \bm{\mu}_t &:= \bar{\bm{J}}_t^T \bm{N} \dot{\bm{\xi}} &
     \bm{p}_t &:= \bar{\bm{J}}_t^T \bm{g} \\
     \bm{\Lambda}_{p|t} &:= \left(\bm{J}_{p|t} \bm{M}^{-1} \bm{J}_{p|t}^T\right)^{-1} \label{eq:lambda_pIt} &
-    \bm{\mu}_{p|t} &:= \bar{\bm{J}}_{p|t}^T \bm{N} \dot{\bm{q}} &
+    \bm{\mu}_{p|t} &:= \bar{\bm{J}}_{p|t}^T \bm{N} \dot{\bm{\xi}} &
     \bm{p}_{p|t} &:= \bar{\bm{J}}_{p|t}^T \bm{g}
 \end{align}
 \end{subequations}
@@ -445,7 +444,7 @@ The following section will discuss the singularity robustness of the algorithm u
 thesis as proposed by \cite{chiaverini1997}.
 
 First, consider the problem of taking the pseudoinverse of an arbitrary matrix $\bm{J}$.
-As discussed in \autoref{sec:pseudoinverse}, the SVD of a matrix $\bm{J}$ can be
+As discussed in \autoref{sec:pseudoinverse}, the \gls{svd} of a matrix $\bm{J}$ can be
 written as
 \begin{align}
     \bm{J} = \bm{U} \bm{\Sigma} \bm{V}^T,
