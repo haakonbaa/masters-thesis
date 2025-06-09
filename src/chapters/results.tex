@@ -610,6 +610,7 @@ tasks taking priority over the position and attitude tasks when thay are activat
 \newpage
 \section{Low-Pass Filtering}
 \label{sec:results:lowpass_filtering}
+\label{sec:results:lowpass}
 
 \paragraph{Experimental setup.}
 This group of experiments aim to show the effects of low-pass filtering the
@@ -619,7 +620,7 @@ directly to the controller without filtering them. The two cases are reffered to
 \begin{itemize}
     \item \textit{filter}. A velocity-level \gls{tpc} run with low-pass filtering of joint angles and generalized velocities.
         Control loop frequency: \(50\) Hz.
-    \item \textit{no-filter}. A velocity-level \gls{tpc} run with no low-pass filtering of the states.
+    \item \textit{un-filtered}. A velocity-level \gls{tpc} run with no low-pass filtering of the states.
         Control loop frequency: \(100\) Hz.
 \end{itemize}
 
@@ -634,34 +635,126 @@ directly to the controller without filtering them. The two cases are reffered to
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250513-154920.pdf}
-    \caption{Position of the Eelume robot during case \textit{no-filter}}
-    \label{fig:results:tpc:no-filter:pos}
+    \caption{Position of the Eelume robot during case \textit{un-filtered}}
+    \label{fig:results:tpc:un-filtered:pos}
 \end{figure}
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-135739.pdf}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-135739.pdf}
     \caption{Allocated thruster forces and joint moment during case \textit{filter}}
     \label{fig:results:tpc:filter:forces}
 \end{figure}
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250513-154920.pdf}
-    \caption{Allocated thruster forces and joint moment during case \textit{no-filter}}
-    \label{fig:results:tpc:no-filter:forces}
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250513-154920.pdf}
+    \caption{Allocated thruster forces and joint moment during case \textit{un-filtered}}
+    \label{fig:results:tpc:un-filtered:forces}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/tasks-filter.pdf}
-    \caption{Comparison of task errors between cases \textit{filter} and \textit{no-filter}}
+    \caption{Comparison of task errors between cases \textit{filter} and \textit{un-filtered}}
     \label{fig:results:tpc:filter:task-errors}
 \end{figure}
 
+\iffalse
 \begin{itemize}
-    \item 
+    \item \autoref{fig:results:tpc:filter:pos} shows the position, orientation and joint angles of the Eelume robot
+        during case \textit{filter}.
+        \begin{itemize}
+            \item The position measurements look smooth
+            \item The Euler angles seem to contain some some oscillations. The oscillations are worst in the roll
+                angle where the amplitude is appriximatel 2 degrees, with a frequency of about 0.5 Hz. 
+            \item oscillations with the same frequency content is observed in the yaw angle, but with lower amplitude.
+            \item the pitch angle seem to contain oscillations as well, but the amplitude is much lower compared to in the pitch and yaw.
+        \end{itemize}
+    \item \autoref{fig:results:tpc:un-filtered:pos} shows the position, orientation and joint angles of the Eelume robot during case \textit{un-filtered}
+        \begin{itemize}
+            \item The position measurments look smooth.
+            \item The roll angle seems to contain some high frequency noise. This has a low amplitude of less than a degree, but has a frequency of about 3 Hz. The noise is much more prominent in the first 30 seconds of the run.
+            \item Some noise is observed in the pitch angle as well, especially in the beginning of the run.
+            \item The joint angles are very jittery, this is especially true for the measurements of joint 1 and 3.
+            \item Except from the jitter, the underlying signal looks very smooth.
+        \end{itemize}
+    \item \autoref{fig:results:tpc:filter:forces} show the allocated thruster forces and joint moments for case \textit{filter}
+        \begin{itemize}
+            \item As with the position measurments for this case there seems to be some oscillations.
+            \item There seems to be oscillations in all allocated thruster forces and joint moments.
+            \item the oscillations seems to be at 0.5 Hz.
+        \end{itemize}
+    \item \autoref{fig:results:tpc:un-filtered:forces} show the allocated thruster forces and joint moments for case \textit{un-filtered}
+        \begin{itemize}
+            \item This is very jittery.
+            \item the thruster references are so jittery that it is hard to see the underlying signal when excluding the jitter.
+            \item For the thruster allocation, there seems to be less jitter as the experiment reaches over 30 seconds.
+            \item The joint motor reference constantly maxes out at \(\pm 16\) Nm and looks more like a "bang-bang" controller.
+        \end{itemize}
+    \item \autoref{fig:results:tpc:filter:task-errors} shows a comparison of the task errors for the two cases.
+        \begin{itemize}
+            \item For both cases, they converge to around 0 in the first 20 seconds. After that, similar behaviour is seen from both runs:
+            \item The Tail task for the un-filtered case seem to track the reference very well. The error is keept at a low level within 0.1
+                m for the last 15 seconds. While for the filtered case, the error reaches a value more than 0.4 m in the same time period.
+            \item However, for the head task, the un-filtered case seems to do better. Both of the errors grows appriximately linearly after
+                the Eelume robot is stretched out, but the filtered case is constantly more than 0.2 m lower than the un-filtered one.
+            \item The orientation task errors are low throughout the run in both cases.
+        \end{itemize}
 \end{itemize}
+\fi
+
+\autoref{fig:results:tpc:filter:pos} presents the position, orientation, and joint angles during the filtered run. The position trajectories appear smooth and continuous. The Euler angles, however, exhibit noticeable oscillations—particularly in the roll angle, where oscillations of approximately \(2^\circ\) amplitude occur at a frequency of around \(0.5\,\mathrm{Hz}\). Similar oscillations are present in the yaw angle, though with slightly lower amplitude. The pitch angle also contains some oscillatory behavior, but it is considerably less pronounced.
+
+In contrast, \autoref{fig:results:tpc:un-filtered:pos} shows the same quantities for the unfiltered run. The position remains smooth, but the roll angle exhibits high-frequency noise, particularly during the first 30 seconds of the run. This noise has a frequency of around \(3\,\mathrm{Hz}\) and amplitude below \(1^\circ\). The pitch angle shows similar transient noise. Most notably, the joint angle signals—especially for joints 1 and 3—display strong jitter throughout the run. Nevertheless, aside from this jitter, the underlying joint trajectories remain smooth.
+
+\autoref{fig:results:tpc:filter:forces} shows the commanded thruster forces and joint motor torques for the filtered case. Oscillations are present across all channels, with a consistent frequency of approximately \(0.5\,\mathrm{Hz}\), matching the dominant oscillatory behavior observed in the pose and joint signals. Although the signals are not noise-free, they are visibly smoother and more interpretable than those in the unfiltered case.
+
+In \autoref{fig:results:tpc:un-filtered:forces}, the unfiltered case reveals highly jittery actuator signals. The thruster references are dominated by high-frequency noise, especially during the first 30 seconds, to the extent that the underlying signal is nearly obscured. Some reduction in jitter is seen as the experiment progresses. The joint motor torques repeatedly saturate at the \(\pm 16\,\mathrm{Nm}\) limit, resulting in behavior reminiscent of a "bang-bang" controller rather than smooth torque regulation.
+
+\autoref{fig:results:tpc:filter:task-errors} compares the task errors for the filtered and unfiltered runs. In both cases, the tail and head task errors converge toward zero within the first 20 seconds, after which different behaviors emerge.
+
+The tail task is better tracked in the unfiltered case, where the error remains within \(0.1\,\mathrm{m}\) for the final 15 seconds. In contrast, the filtered case shows a larger deviation, reaching over \(0.4\,\mathrm{m}\) during the same interval. Conversely, the head task exhibits more favorable tracking in the filtered run. While both cases show approximately linear growth in error after the robot stretches out, the filtered case maintains an error that is consistently more than \(0.2\,\mathrm{m}\) lower than in the unfiltered scenario.
+The orientation task performs similarly in both runs, with low tracking error throughout the experiment.
+
 
 \paragraph{Discussion}
-\label{sec:results:lowpass}
+\iffalse
+\begin{itemize}
+    \item Low-pass filtering induces oscillations?
+        \begin{itemize}
+            \item Seems to be the case, considerng 0.5Hz oscillations observed in the position measurements.
+            \item The allocated thruster forces and joint moments seem to support this. Oscillations around the \(0.5\) Hz range
+                are only observed when the low-pass filtering is enabled.
+            \item Cannot say for certain, the experiments are conducted with different loop-frequencies, which can affect the bandwidth of the controller, which
+                also can explain some oscillatory behaviour.
+        \end{itemize}
+    \item In spite of the large oscillations seen when not low-pass filtering, the performance seems to be OK.
+        \begin{itemize}
+            \item It is important to remember that the lower-level controllers attempting to track the setpoints
+                are effectively low-pass filtering these signals. Thus, low-pass filtering them before they are sent to the lowe-level controllers
+                might remove some of the frequency contents thy could have tracked.
+            \item An other important point is that the lower-level controllers can be damaged when continously switching and having all this high-freqency content. 
+        \end{itemize}
+    \item Looking at the allocated thruster forces and joint moments there seems to be a tradeoff. 
+        \begin{itemize}
+            \item without low-pass filtering: High frequency oscillations, expecially for the joint moments and body fixed torques.
+            \item with low-pass filtering. The inputs for the thrusters are much more smooth, but they contain some oscillations.
+            \item Looking at the performance of the controllers, the task errors as compared in \autoref{fig:results:tpc:filter:task-errors}, it is hard to conclude that filtering is better than no filtering, or vice-versa. 
+            \item Because of the risk of damage, the signals should probably be low-pass filtered inspide of the oscillations this seem to induce.
+            \item Some more experiments can be done to find a spot where the tradeoff is better than the current parameters.
+        \end{itemize}
+    \item 
+\end{itemize}
+\fi
+The comparison between filtered and unfiltered sensor measurements reveals several important trade-offs in system performance and control signal quality.
+
+First, there is evidence that low-pass filtering may induce low-frequency oscillations in the system. Oscillations around \(0.5\,\mathrm{Hz}\) are clearly visible in the position and orientation data when filtering is enabled, and similar oscillatory behavior is observed in the allocated thruster forces and joint moments. These patterns are not present in the unfiltered run. However, it is important to note that the filtered and unfiltered experiments were conducted with different control loop frequencies. Since the loop frequency influences the controller's bandwidth, it may also contribute to the observed oscillations, making it difficult to attribute them solely to filtering.
+
+Despite the high-frequency jitter observed in the unfiltered case, the overall control performance appears acceptable. This can partly be explained by the behavior of the lower-level controllers, which act as implicit low-pass filters when tracking the setpoint references. Pre-filtering the measurements before they reach the low-level controllers may therefore suppress frequencies that the hardware could have followed. However, continuously commanding noisy, high-frequency signals can be damaging to physical actuators, particularly joint motors, which are sensitive to rapid switching and saturation.
+
+When comparing the actuator signals in both cases, a clear trade-off becomes evident. Without filtering, the joint moments and body-fixed torques exhibit high-frequency noise, especially during the early stages of the run. With filtering, these inputs are much smoother overall, although they show low-frequency oscillations around \(0.5\,\mathrm{Hz}\). Evaluating controller performance through task error plots in \autoref{fig:results:tpc:filter:task-errors} does not clearly favor one approach over the other; both cases exhibit strengths and weaknesses depending on the specific task and phase of motion.
+
+Considering the risk of hardware degradation due to persistent high-frequency input signals, it may be advisable to apply low-pass filtering, despite the induced oscillations. Further tuning of the filter parameters and additional experiments are needed to identify a better compromise between signal smoothness and control responsiveness.
+
+
 
 
 
