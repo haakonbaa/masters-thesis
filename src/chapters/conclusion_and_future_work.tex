@@ -4,11 +4,15 @@
 % ------------------------------------------------------------------ Conclusion
 \section{Conclusion}
 
+This thesis presents an experimental validation of a kinematic-level \gls{tpc} framework specifically tailored for the Eelume robot. The primary contributions and findings of this research include:
 \begin{itemize}
-    \item \textbf{Controll, visualization and simulation software}:
-    \item \textbf{Dynamic-positioning controller}
-    \item \textbf{Velocity Level \gls{tpc}}:
-    \item \textbf{Set-Based \gls{tpc}}:
+\item \textbf{Control, Visualization, and Simulation Software}: Comprehensive control, visualization, and simulation software was developed as part of this thesis. The control software facilitates efficient implementation and testing of task-priority controllers and other controller types without requiring detailed handling of low-level communication protocols. The visualization software provides immediate, real-time overviews of experimental results, while the simulation environment enables thorough and safe testing of experimental controllers prior to deployment on the actual Eelume robot.
+
+\item \textbf{Low-level \gls{pd+} Controller}: A robust low-level \gls{pd+} controller was designed, implemented, and experimentally verified. The controller demonstrates reliable reference tracking, exhibiting some steady-state errors primarily in depth and roll orientations.
+
+\item \textbf{Velocity-Level \gls{tpc}}: A velocity-level \gls{tpc} controller was successfully integrated into the control software and experimentally validated. This controller effectively tracks desired tasks and consistently respects task priority constraints when managing conflicting task objectives.
+
+\item \textbf{Set-Based \gls{tpc}}: A velocity-level \gls{tpc} controller incorporating set-based tasks, designed specifically to handle joint limitations, was implemented and validated through experiments. The results confirmed reliable tracking performance under compatible task conditions and underscored the significance of careful task design when tasks become incompatible.
 \end{itemize}
 
 % ----------------------------------------------------------------- Future Work
