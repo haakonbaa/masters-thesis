@@ -222,8 +222,9 @@ be generalized to multiple tasks by using the same methods as presented in \auto
 
 The methods discussed above assume the existence of a controller capable of tracking the desired joint velocities \(\bm{\zeta}_d\). This implies that a lower-level controller must be designed and implemented, and its performance will directly affect the ability to follow the specified tasks.
 
-A straightforward approach to tracking the desired generalized velocities is to use a simple \gls{pd} controller. However, because the robot’s state includes a unit quaternion and the generalized velocities are defined in the body frame—while the robot's state itself is defined in the \gls{ned} frame—some care must be taken during controller design. The controller can be written as:
+A straightforward approach to tracking the desired generalized velocities is to use a simple \gls{pd} controller. However, because the robot’s state includes a unit quaternion and the generalized velocities are defined in the body frame, while the robot's state itself is defined in the \gls{ned} frame, some care must be taken during controller design. The following method is based on \cite{fjellstad1994} and \cite{modsim}.
 
+The controller can be written as:
 \begin{subequations}
 \label{eq:tau_pd}
 \begin{align}
@@ -247,7 +248,7 @@ A straightforward approach to tracking the desired generalized velocities is to 
 
 where \(\bm{\tau} \in \R^{10}\) denotes the desired generalized forces on the body. The desired state \(\bm{\xi}_d\) is obtained by integrating the desired generalized velocities \(\bm{\zeta}_d\). The remaining symbols are defined in \autoref{sec:diff_kin}.
 
-A subtle issue with the controller presented in \autoref{eq:tau_pd} lies in the coupling between the rotational degrees of freedom encoded in the vector part of the error quaternion, $\bm{\varepsilon}_e$. In the angle-axis parametrization, this vector component is scaled by the sine of the rotation angle, rather than the angle itself. As a result, the error contribution along one rotational axis can be unintentionally influenced by errors around the other axes. This effect becomes particularly problematic when the proportional gains applied to each rotational axis differ, which is often the case when the system exhibits varying dynamics—for example, being slower around one axis and faster around others. To mitigate this issue, the angle-axis representation of the orientation error can be explicitly recovered from the quaternion and used in place of the vector part. The following expression can be used:
+A subtle issue with the controller presented in \autoref{eq:tau_pd} lies in the coupling between the rotational degrees of freedom encoded in the vector part of the error quaternion, $\bm{\varepsilon}_e$. In the angle-axis parametrization, this vector component is scaled by the sine of the rotation angle, rather than the angle itself. As a result, the error contribution along one rotational axis can be unintentionally influenced by errors around the other axes. This effect becomes particularly problematic when the proportional gains applied to each rotational axis differ, which is often the case when the system exhibits varying dynamics, for example, being slower around one axis and faster around others. To mitigate this issue, the angle-axis representation of the orientation error can be explicitly recovered from the quaternion and used in place of the vector part. The following expression can be used:
 \begin{align}
 \theta \bm{k} = \frac{\arccos(\eta_e)}{||\bm{\varepsilon}_e||} \bm{\varepsilon}_e,
 \end{align}

@@ -86,7 +86,7 @@ vector part of the error quaternion. The units for the first three elements
 of \(\bm{K}_d\) are in N/(m/s), and the last four are in Nm/(deg/s).
 The buoyancy is compensated by applying a downward thrust of $40$ N, as this value effectively balances the buoyant forces observed at a depth of about $10$ meters. Achieving more precise state-based compensation proved challenging due to uncertainties in accurately determining the robot’s volume and mass distributions.
 
-An essential factor in selecting \gls{dp}-control over \gls{pid}-control involves the interaction between the lower-level controller and the task-priority controller, which sets the reference for the lower-level controller. Since integral action is inherently included in the task-priority controller, incorporating an additional integral term within the \gls{dp} controller would result in dual integration, potentially causing instability as discussed in \cite{fossen}. Consequently, some steady-state errors are anticipated under low-frequency disturbances such as variations in water salinity and ocean currents.
+An essential factor in selecting \gls{dp}-control over \gls{pid}-control involves the interaction between the lower-level controller and the task-priority controller, which sets the reference for the lower-level controller. Since integral action is inherently included in the task-priority controller, incorporating an additional integral term within the \gls{dp} controller would result in dual integration, potentially causing instability as discussed in \cite{fossen2021}. Consequently, some steady-state errors are anticipated under low-frequency disturbances such as variations in water salinity and ocean currents.
 
 Additionally, the Eelume robot exhibits significant symmetry along the $xz$-plane. Therefore, the performance of the lower-level controller is expected to be the same across these \glspl{dof}. Experimental results related to depth-direction control are not included, as the response closely mirrors that observed in lateral motion. A similar reasoning applies to the robot’s pitch and yaw dynamics.
 
@@ -635,13 +635,13 @@ The two cases are referred to as:
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250519-135739.pdf}
-    \caption{Low-pass filtered position of the Eelume robot during case \textit{filtered}}
+    \caption[Low-pass filtered position of the Eelume robot during case \textit{filtered}]{Low-pass filtered position of the Eelume robot during case \textit{filtered}. The position is offset from (11, 36, 10).}
     \label{fig:results:tpc:filter:pos}
 \end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=1.0\textwidth,page=1]{assets/ignored/plots/20250513-154920.pdf}
-    \caption{Position of the Eelume robot during case \textit{unfiltered}}
+    \caption[Position of the Eelume robot during case \textit{unfiltered}]{Position of the Eelume robot during case \textit{unfiltered}. The position is offset from (26,8,2).}
     \label{fig:results:tpc:un-filtered:pos}
 \end{figure}
 \begin{figure}[h!]
