@@ -547,49 +547,7 @@ tasks taking priority over the position and attitude tasks when thay are activat
 \end{figure}
 
 \paragraph{Results.}
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/20250519-141527.pdf}
-    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]
-    {Low-pass filtered position of Eelume robot during \textit{stretch}. The position is offset from \((11, 36, 10)\)}
-    \label{fig:results:tpc:bend:1:pos}
-\end{figure}
-%\begin{figure}[!ht]
-%    \centering
-%    \includegraphics[width=1.0\textwidth,page=4]{assets/ignored/plots/20250519-141527.pdf}
-%    \caption{Low-pass filtered generalized velocity of Eelume robot during \textit{bend}}
-%    \label{fig:results:tpc:bend:1:vel}
-%\end{figure}
-%\begin{figure}[!ht]
-%    \centering
-%    \includegraphics[width=1.0\textwidth,page=6]{assets/ignored/plots/20250519-141527.pdf}
-%    \caption{Desired body fixed forces, body-fixed momens and joint moments during case \textit{bend}}
-%    \label{fig:results:tpc:bend:1:forces}
-%\end{figure}
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-141527.pdf}
-    \caption{Thruster and joint motor forces of during case \textit{bend}}
-    \label{fig:results:tpc:bend:1:forces-torques}
-\end{figure}
-%\begin{figure}[!ht]
-    %\centering
-    %\includegraphics[width=1.0\textwidth,page=7]{assets/ignored/plots/20250519-141527.pdf}
-    %\caption{Tail task value and error during case \textit{bend}}
-    %\label{fig:results:tpc:bend:1:task:1}
-%\end{figure}
-%\begin{figure}[!ht]
-    %\centering
-    %\includegraphics[width=1.0\textwidth,page=8]{assets/ignored/plots/20250519-141527.pdf}
-    %\caption{Head task value and error during case \textit{bend}}
-    %\label{fig:results:tpc:bend:1:task:2}
-%\end{figure}
-%\begin{figure}[!ht]
-    %\centering
-    %\includegraphics[width=1.0\textwidth,page=9]{assets/ignored/plots/20250519-141527.pdf}
-    %\caption{Body orientation task value and error during case \textit{bend}}
-    %\label{fig:results:tpc:bend:1:task:3}
-%\end{figure}
+
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=\textwidth,page=4]{assets/ignored/plots/tasks.pdf}
@@ -598,10 +556,75 @@ tasks taking priority over the position and attitude tasks when thay are activat
 \end{figure}
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1.0\textwidth,page=11]{assets/ignored/plots/20250519-141527.pdf}
+    \includegraphics[width=\textwidth,page=5]{assets/ignored/plots/tasks.pdf}
+    \caption{Comparison of task errors for case \textit{bend}}
+    \label{fig:results:tpc:bend:task-errors}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=3]{assets/ignored/plots/20250519-161629.pdf}
+    \caption[Low-pass filtered position of Eelume robot during \textit{stretch} case with \gls{tpc}]
+    {Low-pass filtered position of Eelume robot during \textit{stretch}. The position is offset from \((11, 36, 10)\)}
+    \label{fig:results:tpc:bend:1:pos}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=5]{assets/ignored/plots/20250519-161629.pdf}
+    \caption{Thruster and joint motor forces of during case \textit{bend}}
+    \label{fig:results:tpc:bend:1:forces-torques}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth,page=11]{assets/ignored/plots/20250519-161629.pdf}
     \caption{Body orientation task value and error during case \textit{bend}}
     \label{fig:results:tpc:bend:dp-tracking}
 \end{figure}
+
+
+
+\autoref{fig:results:tpc:bend:task-traj} shows the trajectories of the head and tail tasks in the north-down plane. Initially, both tasks are tracked reasonably well. However, after approximately 25 seconds, a divergence from the desired trajectories is observed. Specifically, the head and tail depths begin to decrease, deviating from the planned paths. This trend is also visible in the overall body trajectory, shown in black, which ascends after the same time point.
+
+This behavior is further supported by the task error plots shown in \autoref{fig:results:tpc:bend:task-errors}, which present the error evolution for the head, tail, and orientation tasks. For the first 25 seconds, the task errors remain within acceptable bounds. Beyond this point, the head and tail errors increase approximately linearly, indicating a loss of accurate tracking. Meanwhile, the orientation task remains well-regulated throughout the run, with consistently low error.
+
+\autoref{fig:results:tpc:bend:1:pos} presents the full pose and joint angle history for the experiment. The position data is generally smooth, with the downward drift in depth after the 25-second mark matching the observations in the task trajectories. Notably, this time corresponds with the activation of set-based constraints, as the first and third joint angles reach their lower limits. These joints subsequently stabilize, oscillating slightly within the range of approximately \([-50^\circ, -45^\circ]\).
+
+Minor oscillations are also observed in the orientation data, particularly in the roll angle. These oscillations occur at a frequency of about \(0.7\,\mathrm{Hz}\) and have an amplitude of roughly \(1.5^\circ\).
+
+The actuator commands during the run are shown in \autoref{fig:results:tpc:bend:1:forces-torques}. Oscillations in both thruster forces and joint torques become more pronounced after 15 seconds. \autoref{fig:results:tpc:bend:dp-tracking} compares the reference and actual generalized positions. As the joint limits are reached, the reference velocities for joints 1 and 3 flatten out, indicating saturation due to the active joint constraints. Furthermore, while the controller tracks the east and depth references reasonably well, it struggles to maintain accuracy in the north direction.
+
+\paragraph{Discussion.}
+
+The key question arising from this experiment is why the robot begins to deviate from the task trajectories—specifically, why it reduces depth after 25 seconds. The data strongly suggests that this behavior coincides with activation of the joint limit constraints, as indicated in \autoref{fig:results:tpc:bend:1:pos}. Once the first and third joints hit their limits, the associated set-based tasks are activated and assigned higher priority than the head, tail, and orientation tasks.
+
+The task Jacobian associated with the joint limit constraint for \(\theta_1\) is a \(1 \times 10\) row vector with all zeros except for a single one in the seventh position:
+\[
+\bm{J}_s = [0\ 0\ 0\ 0\ 0\ 0\ 1\ 0\ 0\ 0].
+\]
+This structure reflects the fact that the task directly constrains only \(\theta_1\), with no influence from other generalized coordinates. The corresponding null-space projector \(\bm{N}_s = \I - \bm{J}_s^{+} \bm{J}_s\) is thus nearly the identity matrix, except for a zero in the position corresponding to \(\theta_1\):
+\begin{align}
+\bm{N}_s = 
+\begin{bmatrix}
+1 &   &        &        &  \\
+  & \ddots &        &        & \\
+  &   & 0      &        &\\
+  &   &        & \ddots      & \\
+  &   &        &        & 1
+\end{bmatrix}.
+\end{align}
+
+This null-space projector effectively zeroes out the component of the desired generalized velocity \(\bm{\zeta}_d\) that corresponds to motion in \(\theta_1\). As a result, when the set-based task is activated, it overrides any previously computed joint velocity in that direction. The full control law becomes:
+\begin{align}
+    \bm{\zeta}_d = \bm{J}_s^{+}\bm{\Lambda}_s \tilde{\bm{\sigma}}_s + \bm{N}_s \sum_{i=1}^k \bm{N}_i^{\#}\bm{J}_i^{\#} \left(\dot{\bm{\sigma}}_{i,d} + \bm{\Lambda}_i \tilde{\bm{\sigma}}_i\right),
+\end{align}
+which ensures that the constraint is enforced at the cost of suppressing any conflicting joint motion from lower-priority tasks.
+
+One can imagine that, in the absence of joint limits, the controller would command the robot to ascend (decrease depth) while bending the joints to maintain head and tail positions. However, once the joint motions are blocked by the set-based constraints, the required joint contributions to those tasks cannot be realized. As a result, the controller instead produces a net upward base motion, leading to the observed depth reduction.
+
+This interpretation is further supported by the data in \autoref{fig:results:tpc:bend:dp-tracking}, which shows that the reference depth itself decreases—indicating that the behavior originates from the controller’s task prioritization rather than a failure of the low-level depth regulation.
+
+In summary, this experiment highlights a fundamental limitation of task-priority control when using set-based tasks. While the method correctly enforces constraints, it can result in undesired behavior if task interactions are not carefully considered. Designing compatible and non-conflicting tasks is therefore essential for reliable system behavior.
 
 \FloatBarrier
 
@@ -657,50 +680,6 @@ directly to the controller without filtering them. The two cases are reffered to
     \label{fig:results:tpc:filter:task-errors}
 \end{figure}
 
-\iffalse
-\begin{itemize}
-    \item \autoref{fig:results:tpc:filter:pos} shows the position, orientation and joint angles of the Eelume robot
-        during case \textit{filter}.
-        \begin{itemize}
-            \item The position measurements look smooth
-            \item The Euler angles seem to contain some some oscillations. The oscillations are worst in the roll
-                angle where the amplitude is appriximatel 2 degrees, with a frequency of about 0.5 Hz. 
-            \item oscillations with the same frequency content is observed in the yaw angle, but with lower amplitude.
-            \item the pitch angle seem to contain oscillations as well, but the amplitude is much lower compared to in the pitch and yaw.
-        \end{itemize}
-    \item \autoref{fig:results:tpc:un-filtered:pos} shows the position, orientation and joint angles of the Eelume robot during case \textit{un-filtered}
-        \begin{itemize}
-            \item The position measurments look smooth.
-            \item The roll angle seems to contain some high frequency noise. This has a low amplitude of less than a degree, but has a frequency of about 3 Hz. The noise is much more prominent in the first 30 seconds of the run.
-            \item Some noise is observed in the pitch angle as well, especially in the beginning of the run.
-            \item The joint angles are very jittery, this is especially true for the measurements of joint 1 and 3.
-            \item Except from the jitter, the underlying signal looks very smooth.
-        \end{itemize}
-    \item \autoref{fig:results:tpc:filter:forces} show the allocated thruster forces and joint moments for case \textit{filter}
-        \begin{itemize}
-            \item As with the position measurments for this case there seems to be some oscillations.
-            \item There seems to be oscillations in all allocated thruster forces and joint moments.
-            \item the oscillations seems to be at 0.5 Hz.
-        \end{itemize}
-    \item \autoref{fig:results:tpc:un-filtered:forces} show the allocated thruster forces and joint moments for case \textit{un-filtered}
-        \begin{itemize}
-            \item This is very jittery.
-            \item the thruster references are so jittery that it is hard to see the underlying signal when excluding the jitter.
-            \item For the thruster allocation, there seems to be less jitter as the experiment reaches over 30 seconds.
-            \item The joint motor reference constantly maxes out at \(\pm 16\) Nm and looks more like a "bang-bang" controller.
-        \end{itemize}
-    \item \autoref{fig:results:tpc:filter:task-errors} shows a comparison of the task errors for the two cases.
-        \begin{itemize}
-            \item For both cases, they converge to around 0 in the first 20 seconds. After that, similar behaviour is seen from both runs:
-            \item The Tail task for the un-filtered case seem to track the reference very well. The error is keept at a low level within 0.1
-                m for the last 15 seconds. While for the filtered case, the error reaches a value more than 0.4 m in the same time period.
-            \item However, for the head task, the un-filtered case seems to do better. Both of the errors grows appriximately linearly after
-                the Eelume robot is stretched out, but the filtered case is constantly more than 0.2 m lower than the un-filtered one.
-            \item The orientation task errors are low throughout the run in both cases.
-        \end{itemize}
-\end{itemize}
-\fi
-
 \autoref{fig:results:tpc:filter:pos} presents the position, orientation, and joint angles during the filtered run. The position trajectories appear smooth and continuous. The Euler angles, however, exhibit noticeable oscillations—particularly in the roll angle, where oscillations of approximately \(2^\circ\) amplitude occur at a frequency of around \(0.5\,\mathrm{Hz}\). Similar oscillations are present in the yaw angle, though with slightly lower amplitude. The pitch angle also contains some oscillatory behavior, but it is considerably less pronounced.
 
 In contrast, \autoref{fig:results:tpc:un-filtered:pos} shows the same quantities for the unfiltered run. The position remains smooth, but the roll angle exhibits high-frequency noise, particularly during the first 30 seconds of the run. This noise has a frequency of around \(3\,\mathrm{Hz}\) and amplitude below \(1^\circ\). The pitch angle shows similar transient noise. Most notably, the joint angle signals—especially for joints 1 and 3—display strong jitter throughout the run. Nevertheless, aside from this jitter, the underlying joint trajectories remain smooth.
@@ -716,34 +695,6 @@ The orientation task performs similarly in both runs, with low tracking error th
 
 
 \paragraph{Discussion}
-\iffalse
-\begin{itemize}
-    \item Low-pass filtering induces oscillations?
-        \begin{itemize}
-            \item Seems to be the case, considerng 0.5Hz oscillations observed in the position measurements.
-            \item The allocated thruster forces and joint moments seem to support this. Oscillations around the \(0.5\) Hz range
-                are only observed when the low-pass filtering is enabled.
-            \item Cannot say for certain, the experiments are conducted with different loop-frequencies, which can affect the bandwidth of the controller, which
-                also can explain some oscillatory behaviour.
-        \end{itemize}
-    \item In spite of the large oscillations seen when not low-pass filtering, the performance seems to be OK.
-        \begin{itemize}
-            \item It is important to remember that the lower-level controllers attempting to track the setpoints
-                are effectively low-pass filtering these signals. Thus, low-pass filtering them before they are sent to the lowe-level controllers
-                might remove some of the frequency contents thy could have tracked.
-            \item An other important point is that the lower-level controllers can be damaged when continously switching and having all this high-freqency content. 
-        \end{itemize}
-    \item Looking at the allocated thruster forces and joint moments there seems to be a tradeoff. 
-        \begin{itemize}
-            \item without low-pass filtering: High frequency oscillations, expecially for the joint moments and body fixed torques.
-            \item with low-pass filtering. The inputs for the thrusters are much more smooth, but they contain some oscillations.
-            \item Looking at the performance of the controllers, the task errors as compared in \autoref{fig:results:tpc:filter:task-errors}, it is hard to conclude that filtering is better than no filtering, or vice-versa. 
-            \item Because of the risk of damage, the signals should probably be low-pass filtered inspide of the oscillations this seem to induce.
-            \item Some more experiments can be done to find a spot where the tradeoff is better than the current parameters.
-        \end{itemize}
-    \item 
-\end{itemize}
-\fi
 The comparison between filtered and unfiltered sensor measurements reveals several important trade-offs in system performance and control signal quality.
 
 First, there is evidence that low-pass filtering may induce low-frequency oscillations in the system. Oscillations around \(0.5\,\mathrm{Hz}\) are clearly visible in the position and orientation data when filtering is enabled, and similar oscillatory behavior is observed in the allocated thruster forces and joint moments. These patterns are not present in the unfiltered run. However, it is important to note that the filtered and unfiltered experiments were conducted with different control loop frequencies. Since the loop frequency influences the controller's bandwidth, it may also contribute to the observed oscillations, making it difficult to attribute them solely to filtering.
